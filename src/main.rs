@@ -6,14 +6,22 @@ struct Point {
     pub z: f32,
 }
 
+impl Point {
+    pub fn equalish_to(&self, other: &Self) -> bool {
+        equalish(self.x, other.x) &&
+            equalish(self.y, other.y) &&
+            equalish(self.z, other.z)
+    }
+}
+
 struct Vector {
     pub x: f32,
     pub y: f32,
     pub z: f32,
 }
 
-impl Point {
-    pub fn equalish_to(&self, other: &Point) -> bool {
+impl Vector {
+    pub fn equalish_to(&self, other: &Self) -> bool {
         equalish(self.x, other.x) &&
             equalish(self.y, other.y) &&
             equalish(self.z, other.z)
@@ -77,6 +85,44 @@ mod tests {
             };
 
             assert!(! point_a.equalish_to(&point_b));
+        }
+    }
+
+    mod vector_tests {
+        use super::*;
+
+        #[test]
+        fn equalish_is_true_for_diff_below_epsilon() {
+            let vector_a = Vector {
+                x: 1.0,
+                y: 1.0,
+                z: 1.0,
+            };
+
+            let vector_b = Vector {
+                x: 1.000001,
+                y: 1.000001,
+                z: 1.000001,
+            };
+
+            assert!(vector_a.equalish_to(&vector_b));
+        }
+
+        #[test]
+        fn equalish_is_false_for_diff_above_epsilon() {
+            let vector_a = Vector {
+                x: 1.0,
+                y: 1.0,
+                z: 1.0,
+            };
+
+            let vector_b = Vector {
+                x: 1.00002,
+                y: 1.00002,
+                z: 1.00002,
+            };
+
+            assert!(! vector_a.equalish_to(&vector_b));
         }
     }
 }
