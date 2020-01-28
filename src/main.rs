@@ -43,7 +43,7 @@ impl Vector {
             equalish(self.z, other.z)
     }
 
-    pub fn plus(&self, other: &Self) -> Self {
+    pub fn add_vector(&self, other: &Self) -> Self {
         Self {
             x: self.x + other.x,
             y: self.y + other.y,
@@ -196,7 +196,7 @@ mod tests {
         }
 
         #[test]
-        fn add_sums_each_pair_of_values() {
+        fn add_vector_sums_each_pair_of_values() {
             let a = Vector {
                 x: 1.0,
                 y: 2.0,
@@ -215,7 +215,7 @@ mod tests {
                 z: 7.0,
             };
 
-            assert!(a.plus(&b).equalish_to(&expected));
+            assert!(a.add_vector(&b).equalish_to(&expected));
         }
     }
 }
