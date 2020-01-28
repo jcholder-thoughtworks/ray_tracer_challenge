@@ -13,27 +13,11 @@ impl Point {
             equalish(self.z, other.z)
     }
 
-    pub fn add_point(&self, other: &Point) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-        }
-    }
-
     pub fn add_vector(&self, other: &Vector) -> Self {
         Self {
             x: self.x + other.x,
             y: self.y + other.y,
             z: self.z + other.z,
-        }
-    }
-
-    pub fn subtract_point(&self, other: &Point) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
         }
     }
 
@@ -128,29 +112,6 @@ mod tests {
         }
 
         #[test]
-        fn add_point_sums_each_pair_of_values() {
-            let a = Point {
-                x: 1.0,
-                y: 2.0,
-                z: 3.0,
-            };
-
-            let b = Point {
-                x: 2.0,
-                y: 3.0,
-                z: 4.0,
-            };
-
-            let expected = Point {
-                x: 3.0,
-                y: 5.0,
-                z: 7.0,
-            };
-
-            assert!(a.add_point(&b).equalish_to(&expected));
-        }
-
-        #[test]
         fn add_vector_sums_each_pair_of_values() {
             let a = Point {
                 x: 1.0,
@@ -171,29 +132,6 @@ mod tests {
             };
 
             assert!(a.add_vector(&b).equalish_to(&expected));
-        }
-
-        #[test]
-        fn subtract_point_subtracts_latter_from_former_for_each_pair_of_values() {
-            let a = Point {
-                x: 1.0,
-                y: 2.0,
-                z: 3.0,
-            };
-
-            let b = Point {
-                x: 1.0,
-                y: 1.0,
-                z: 4.0,
-            };
-
-            let expected = Point {
-                x: 0.0,
-                y: 1.0,
-                z: -1.0,
-            };
-
-            assert!(a.subtract_point(&b).equalish_to(&expected));
         }
 
         #[test]
