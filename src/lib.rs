@@ -2,7 +2,7 @@ use std::ops;
 
 const EPSILON: f32 = 0.00001;
 
-#[derive(Clone,Debug)]
+#[derive(Copy,Clone,Debug)]
 pub struct Point {
     pub x: f32,
     pub y: f32,
@@ -53,7 +53,7 @@ impl ops::Sub<Vector> for Point {
     }
 }
 
-#[derive(Clone,Debug)]
+#[derive(Copy,Clone,Debug)]
 pub struct Vector {
     pub x: f32,
     pub y: f32,
