@@ -34,6 +34,14 @@ impl Vector {
             equalish(self.y, other.y) &&
             equalish(self.z, other.z)
     }
+
+    pub fn plus(&self, other: &Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
+        }
+    }
 }
 
 fn equalish(a: f32, b: f32) -> bool {
@@ -154,6 +162,29 @@ mod tests {
             };
 
             assert!(! vector_a.equalish_to(&vector_b));
+        }
+
+        #[test]
+        fn add_sums_all_values() {
+            let a = Vector {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
+
+            let b = Vector {
+                x: 2.0,
+                y: 3.0,
+                z: 4.0,
+            };
+
+            let expected = Vector {
+                x: 3.0,
+                y: 5.0,
+                z: 7.0,
+            };
+
+            assert!(a.plus(&b).equalish_to(&expected));
         }
     }
 }
