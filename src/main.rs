@@ -21,6 +21,14 @@ impl Point {
         }
     }
 
+    pub fn subtract_point(&self, other: &Self) -> Vector {
+        Vector {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
+        }
+    }
+
     pub fn subtract_vector(&self, other: &Vector) -> Self {
         Self {
             x: self.x - other.x,
@@ -179,6 +187,29 @@ mod tests {
             };
 
             assert!(a.subtract_vector(&b).equalish_to(&expected));
+        }
+
+        #[test]
+        fn subtract_point_subtracts_latter_from_former_for_each_pair_of_values() {
+            let a = Point {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
+
+            let b = Point {
+                x: 1.0,
+                y: 1.0,
+                z: 4.0,
+            };
+
+            let expected = Vector {
+                x: 0.0,
+                y: 1.0,
+                z: -1.0,
+            };
+
+            assert!(a.subtract_point(&b).equalish_to(&expected));
         }
     }
 
