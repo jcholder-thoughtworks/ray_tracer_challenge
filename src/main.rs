@@ -15,14 +15,6 @@ impl Point {
             equalish(self.y, other.y) &&
             equalish(self.z, other.z)
     }
-
-    pub fn subtract_vector(&self, other: &Vector) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
-        }
-    }
 }
 
 impl ops::Add<Vector> for Point {
@@ -49,6 +41,18 @@ impl ops::Sub<Point> for Point {
     }
 }
 
+impl ops::Sub<Vector> for Point {
+    type Output = Self;
+
+    fn sub(self, rhs: Vector) -> Self {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
 #[derive(Clone,Debug)]
 struct Vector {
     pub x: f32,
@@ -56,35 +60,47 @@ struct Vector {
     pub z: f32,
 }
 
+impl ops::Add<Vector> for Vector {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl ops::Add<Point> for Vector {
+    type Output = Point;
+
+    fn add(self, rhs: Point) -> Point {
+        Point {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl ops::Sub<Vector> for Vector {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
 impl Vector {
     pub fn equalish_to(&self, other: &Self) -> bool {
         equalish(self.x, other.x) &&
             equalish(self.y, other.y) &&
             equalish(self.z, other.z)
-    }
-
-    pub fn add_vector(&self, other: &Self) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-        }
-    }
-
-    pub fn add_point(&self, other: &Point) -> Point {
-        Point {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-        }
-    }
-
-    pub fn subtract_vector(&self, other: &Self) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
-        }
     }
 }
 
@@ -190,7 +206,7 @@ mod tests {
                 z: -1.0,
             };
 
-            assert!(a.subtract_vector(&b).equalish_to(&expected));
+            assert!((a - b).equalish_to(&expected));
         }
 
         #[test]
@@ -274,7 +290,7 @@ mod tests {
                 z: 7.0,
             };
 
-            assert!(a.add_vector(&b).equalish_to(&expected));
+            assert!((a + b).equalish_to(&expected));
         }
 
         #[test]
@@ -297,7 +313,7 @@ mod tests {
                 z: 7.0,
             };
 
-            assert!(a.add_point(&b).equalish_to(&expected));
+            assert!((a + b).equalish_to(&expected));
         }
 
         #[test]
@@ -320,7 +336,7 @@ mod tests {
                 z: 1.0,
             };
 
-            assert!(a.subtract_vector(&b).equalish_to(&expected));
+            assert!((a - b).equalish_to(&expected));
         }
     }
 }
