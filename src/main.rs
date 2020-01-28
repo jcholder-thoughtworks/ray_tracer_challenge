@@ -1,3 +1,5 @@
+use std::ops;
+
 const EPSILON: f32 = 0.00001;
 
 #[derive(Clone,Debug)]
@@ -14,14 +16,6 @@ impl Point {
             equalish(self.z, other.z)
     }
 
-    pub fn add_vector(&self, other: &Vector) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-        }
-    }
-
     pub fn subtract_point(&self, other: &Self) -> Vector {
         Vector {
             x: self.x - other.x,
@@ -35,6 +29,18 @@ impl Point {
             x: self.x - other.x,
             y: self.y - other.y,
             z: self.z - other.z,
+        }
+    }
+}
+
+impl ops::Add<Vector> for Point {
+    type Output = Self;
+
+    fn add(self, rhs: Vector) -> Self {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
         }
     }
 }
@@ -157,7 +163,7 @@ mod tests {
                 z: 7.0,
             };
 
-            assert!(a.add_vector(&b).equalish_to(&expected));
+            assert!((a + b).equalish_to(&expected));
         }
 
         #[test]
