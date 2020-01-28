@@ -96,6 +96,18 @@ impl ops::Sub<Vector> for Vector {
     }
 }
 
+impl ops::Neg for Vector {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self::Output {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+}
+
 impl Vector {
     pub fn equalish_to(&self, other: &Self) -> bool {
         equalish(self.x, other.x) &&
@@ -337,6 +349,23 @@ mod tests {
             };
 
             assert!((a - b).equalish_to(&expected));
+        }
+
+        #[test]
+        fn negating_vector_inverts_each_value() {
+            let v = Vector {
+                x: 1.0,
+                y: -1.0,
+                z: 0.0,
+            };
+
+            let expected = Vector {
+                x: -1.0,
+                y: 1.0,
+                z: 0.0,
+            };
+
+            assert!((-v).equalish_to(&expected));
         }
     }
 }
