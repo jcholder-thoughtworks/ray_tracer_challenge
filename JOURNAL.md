@@ -11,3 +11,7 @@ Dang, I wasted plenty of time and effort by not first re-reading which vector/po
 Dang again. If I'd realized that operator overloading would have been so easy I would have lead with that instead of bothering with intermediate functions.
 
 Seeing all these operations that include the W component of the example tuples and hoping that my W-less Vector struct doesn't cause me problems in regards to this later.
+
+Successful physics implementation! Go me!
+
+Okay, Rust only has the two float types and the book says I won't need the higher precisions of f64 (just look at EPSILON) so I won't bother templating that.
