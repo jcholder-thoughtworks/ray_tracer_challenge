@@ -140,6 +140,10 @@ impl Vector {
             equalish(self.y, other.y) &&
             equalish(self.z, other.z)
     }
+
+    pub fn mag(&self) -> f32 {
+        (self.x.powi(2) + self.y.powi(2) + self.z.powi(2)).sqrt()
+    }
 }
 
 fn equalish(a: f32, b: f32) -> bool {
@@ -432,6 +436,34 @@ mod tests {
             let result = a / b;
 
             assert!(result.equalish_to(&expected), "Expected {:?} but got {:?}", expected, result);
+        }
+
+        #[test]
+        fn magnitudes_of_vectors() {
+            let v = Vector { x: 1.0, y: 0.0, z: 0.0 };
+            let expected = 1.0;
+            let result = v.mag();
+            assert!(equalish(expected, result), "Expected {} but got {}", expected, result);
+
+            let v = Vector { x: 0.0, y: 1.0, z: 0.0 };
+            let expected = 1.0;
+            let result = v.mag();
+            assert!(equalish(expected, result), "Expected {} but got {}", expected, result);
+
+            let v = Vector { x: 0.0, y: 0.0, z: 1.0 };
+            let expected = 1.0;
+            let result = v.mag();
+            assert!(equalish(expected, result), "Expected {} but got {}", expected, result);
+
+            let v = Vector { x: 1.0, y: 2.0, z: 3.0 };
+            let expected = (14.0 as f32).sqrt();
+            let result = v.mag();
+            assert!(equalish(expected, result), "Expected {} but got {}", expected, result);
+
+            let v = Vector { x: -1.0, y: -2.0, z: -3.0 };
+            let expected = (14.0 as f32).sqrt();
+            let result = v.mag();
+            assert!(equalish(expected, result), "Expected {} but got {}", expected, result);
         }
     }
 }
