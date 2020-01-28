@@ -1,5 +1,7 @@
 use std::ops;
 
+pub mod physics;
+
 const EPSILON: f32 = 0.00001;
 
 #[derive(Copy,Clone,Debug)]

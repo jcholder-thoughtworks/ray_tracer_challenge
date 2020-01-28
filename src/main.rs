@@ -1,23 +1,5 @@
 use ray_tracer_challenge::*;
-
-#[derive(Clone,Debug)]
-struct Projectile {
-    position: Point,
-    velocity: Vector,
-}
-
-#[derive(Clone,Debug)]
-struct Environment {
-    gravity: Vector,
-    wind: Vector,
-}
-
-fn tick(environment: &Environment, projectile: Projectile) -> Projectile {
-    let position = projectile.position + projectile.velocity.clone();
-    let velocity = projectile.velocity + environment.gravity + environment.wind;
-
-    Projectile { position, velocity }
-}
+use ray_tracer_challenge::physics::*;
 
 fn main() {
     let mut projectile = Projectile {
@@ -33,7 +15,7 @@ fn main() {
     println!("It's an environment! {:?}", environment);
 
     while projectile.position.y > 0.0 {
-        projectile = tick(&environment, projectile);
+        projectile = projectile.tick(&environment);
         println!("Updated projectile! {:?}", projectile);
     }
 
