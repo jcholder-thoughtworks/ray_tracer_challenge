@@ -16,14 +16,6 @@ impl Point {
             equalish(self.z, other.z)
     }
 
-    pub fn subtract_point(&self, other: &Self) -> Vector {
-        Vector {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
-        }
-    }
-
     pub fn subtract_vector(&self, other: &Vector) -> Self {
         Self {
             x: self.x - other.x,
@@ -41,6 +33,18 @@ impl ops::Add<Vector> for Point {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
             z: self.z + rhs.z,
+        }
+    }
+}
+
+impl ops::Sub<Point> for Point {
+    type Output = Vector;
+
+    fn sub(self, rhs: Point) -> Vector {
+        Vector {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
         }
     }
 }
@@ -209,7 +213,7 @@ mod tests {
                 z: -1.0,
             };
 
-            assert!(a.subtract_point(&b).equalish_to(&expected));
+            assert!((a - b).equalish_to(&expected));
         }
     }
 
