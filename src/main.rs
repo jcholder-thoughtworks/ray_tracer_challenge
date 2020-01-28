@@ -108,6 +108,19 @@ impl ops::Neg for Vector {
     }
 }
 
+// TODO: Template for float type
+impl ops::Mul<f32> for Vector {
+    type Output = Self;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        Self::Output {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
 impl Vector {
     pub fn equalish_to(&self, other: &Self) -> bool {
         equalish(self.x, other.x) &&
@@ -366,6 +379,25 @@ mod tests {
             };
 
             assert!((-v).equalish_to(&expected));
+        }
+
+        #[test]
+        fn multiply_vector_multiplies_each_value() {
+            let a = Vector {
+                x: 1.0,
+                y: -1.0,
+                z: 0.0,
+            };
+
+            let b = 5.0;
+
+            let expected = Vector {
+                x: 5.0,
+                y: -5.0,
+                z: 0.0,
+            };
+
+            assert!((a * b).equalish_to(&expected));
         }
     }
 }
