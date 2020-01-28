@@ -121,6 +121,19 @@ impl ops::Mul<f32> for Vector {
     }
 }
 
+// TODO: Template for float type
+impl ops::Div<f32> for Vector {
+    type Output = Self;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        Self::Output {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+        }
+    }
+}
+
 impl Vector {
     pub fn equalish_to(&self, other: &Self) -> bool {
         equalish(self.x, other.x) &&
@@ -398,6 +411,27 @@ mod tests {
             };
 
             assert!((a * b).equalish_to(&expected));
+        }
+
+        #[test]
+        fn divide_vector_divides_each_value() {
+            let a = Vector {
+                x: 1.0,
+                y: -1.0,
+                z: 0.0,
+            };
+
+            let b = 2.0;
+
+            let expected = Vector {
+                x: 0.5,
+                y: -0.5,
+                z: 0.0,
+            };
+
+            let result = a / b;
+
+            assert!(result.equalish_to(&expected), "Expected {:?} but got {:?}", expected, result);
         }
     }
 }
