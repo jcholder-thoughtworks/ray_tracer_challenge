@@ -50,6 +50,14 @@ impl Vector {
             z: self.z + other.z,
         }
     }
+
+    pub fn subtract_vector(&self, other: &Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
+        }
+    }
 }
 
 fn equalish(a: f32, b: f32) -> bool {
@@ -216,6 +224,29 @@ mod tests {
             };
 
             assert!(a.add_vector(&b).equalish_to(&expected));
+        }
+
+        #[test]
+        fn subtract_vector_subtracts_second_value_from_for_for_each_pair() {
+            let a = Vector {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
+
+            let b = Vector {
+                x: 1.0,
+                y: 3.0,
+                z: 2.0,
+            };
+
+            let expected = Vector {
+                x: 0.0,
+                y: -1.0,
+                z: 1.0,
+            };
+
+            assert!(a.subtract_vector(&b).equalish_to(&expected));
         }
     }
 }
