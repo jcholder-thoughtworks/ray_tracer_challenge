@@ -12,6 +12,14 @@ impl Point {
             equalish(self.y, other.y) &&
             equalish(self.z, other.z)
     }
+
+    pub fn plus(&self, other: &Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
+        }
+    }
 }
 
 struct Vector {
@@ -85,6 +93,29 @@ mod tests {
             };
 
             assert!(! point_a.equalish_to(&point_b));
+        }
+
+        #[test]
+        fn add_sums_all_values() {
+            let a = Point {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
+
+            let b = Point {
+                x: 2.0,
+                y: 3.0,
+                z: 4.0,
+            };
+
+            let expected = Point {
+                x: 3.0,
+                y: 5.0,
+                z: 7.0,
+            };
+
+            assert!(a.plus(&b).equalish_to(&expected));
         }
     }
 
