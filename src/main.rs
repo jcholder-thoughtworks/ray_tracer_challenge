@@ -104,7 +104,7 @@ mod tests {
         }
 
         #[test]
-        fn add_sums_all_values() {
+        fn add_sums_each_pair_of_values() {
             let a = Point {
                 x: 1.0,
                 y: 2.0,
@@ -165,7 +165,7 @@ mod tests {
         }
 
         #[test]
-        fn add_sums_all_values() {
+        fn add_sums_each_pair_of_values() {
             let a = Vector {
                 x: 1.0,
                 y: 2.0,
