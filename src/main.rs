@@ -1,5 +1,6 @@
 const EPSILON: f32 = 0.00001;
 
+#[derive(Clone,Debug)]
 struct Point {
     pub x: f32,
     pub y: f32,
@@ -38,6 +39,7 @@ impl Point {
     }
 }
 
+#[derive(Clone,Debug)]
 struct Vector {
     pub x: f32,
     pub y: f32,
