@@ -160,6 +160,14 @@ impl Vector {
             (self.y * rhs.y) +
             (self.z * rhs.z)
     }
+
+    pub fn cross(self, rhs: Self) -> Self {
+        Self {
+            x: (self.y * rhs.z) - (self.z * rhs.y),
+            y: (self.z * rhs.x) - (self.x * rhs.z),
+            z: (self.x * rhs.y) - (self.y * rhs.x),
+        }
+    }
 }
 
 fn equalish(a: f32, b: f32) -> bool {
@@ -505,6 +513,15 @@ mod tests {
             let expected = 20.0;
             let result = a.dot(b);
             assert!(equalish(expected, result), "Expected {:?} but got {:?}", expected, result);
+        }
+
+        #[test]
+        fn cross_products_of_vectors() {
+            let a = Vector { x: 1.0, y: 2.0, z: 3.0 };
+            let b = Vector { x: 2.0, y: 3.0, z: 4.0 };
+            let expected = Vector { x: -1.0, y: 2.0, z: -1.0 };
+            let result = a.cross(b);
+            assert!(expected.equalish_to(&result), "Expected {:?} but got {:?}", expected, result);
         }
     }
 }
