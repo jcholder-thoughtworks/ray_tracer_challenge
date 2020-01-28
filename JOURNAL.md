@@ -9,3 +9,5 @@ And of course the math operations complicate this, given that the book's system 
 Dang, I wasted plenty of time and effort by not first re-reading which vector/point operations are actually supported.
 
 Dang again. If I'd realized that operator overloading would have been so easy I would have lead with that instead of bothering with intermediate functions.
+
+Seeing all these operations that include the W component of the example tuples and hoping that my W-less Vector struct doesn't cause me problems in regards to this later.

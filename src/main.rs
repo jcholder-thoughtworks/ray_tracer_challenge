@@ -144,6 +144,22 @@ impl Vector {
     pub fn mag(&self) -> f32 {
         (self.x.powi(2) + self.y.powi(2) + self.z.powi(2)).sqrt()
     }
+
+    pub fn norm(self) -> Self {
+        let mag = self.mag();
+
+        Self {
+            x: self.x / mag,
+            y: self.y / mag,
+            z: self.z / mag,
+        }
+    }
+
+    pub fn dot(self, rhs: Self) -> f32 {
+        (self.x * rhs.x) +
+            (self.y * rhs.y) +
+            (self.z * rhs.z)
+    }
 }
 
 fn equalish(a: f32, b: f32) -> bool {
@@ -464,6 +480,31 @@ mod tests {
             let expected = (14.0 as f32).sqrt();
             let result = v.mag();
             assert!(equalish(expected, result), "Expected {} but got {}", expected, result);
+        }
+
+        #[test]
+        fn normalizing_vectors() {
+            let v = Vector { x: 4.0, y: 0.0, z: 0.0 };
+            let expected = Vector { x: 1.0, y: 0.0, z: 0.0 };
+            let result = v.norm();
+            assert!(expected.equalish_to(&result), "Expected {:?} but got {:?}", expected, result);
+
+            let v = Vector { x: 1.0, y: 2.0, z: 3.0 };
+            let x = 1.0 / (14.0 as f32).sqrt();
+            let y = 2.0 / (14.0 as f32).sqrt();
+            let z = 3.0 / (14.0 as f32).sqrt();
+            let expected = Vector { x, y, z };
+            let result = v.norm();
+            assert!(expected.equalish_to(&result), "Expected {:?} but got {:?}", expected, result);
+        }
+
+        #[test]
+        fn dot_products_of_vectors() {
+            let a = Vector { x: 1.0, y: 2.0, z: 3.0 };
+            let b = Vector { x: 2.0, y: 3.0, z: 4.0 };
+            let expected = 20.0;
+            let result = a.dot(b);
+            assert!(equalish(expected, result), "Expected {:?} but got {:?}", expected, result);
         }
     }
 }
