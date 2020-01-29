@@ -6,6 +6,9 @@ use ray_tracer_challenge::physics::*;
 use ray_tracer_challenge::color::*;
 use ray_tracer_challenge::canvas::*;
 
+const CANVAS_WIDTH: u32 = 400;
+const CANVAS_HEIGHT: u32 = 200;
+
 fn main() -> std::io::Result<()> {
     let mut projectile = Projectile {
         position: Point { x: 1.0, y: 1.0, z: 1.0 },
@@ -16,32 +19,34 @@ fn main() -> std::io::Result<()> {
         wind: Vector { x: 0.1, y: 0.0, z: 0.0 },
     };
 
+    let mut canvas = Canvas::of_color(CANVAS_WIDTH, CANVAS_HEIGHT, BLACK);
+
     println!("It's a projectile! {:?}", projectile);
     println!("It's an environment! {:?}", environment);
 
     while projectile.position.y > 0.0 {
         projectile = projectile.tick(&environment);
+
         println!("Updated projectile! {:?}", projectile);
+
+        let x = projectile.position.x.round() as i32;
+        let y = CANVAS_HEIGHT as i32 - projectile.position.y.round() as i32;
+
+        if x < 0 && y < 0 {
+            continue;
+        }
+
+        let x = x as u32;
+        let y = y as u32;
+
+        if x < CANVAS_WIDTH && y < CANVAS_HEIGHT {
+            canvas.write_pixel(x, y, WHITE);
+        }
     }
 
     println!("And we've landed!");
 
-    //println!("Here's a color: {:?}.", Color { red: 0.1, green: 0.2, blue: 0.3 });
-
-    let mut canvas = Canvas::new(5, 3);
-    let c1 = Color::new(1.5, 0.0, 0.0);
-    let c2 = Color::new(0.0, 0.5, 0.0);
-    let c3 = Color::new(-0.5, 0.0, 1.0);
-
-    canvas.write_pixel(0, 0, c1);
-    canvas.write_pixel(2, 1, c2);
-    canvas.write_pixel(4, 2, c3);
-
-    //println!("Here's a canvas: {:?}.", canvas);
-
     let ppm = canvas.to_ppm();
-
-    //println!("Here's the canvas as a PPM file: {}", ppm);
 
     println!("Saving the PPM to a file ...");
 
