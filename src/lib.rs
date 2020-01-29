@@ -2,6 +2,7 @@ use std::ops;
 
 pub mod physics;
 pub mod color;
+pub mod canvas;
 
 const EPSILON: f32 = 0.00001;
 
