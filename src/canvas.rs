@@ -1,6 +1,7 @@
 use super::color::{Color, BLACK};
 
 const PPM_VERSION: &str = "P3";
+const MAX_PPM_LINE_LENGTH: usize = 70;
 const MAX_COLOR_VALUE: f32 = 1.0;
 const MIN_COLOR_VALUE: f32 = 0.0;
 const PPM_MAX_COLOR_VALUE: u32 = 255;
@@ -48,17 +49,32 @@ impl Canvas {
         let headers = format!("{}\n{} {}\n{}\n", PPM_VERSION, self.width, self.height, PPM_MAX_COLOR_VALUE);
         ppm.push_str(&headers);
 
+        let mut line = String::new();
+
         for (i, pixel) in self.pixels.iter().enumerate() {
             let red = within_bounds(pixel.red);
             let green = within_bounds(pixel.green);
             let blue = within_bounds(pixel.blue);
 
-            let pixel_str = format!("{} {} {} ", red, green, blue);
-            ppm.push_str(&pixel_str);
+            let color_strs = vec![red.to_string(), green.to_string(), blue.to_string()];
+
+            for cs in color_strs.iter() {
+                // plus one for the separating space that would be added
+                if line.len() + cs.len() + 1 > MAX_PPM_LINE_LENGTH {
+                    ppm.push_str(&line);
+                    ppm.push_str(&"\n");
+                    line = String::new();
+                }
+
+                line.push_str(&cs);
+                line.push_str(&" ");
+            }
 
             if i > 0 && ((i + 1) % (self.width as usize) == 0) {
-                ppm = ppm.trim().to_string();
+                line = line.trim().to_string();
+                ppm.push_str(&line);
                 ppm.push_str(&"\n");
+                line = String::new();
             }
         }
 
@@ -150,9 +166,20 @@ mod tests {
         let ppm = canvas.to_ppm();
         let lines: Vec<&str> = ppm.split("\n").collect();
 
-        assert!(lines[3].trim() == "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204", "Actual: {}", lines[3].trim());
-        assert!(lines[4].trim() == "153 255 204 153 255 204 153 255 204 153 255 204 153", "Actual: {}", lines[4].trim());
-        assert!(lines[5].trim() == "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204", "Actual: {}", lines[5].trim());
-        assert!(lines[6].trim() == "153 255 204 153 255 204 153 255 204 153 255 204 153", "Actual: {}", lines[6].trim());
+        let expected = "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204";
+        let actual = lines[3].trim();
+        assert!(expected == actual, "\nExpected: {}\nActual:   {}\n", expected, actual);
+
+        let expected = "153 255 204 153 255 204 153 255 204 153 255 204 153";
+        let actual = lines[4].trim();
+        assert!(expected == actual, "\nExpected: {}\nActual:   {}\n", expected, actual);
+
+        let expected = "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204";
+        let actual = lines[5].trim();
+        assert!(expected == actual, "\nExpected: {}\nActual:   {}\n", expected, actual);
+
+        let expected = "153 255 204 153 255 204 153 255 204 153 255 204 153";
+        let actual = lines[6].trim();
+        assert!(expected == actual, "\nExpected: {}\nActual:   {}\n", expected, actual);
     }
 }
