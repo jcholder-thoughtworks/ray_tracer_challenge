@@ -1,5 +1,8 @@
 use super::color::{Color, BLACK};
 
+const PPM_VERSION: &str = "P3";
+const MAX_COLOR_VALUE: u32 = 255;
+
 #[derive(Clone,Debug)]
 pub struct Canvas {
     pub width: u32,
@@ -24,6 +27,10 @@ impl Canvas {
     pub fn pixel_at(&self, x: u32, y: u32) -> Color {
         let i = x + (y * self.height);
         self.pixels[i as usize]
+    }
+
+    pub fn to_ppm(&self) -> String {
+        format!("{}\n{} {}\n{}", PPM_VERSION, self.width, self.height, MAX_COLOR_VALUE)
     }
 }
 
@@ -57,5 +64,17 @@ mod tests {
         let pixel = canvas.pixel_at(2, 3);
 
         assert!(pixel.equalish_to(&red));
+    }
+
+    #[test]
+    fn ppm_headers() {
+        let canvas = Canvas::new(5, 3);
+
+        let ppm = canvas.to_ppm();
+        let lines: Vec<&str> = ppm.split("\n").collect();
+
+        assert!(lines[0].trim() == "P3");
+        assert!(lines[1].trim() == "5 3");
+        assert!(lines[2].trim() == "255");
     }
 }
