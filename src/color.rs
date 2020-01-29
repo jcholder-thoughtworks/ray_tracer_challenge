@@ -2,6 +2,12 @@ use std::ops;
 
 use super::equalish;
 
+pub const BLACK: Color = Color {
+    red: 0.0,
+    green: 0.0,
+    blue: 0.0,
+};
+
 #[derive(Clone,Debug)]
 pub struct Color {
     pub red: f32,
