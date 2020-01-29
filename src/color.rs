@@ -45,6 +45,18 @@ impl ops::Sub<Color> for Color {
     }
 }
 
+impl ops::Mul<f32> for Color {
+    type Output = Self;
+
+    fn mul(self, rhs: f32) -> Self {
+        Color {
+            red: self.red * rhs,
+            green: self.green * rhs,
+            blue: self.blue * rhs,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -67,6 +79,16 @@ mod tests {
 
         let expected = Color::new(0.2, 0.5, 0.5);
         let actual = c1 - c2;
+
+        assert!(actual.equalish_to(&expected), "Expected {:?} but got {:?}", expected, actual);
+    }
+
+    #[test]
+    fn multiplying_colors_by_scalars() {
+        let c = Color::new(0.2, 0.3, 0.4);
+
+        let expected = Color::new(0.4, 0.6, 0.8);
+        let actual = c * 2.0;
 
         assert!(actual.equalish_to(&expected), "Expected {:?} but got {:?}", expected, actual);
     }
