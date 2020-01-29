@@ -182,4 +182,12 @@ mod tests {
         let actual = lines[6].trim();
         assert!(expected == actual, "\nExpected: {}\nActual:   {}\n", expected, actual);
     }
+
+    #[test]
+    fn terminating_newline_on_ppm_content() {
+        let canvas = Canvas::new(5, 3);
+        let ppm = canvas.to_ppm();
+
+        assert!(ppm.chars().last().unwrap() == '\n');
+    }
 }
