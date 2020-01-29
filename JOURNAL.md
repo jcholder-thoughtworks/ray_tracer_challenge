@@ -26,4 +26,4 @@ Oops. Somehow swapped `height` for `width` on the pixel methods on `Canvas`. Had
 
 Phew! Finally done with PPM export. That took a bit more trouble than I would have liked but it's done.
 
-Break over. Time to start on the projectile trajectory rendering challenge!
+Break over. Time to start on the projectile trajectory rendering challenge! Projectile rendering was a cinch! And I had a little fun with the Z coordinate and color. Glad to have a coworker sitting next to me who knows the math of all this better than I do. (Haven't needed their help yet but it's still a way to connect and socialize.)
