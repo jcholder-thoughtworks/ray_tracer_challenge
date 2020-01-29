@@ -15,6 +15,16 @@ impl Canvas {
             pixels: vec![BLACK; (width * height) as usize],
         }
     }
+
+    pub fn write_pixel(&mut self, x: u32, y: u32, color: Color) {
+        let i = x + (y * self.height);
+        self.pixels[i as usize] = color;
+    }
+
+    pub fn pixel_at(&self, x: u32, y: u32) -> Color {
+        let i = x + (y * self.height);
+        self.pixels[i as usize]
+    }
 }
 
 #[cfg(test)]
@@ -35,5 +45,17 @@ mod tests {
             assert!(pixel.green == BLACK.green);
             assert!(pixel.blue == BLACK.blue);
         }
+    }
+
+    #[test]
+    fn writing_and_reading_pixels() {
+        let mut canvas = Canvas::new(10, 20);
+        let red = Color::new(1.0, 0.0, 0.0);
+
+        canvas.write_pixel(2, 3, red);
+
+        let pixel = canvas.pixel_at(2, 3);
+
+        assert!(pixel.equalish_to(&red));
     }
 }
