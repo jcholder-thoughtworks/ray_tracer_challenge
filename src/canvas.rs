@@ -14,10 +14,18 @@ pub struct Canvas {
 
 impl Canvas {
     pub fn new(width: u32, height: u32) -> Self {
-        Canvas {
+        Self {
             width,
             height,
             pixels: vec![BLACK; (width * height) as usize],
+        }
+    }
+
+    pub fn of_color(width: u32, height: u32, color: Color) -> Self {
+        Self {
+            width,
+            height,
+            pixels: vec![color; (width * height) as usize],
         }
     }
 
@@ -132,5 +140,19 @@ mod tests {
         assert!(lines[3].trim() == "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0", "Actual: {}", lines[3].trim());
         assert!(lines[4].trim() == "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0", "Actual: {}", lines[4].trim());
         assert!(lines[5].trim() == "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255", "Actual: {}", lines[5].trim());
+    }
+
+    #[test]
+    fn well_formatted_ppm_content() {
+        let color = Color::new(1.0, 0.8, 0.6);
+        let canvas = Canvas::of_color(10, 2, color);
+
+        let ppm = canvas.to_ppm();
+        let lines: Vec<&str> = ppm.split("\n").collect();
+
+        assert!(lines[3].trim() == "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204", "Actual: {}", lines[3].trim());
+        assert!(lines[4].trim() == "153 255 204 153 255 204 153 255 204 153 255 204 153", "Actual: {}", lines[4].trim());
+        assert!(lines[5].trim() == "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204", "Actual: {}", lines[5].trim());
+        assert!(lines[6].trim() == "153 255 204 153 255 204 153 255 204 153 255 204 153", "Actual: {}", lines[6].trim());
     }
 }
