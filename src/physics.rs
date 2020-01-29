@@ -8,7 +8,7 @@ pub struct Projectile {
 
 impl Projectile {
     pub fn tick(self, environment: &Environment) -> Self {
-        let position = self.position + self.velocity.clone();
+        let position = self.position + self.velocity;
         let velocity = self.velocity + environment.gravity + environment.wind;
 
         Self { position, velocity }

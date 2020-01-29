@@ -18,4 +18,4 @@ Okay, Rust only has the two float types and the book says I won't need the highe
 
 # 29Jan2020
 
-Time for colors! But first, time to clean up the code a bit first. Linter!
+Time for colors! But first, time to clean up the code a bit first. Linter! Running `rustup update`, too, before installing `clippy`. I've used `clippy` before and look forward to revisiting it. Hah! Only a single piece of simple feedback! Go me!
