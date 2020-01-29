@@ -8,7 +8,7 @@ pub const BLACK: Color = Color {
     blue: 0.0,
 };
 
-#[derive(Clone,Debug)]
+#[derive(Clone,Copy,Debug)]
 pub struct Color {
     pub red: f32,
     pub green: f32,
