@@ -15,7 +15,7 @@ fn main() -> std::io::Result<()> {
         velocity: Vector { x: 2.0, y: 5.0, z: 1.0 },
     };
     let environment = Environment {
-        gravity: Vector { x: 0.0, y: -0.1, z: 0.0 },
+        gravity: Vector { x: 0.0, y: -0.1, z: -0.1 },
         wind: Vector { x: 0.02, y: 0.0, z: 0.0 },
     };
 
@@ -31,6 +31,10 @@ fn main() -> std::io::Result<()> {
 
         let x = projectile.position.x.round() as i32;
         let y = CANVAS_HEIGHT as i32 - projectile.position.y.round() as i32;
+        let z = 100.0 / projectile.position.z.abs();
+        let color = WHITE * z;
+
+        println!("{} {:?}", z, color);
 
         if x < 0 && y < 0 {
             continue;
@@ -40,7 +44,7 @@ fn main() -> std::io::Result<()> {
         let y = y as u32;
 
         if x < CANVAS_WIDTH && y < CANVAS_HEIGHT {
-            canvas.write_pixel(x, y, WHITE);
+            canvas.write_pixel(x, y, color);
         }
     }
 
