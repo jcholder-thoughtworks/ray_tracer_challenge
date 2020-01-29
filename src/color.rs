@@ -33,6 +33,18 @@ impl ops::Add<Color> for Color {
     }
 }
 
+impl ops::Sub<Color> for Color {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self {
+        Color {
+            red: self.red - rhs.red,
+            green: self.green - rhs.green,
+            blue: self.blue - rhs.blue,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -44,6 +56,17 @@ mod tests {
 
         let expected = Color::new(1.6, 0.7, 1.0);
         let actual = c1 + c2;
+
+        assert!(actual.equalish_to(&expected), "Expected {:?} but got {:?}", expected, actual);
+    }
+
+    #[test]
+    fn subtracting_colors() {
+        let c1 = Color::new(0.9, 0.6, 0.75);
+        let c2 = Color::new(0.7, 0.1, 0.25);
+
+        let expected = Color::new(0.2, 0.5, 0.5);
+        let actual = c1 - c2;
 
         assert!(actual.equalish_to(&expected), "Expected {:?} but got {:?}", expected, actual);
     }
