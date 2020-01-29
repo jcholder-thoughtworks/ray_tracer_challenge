@@ -19,6 +19,14 @@ impl Color {
             equalish(self.green, other.green) &&
             equalish(self.blue, other.blue)
     }
+
+    fn hadamard_schur_product(&self, other: &Self) -> Self {
+        Color {
+            red: self.red * other.red,
+            green: self.green * other.green,
+            blue: self.blue * other.blue,
+        }
+    }
 }
 
 impl ops::Add<Color> for Color {
@@ -57,6 +65,14 @@ impl ops::Mul<f32> for Color {
     }
 }
 
+impl ops::Mul<Color> for Color {
+    type Output = Self;
+
+    fn mul(self, rhs: Self) -> Self {
+        self.hadamard_schur_product(&rhs)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -89,6 +105,17 @@ mod tests {
 
         let expected = Color::new(0.4, 0.6, 0.8);
         let actual = c * 2.0;
+
+        assert!(actual.equalish_to(&expected), "Expected {:?} but got {:?}", expected, actual);
+    }
+
+    #[test]
+    fn multiplying_colors_by_colors() {
+        let c1 = Color::new(1.0, 0.2, 0.4);
+        let c2 = Color::new(0.9, 1.0, 0.1);
+
+        let expected = Color::new(0.9, 0.2, 0.04);
+        let actual = c1 * c2;
 
         assert!(actual.equalish_to(&expected), "Expected {:?} but got {:?}", expected, actual);
     }
