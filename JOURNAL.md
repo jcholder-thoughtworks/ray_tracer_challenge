@@ -15,3 +15,7 @@ Seeing all these operations that include the W component of the example tuples a
 Successful physics implementation! Go me!
 
 Okay, Rust only has the two float types and the book says I won't need the higher precisions of f64 (just look at EPSILON) so I won't bother templating that.
+
+# 29Jan2020
+
+Time for colors! But first, time to clean up the code a bit first. Linter!
