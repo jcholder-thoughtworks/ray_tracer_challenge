@@ -26,7 +26,7 @@ fn main() -> std::io::Result<()> {
 
     println!("And we've landed!");
 
-    println!("Here's a color: {:?}.", Color { red: 0.1, green: 0.2, blue: 0.3 });
+    //println!("Here's a color: {:?}.", Color { red: 0.1, green: 0.2, blue: 0.3 });
 
     let mut canvas = Canvas::new(5, 3);
     let c1 = Color::new(1.5, 0.0, 0.0);
@@ -37,11 +37,11 @@ fn main() -> std::io::Result<()> {
     canvas.write_pixel(2, 1, c2);
     canvas.write_pixel(4, 2, c3);
 
-    println!("Here's a canvas: {:?}.", canvas);
+    //println!("Here's a canvas: {:?}.", canvas);
 
     let ppm = canvas.to_ppm();
 
-    println!("Here's the canvas as a PPM file: {}", ppm);
+    //println!("Here's the canvas as a PPM file: {}", ppm);
 
     println!("Saving the PPM to a file ...");
 

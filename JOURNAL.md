@@ -24,4 +24,4 @@ I'm mixing references and non-references less consistently than I would like. Mi
 
 Oops. Somehow swapped `height` for `width` on the pixel methods on `Canvas`. Had to add another `assert!` which verified that the exact pixel in the 1D array I'm using was correct. Took me a surprisingly long time to debug that, though. Probably just needed to walk away from the code for a while instead of sticking with it for so long.
 
-
+Phew! Finally done with PPM export. That took a bit more trouble than I would have liked but it's done.
