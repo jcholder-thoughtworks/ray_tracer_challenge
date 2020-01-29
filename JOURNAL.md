@@ -21,3 +21,7 @@ Okay, Rust only has the two float types and the book says I won't need the highe
 Time for colors! But first, time to clean up the code a bit first. Linter! Running `rustup update`, too, before installing `clippy`. I've used `clippy` before and look forward to revisiting it. Hah! Only a single piece of simple feedback! Go me!
 
 I'm mixing references and non-references less consistently than I would like. Might help to go back and take out all the references until I run into actual borrow issues. I expect that to make the API more predictable.
+
+Oops. Somehow swapped `height` for `width` on the pixel methods on `Canvas`. Had to add another `assert!` which verified that the exact pixel in the 1D array I'm using was correct. Took me a surprisingly long time to debug that, though. Probably just needed to walk away from the code for a while instead of sticking with it for so long.
+
+
