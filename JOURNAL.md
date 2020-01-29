@@ -31,3 +31,5 @@ Break over. Time to start on the projectile trajectory rendering challenge! Proj
 Realization: I can use Cucumber proper with Rust! Specifically: https://github.com/bbqsrc/cucumber-rust. That was pleasantly easy to set up! (Aside from a hiccup with needing to add all the example code first before anything would work.)
 
 Customizing the Cucumber code to work with the examples from the book is going well so far!
+
+`ndarray` for the win! When I saw how much manual effort would be required to handle matrix math, I ditched the unnecessary agony and went with a crate. Life's too short to burn on reimplementing that! And besides, there's raycasting to learn instead.

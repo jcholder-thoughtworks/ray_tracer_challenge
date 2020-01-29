@@ -3,6 +3,7 @@
 #[macro_use]
 extern crate ndarray;
 
+use ndarray::*;
 use ndarray::prelude::*;
 
 use cucumber::{cucumber, before, after};
@@ -12,6 +13,7 @@ use ray_tracer_challenge::color::*;
 pub struct MyWorld {
     // You can use this struct for mutable context in scenarios.
     colors: Vec<Color>,
+    matrix: Array<f32, Ix2>,
 }
 
 impl cucumber::World for MyWorld {}
@@ -20,6 +22,7 @@ impl std::default::Default for MyWorld {
         // This function is called every time a new scenario is started
         MyWorld { 
             colors: vec![BLACK; 3],
+            matrix: Array::from_elem((4, 4), 0.0),
         }
     }
 }
@@ -27,7 +30,7 @@ impl std::default::Default for MyWorld {
 mod example_steps {
     use cucumber::steps;
 
-    use ndarray::Array;
+    use ndarray::*;
 
     use ray_tracer_challenge::color::*;
     
@@ -36,23 +39,25 @@ mod example_steps {
         given "the following 4x4 matrix M:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            let mut matrix = Array::from_elem((4, 4), 0.0);
+            world.matrix = Array::from_elem((4, 4), 0.0);
 
             for (x, value) in table.header.iter().enumerate() {
-                matrix[[0,x]] = value.parse().unwrap();
+                world.matrix[[0,x]] = value.parse().unwrap();
             }
 
             for (y, row) in table.rows.iter().enumerate() {
                 for (x, value) in row.iter().enumerate() {
-                    matrix[[y + 1,x]] = value.parse().unwrap();
+                    world.matrix[[y + 1,x]] = value.parse().unwrap();
                 }
             }
-
-            panic!("{:?}", matrix);
         };
 
         then regex r"M\[(.*),(.*)\] = (.*)" |world, matches, step| {
+            let x: usize = matches[1].parse().unwrap();
+            let y: usize = matches[2].parse().unwrap();
+            let expected: f32 = matches[3].parse().unwrap();
 
+            assert_eq!(expected, world.matrix[[x, y]]);
         };
 
         given regex r"c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
