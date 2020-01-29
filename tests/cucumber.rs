@@ -1,10 +1,6 @@
 // Derived from example at https://github.com/bbqsrc/cucumber-rust/blob/master/README.md
 
-#[macro_use]
-extern crate ndarray;
-
 use ndarray::*;
-use ndarray::prelude::*;
 
 use cucumber::{cucumber, before, after};
 
@@ -52,7 +48,7 @@ mod example_steps {
             }
         };
 
-        then regex r"M\[(.*),(.*)\] = (.*)" |world, matches, step| {
+        then regex r"M\[(.*),(.*)\] = (.*)" |world, matches, _step| {
             let x: usize = matches[1].parse().unwrap();
             let y: usize = matches[2].parse().unwrap();
             let expected: f32 = matches[3].parse().unwrap();
