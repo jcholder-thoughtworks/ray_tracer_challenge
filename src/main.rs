@@ -12,11 +12,11 @@ const CANVAS_HEIGHT: u32 = 200;
 fn main() -> std::io::Result<()> {
     let mut projectile = Projectile {
         position: Point { x: 1.0, y: 1.0, z: 1.0 },
-        velocity: Vector { x: 1.0, y: 1.0, z: 1.0 },
+        velocity: Vector { x: 2.0, y: 5.0, z: 1.0 },
     };
     let environment = Environment {
         gravity: Vector { x: 0.0, y: -0.1, z: 0.0 },
-        wind: Vector { x: 0.1, y: 0.0, z: 0.0 },
+        wind: Vector { x: 0.02, y: 0.0, z: 0.0 },
     };
 
     let mut canvas = Canvas::of_color(CANVAS_WIDTH, CANVAS_HEIGHT, BLACK);
