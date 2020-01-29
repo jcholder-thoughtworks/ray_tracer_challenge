@@ -1,6 +1,7 @@
 use std::ops;
 
 pub mod physics;
+pub mod color;
 
 const EPSILON: f32 = 0.00001;
 
@@ -172,7 +173,7 @@ impl Vector {
     }
 }
 
-fn equalish(a: f32, b: f32) -> bool {
+pub fn equalish(a: f32, b: f32) -> bool {
     (a - b).abs() < EPSILON
 }
 

@@ -1,5 +1,6 @@
 use ray_tracer_challenge::*;
 use ray_tracer_challenge::physics::*;
+use ray_tracer_challenge::color::*;
 
 fn main() {
     let mut projectile = Projectile {
@@ -19,5 +20,7 @@ fn main() {
         println!("Updated projectile! {:?}", projectile);
     }
 
-    println!("And we've landed!")
+    println!("And we've landed!");
+
+    println!("Here's a color: {:?}.", Color { red: 0.1, green: 0.2, blue: 0.3 });
 }
