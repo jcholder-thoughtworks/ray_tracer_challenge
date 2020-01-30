@@ -131,6 +131,26 @@ mod example_steps {
             assert_ne!(world.matrix_a, world.matrix_b);
         };
 
+        then "A * B is the following 4x4 matrix:" |world, step| {
+            let table = step.table().unwrap().clone();
+
+            let mut expected_matrix: Array<i32, Ix2> = Array::from_elem((4, 4), 0);
+
+            for (c, value) in table.header.iter().enumerate() {
+                expected_matrix[[0,c]] = value.parse().unwrap();
+            }
+
+            for (r, row) in table.rows.iter().enumerate() {
+                for (c, value) in row.iter().enumerate() {
+                    expected_matrix[[r + 1,c]] = value.parse().unwrap();
+                }
+            }
+
+            let actual_matrix = world.matrix_a.dot(&world.matrix_b);
+
+            assert_eq!(expected_matrix, actual_matrix);
+        };
+
         then "A * identity_matrix = A" |world, _step| {
             let identity_matrix: Array<i32, Ix2> = Array::eye(4);
 
