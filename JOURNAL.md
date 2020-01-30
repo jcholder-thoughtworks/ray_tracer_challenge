@@ -49,3 +49,5 @@ The "A matrix multiplied by a tuple" scenario was particularly interesting. Goin
 (Skipping the `Multiplying the identity matrix by a tuple` scenario for now since it doesn't test anything particularly interesting from the looks of it, at least in regards to my understanding of `ndarray`.)
 
 Never mind on duplicating the code for matrix generation from scenario table data. I've ended up duplicating it far too often at this point. Function extraction time!
+
+... Another 300 units (not pages) of book to go on just inverting matrices. Egads. (That's similar in size to the whole section on tuples, points, and vectors).
