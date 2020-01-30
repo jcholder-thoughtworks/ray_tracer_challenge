@@ -37,8 +37,8 @@ mod example_steps {
 
     use ray_tracer_challenge::color::*;
 
-    fn table_to_matrix_4x4(table: gherkin::Table) -> Array<i32, Ix2> {
-        let mut matrix = Array::from_elem((4, 4), 0);
+    fn table_to_matrix(table: gherkin::Table, size: (Ix, Ix)) -> Array<i32, Ix2> {
+        let mut matrix = Array::from_elem(size, 0);
 
         for (c, value) in table.header.iter().enumerate() {
             matrix[[0,c]] = value.parse().unwrap();
@@ -216,7 +216,7 @@ mod example_steps {
 
             let transposed = world.matrix_a.t();
 
-            let expected = table_to_matrix_4x4(table);
+            let expected = table_to_matrix(table, (4, 4));
 
             assert_eq!(expected, transposed);
         };
