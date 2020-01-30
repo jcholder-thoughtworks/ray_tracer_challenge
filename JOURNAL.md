@@ -45,3 +45,7 @@ Okay, I _would_ benefit from going through more of this matrix implementation wo
 And it's a good thing I _did_ proceed to implement more tests! I made the false assumption that the `*` operator would perform matrix multiplication but it only performs element multiplication in the `ndarray` crate. That would have lead to some confusing results later!
 
 The "A matrix multiplied by a tuple" scenario was particularly interesting. Going to take a quick peek into any helper methods for tuple to/from matrix conversion. After all, that scenario is truly testing my ability to multiply my custom types against matrices.
+
+(Skipping the `Multiplying the identity matrix by a tuple` scenario for now since it doesn't test anything particularly interesting from the looks of it, at least in regards to my understanding of `ndarray`.)
+
+Never mind on duplicating the code for matrix generation from scenario table data. I've ended up duplicating it far too often at this point. Function extraction time!

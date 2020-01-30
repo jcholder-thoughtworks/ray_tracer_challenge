@@ -33,8 +33,25 @@ mod example_steps {
     use cucumber::steps;
 
     use ndarray::*;
+    use gherkin;
 
     use ray_tracer_challenge::color::*;
+
+    fn table_to_matrix_4x4(table: gherkin::Table) -> Array<i32, Ix2> {
+        let mut matrix = Array::from_elem((4, 4), 0);
+
+        for (c, value) in table.header.iter().enumerate() {
+            matrix[[0,c]] = value.parse().unwrap();
+        }
+
+        for (r, row) in table.rows.iter().enumerate() {
+            for (c, value) in row.iter().enumerate() {
+                matrix[[r + 1,c]] = value.parse().unwrap();
+            }
+        }
+
+        matrix
+    }
     
     // Any type that implements cucumber::World + Default can be the world
     steps!(crate::MyWorld => {
@@ -192,6 +209,16 @@ mod example_steps {
             let identity_matrix: Array<i32, Ix2> = Array::eye(4);
 
             assert_eq!(world.matrix_a.dot(&identity_matrix), world.matrix_a)
+        };
+
+        then "transpose(A) is the following matrix:" |world, step| {
+            let table = step.table().unwrap().clone();
+
+            let transposed = world.matrix_a.t();
+
+            let expected = table_to_matrix_4x4(table);
+
+            assert_eq!(expected, transposed);
         };
     });
 }
