@@ -37,3 +37,5 @@ Customizing the Cucumber code to work with the examples from the book is going w
 # 30Jan2020
 
 Back to work! It still feels like "cheating" to not implement matrices on my own, which makes it tempting to revisit that later. But actually getting to a render matters more! Maintain that momentum.
+
+There's plenty of duplication in some of the matrix-assigning Cucumber step implementations but it's so incredibly unlikely that we'll be changing this code that I won't prioritize refactoring that. Similarly, I'll refrain from reimplementing my earlier unit tests as Cucumber tests because those tests already provide their value as-is. If I were publishing this in a book or otherwise polishing the code then yes, I would refactor that. But I'm not.

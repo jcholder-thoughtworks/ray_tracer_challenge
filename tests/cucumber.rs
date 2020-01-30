@@ -10,6 +10,8 @@ pub struct MyWorld {
     // You can use this struct for mutable context in scenarios.
     colors: Vec<Color>,
     matrix: Array<f32, Ix2>,
+    matrix_a: Array<i32, Ix2>,
+    matrix_b: Array<i32, Ix2>,
 }
 
 impl cucumber::World for MyWorld {}
@@ -19,6 +21,8 @@ impl std::default::Default for MyWorld {
         MyWorld { 
             colors: vec![BLACK; 3],
             matrix: Array::from_elem((4, 4), 0.0),
+            matrix_a: Array::from_elem((4, 4), 0),
+            matrix_b: Array::from_elem((4, 4), 0),
         }
     }
 }
@@ -47,6 +51,38 @@ mod example_steps {
             for (r, row) in table.rows.iter().enumerate() {
                 for (c, value) in row.iter().enumerate() {
                     world.matrix[[r + 1,c]] = value.parse().unwrap();
+                }
+            }
+        };
+
+        given "the following matrix B:" |world, step| {
+            let table = step.table().unwrap().clone();
+
+            world.matrix_b = Array::from_elem((4, 4), 0);
+
+            for (c, value) in table.header.iter().enumerate() {
+                world.matrix_b[[0,c]] = value.parse().unwrap();
+            }
+
+            for (r, row) in table.rows.iter().enumerate() {
+                for (c, value) in row.iter().enumerate() {
+                    world.matrix_b[[r + 1,c]] = value.parse().unwrap();
+                }
+            }
+        };
+
+        given "the following matrix A:" |world, step| {
+            let table = step.table().unwrap().clone();
+
+            world.matrix_a = Array::from_elem((4, 4), 0);
+
+            for (c, value) in table.header.iter().enumerate() {
+                world.matrix_a[[0,c]] = value.parse().unwrap();
+            }
+
+            for (r, row) in table.rows.iter().enumerate() {
+                for (c, value) in row.iter().enumerate() {
+                    world.matrix_a[[r + 1,c]] = value.parse().unwrap();
                 }
             }
         };
@@ -85,6 +121,14 @@ mod example_steps {
             let expected = Color::new(red, green, blue);
 
             assert!((color1 + color2).equalish_to(&expected));
+        };
+
+        then "A = B" |world, _step| {
+            assert_eq!(world.matrix_a, world.matrix_b);
+        };
+
+        then "A != B" |world, _step| {
+            assert_ne!(world.matrix_a, world.matrix_b);
         };
     });
 }
