@@ -33,3 +33,7 @@ Realization: I can use Cucumber proper with Rust! Specifically: https://github.c
 Customizing the Cucumber code to work with the examples from the book is going well so far!
 
 `ndarray` for the win! When I saw how much manual effort would be required to handle matrix math, I ditched the unnecessary agony and went with a crate. Life's too short to burn on reimplementing that! And besides, there's raycasting to learn instead.
+
+# 30Jan2020
+
+Back to work! It still feels like "cheating" to not implement matrices on my own, which makes it tempting to revisit that later. But actually getting to a render matters more! Maintain that momentum.
