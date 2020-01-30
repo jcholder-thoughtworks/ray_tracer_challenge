@@ -40,23 +40,23 @@ mod example_steps {
 
             world.matrix = Array::from_elem((width, height), 0.0);
 
-            for (x, value) in table.header.iter().enumerate() {
-                world.matrix[[0,x]] = value.parse().unwrap();
+            for (c, value) in table.header.iter().enumerate() {
+                world.matrix[[0,c]] = value.parse().unwrap();
             }
 
-            for (y, row) in table.rows.iter().enumerate() {
-                for (x, value) in row.iter().enumerate() {
-                    world.matrix[[y + 1,x]] = value.parse().unwrap();
+            for (r, row) in table.rows.iter().enumerate() {
+                for (c, value) in row.iter().enumerate() {
+                    world.matrix[[r + 1,c]] = value.parse().unwrap();
                 }
             }
         };
 
         then regex r"M\[(.*),(.*)\] = (.*)" |world, matches, _step| {
-            let x: usize = matches[1].parse().unwrap();
-            let y: usize = matches[2].parse().unwrap();
+            let r: usize = matches[1].parse().unwrap();
+            let c: usize = matches[2].parse().unwrap();
             let expected: f32 = matches[3].parse().unwrap();
 
-            assert_eq!(expected, world.matrix[[x, y]]);
+            assert_eq!(expected, world.matrix[[r, c]]);
         };
 
         given regex r"c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
