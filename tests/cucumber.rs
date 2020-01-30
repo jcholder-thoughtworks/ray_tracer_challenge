@@ -12,6 +12,7 @@ pub struct MyWorld {
     matrix: Array<f32, Ix2>,
     matrix_a: Array<i32, Ix2>,
     matrix_b: Array<i32, Ix2>,
+    tuple: (i32, i32, i32, i32),
 }
 
 impl cucumber::World for MyWorld {}
@@ -23,6 +24,7 @@ impl std::default::Default for MyWorld {
             matrix: Array::from_elem((4, 4), 0.0),
             matrix_a: Array::from_elem((4, 4), 0),
             matrix_b: Array::from_elem((4, 4), 0),
+            tuple: (0, 0, 0, 0),
         }
     }
 }
@@ -107,6 +109,15 @@ mod example_steps {
             world.colors[color_i] = color;
         };
 
+        given regex r"b ← tuple\((.*), (.*), (.*), (.*)\)" |world, matches, _step| {
+            let t1: i32 = matches[1].parse().unwrap();
+            let t2: i32 = matches[2].parse().unwrap();
+            let t3: i32 = matches[3].parse().unwrap();
+            let t4: i32 = matches[4].parse().unwrap();
+
+            world.tuple = (t1, t2, t3, t4);
+        };
+
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
             let color_i1: usize = matches[1].parse().unwrap();
             let color1 = world.colors[color_i1];
@@ -129,6 +140,29 @@ mod example_steps {
 
         then "A != B" |world, _step| {
             assert_ne!(world.matrix_a, world.matrix_b);
+        };
+
+        then regex r"A * b = tuple\((.*), (.*), (.*), (.*)\)" |world, matches, _step| {
+            let t1: i32 = matches[1].parse().unwrap();
+            let t2: i32 = matches[2].parse().unwrap();
+            let t3: i32 = matches[3].parse().unwrap();
+            let t4: i32 = matches[4].parse().unwrap();
+
+            let mut tuple_matrix: Array<i32, Ix1> = Array::from_elem((4), 0);
+            tuple_matrix[[0]] = world.tuple.0;
+
+            let multiplied_matrix = world.matrix_a.dot(&tuple_matrix);
+
+            let matrix_as_tuple = (
+                multiplied_matrix[0],
+                multiplied_matrix[1],
+                multiplied_matrix[2],
+                multiplied_matrix[3],
+            );
+
+            let expected_tuple = (t1, t2, t3, t4);
+
+            assert_eq!(expected_tuple, matrix_as_tuple);
         };
 
         then "A * B is the following 4x4 matrix:" |world, step| {
