@@ -13,7 +13,7 @@ impl Determinantable for Array<i32, Ix2> {
         if self.dim() == (2, 2) {
             determinant_i32_2x2(self)
         } else {
-            unimplemented!("Not implemented for matrices of dimensions {:?}", self.dim())
+            unimplemented!("Matrices with dimensions {:?} are unsupported", self.dim())
         }
     }
 }
