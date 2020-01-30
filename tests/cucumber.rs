@@ -142,14 +142,17 @@ mod example_steps {
             assert_ne!(world.matrix_a, world.matrix_b);
         };
 
-        then regex r"A * b = tuple\((.*), (.*), (.*), (.*)\)" |world, matches, _step| {
+        then regex r"A \* b = tuple\((.*), (.*), (.*), (.*)\)" |world, matches, _step| {
             let t1: i32 = matches[1].parse().unwrap();
             let t2: i32 = matches[2].parse().unwrap();
             let t3: i32 = matches[3].parse().unwrap();
             let t4: i32 = matches[4].parse().unwrap();
 
-            let mut tuple_matrix: Array<i32, Ix1> = Array::from_elem((4), 0);
+            let mut tuple_matrix: Array<i32, Ix1> = Array::from_elem(4, 0);
             tuple_matrix[[0]] = world.tuple.0;
+            tuple_matrix[[1]] = world.tuple.1;
+            tuple_matrix[[2]] = world.tuple.2;
+            tuple_matrix[[3]] = world.tuple.3;
 
             let multiplied_matrix = world.matrix_a.dot(&tuple_matrix);
 
