@@ -51,3 +51,5 @@ The "A matrix multiplied by a tuple" scenario was particularly interesting. Goin
 Never mind on duplicating the code for matrix generation from scenario table data. I've ended up duplicating it far too often at this point. Function extraction time!
 
 ... Another 300 units (not pages) of book to go on just inverting matrices. Egads. (That's similar in size to the whole section on tuples, points, and vectors). Well, time to dive in!
+
+Determinants might prove _interesting_. Wanted to try the ` ndarray-linalg` crate in combination with `openblas` but getting compiler errors. MacOS is explicitly not supported and I want to avoid the non-free Intel MKL library. I then looked at the `linxal` crate but it's explicitly non-optimized for low-dimensional arithmetic. Given that these libraries might make this code of mine impractical for WASM port, I think I'll actually attempt a manual implementation.

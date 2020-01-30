@@ -36,6 +36,7 @@ mod example_steps {
     use gherkin;
 
     use ray_tracer_challenge::color::*;
+    use ray_tracer_challenge::math::*;
 
     fn table_to_matrix(table: gherkin::Table, size: (Ix, Ix)) -> Array<i32, Ix2> {
         let mut matrix = Array::from_elem(size, 0);
@@ -72,6 +73,15 @@ mod example_steps {
                     world.matrix[[r + 1,c]] = value.parse().unwrap();
                 }
             }
+        };
+
+        given regex r"the following (.*)x(.*) matrix A:" |world, matches, step| {
+            let width = matches[1].parse().unwrap();
+            let height = matches[2].parse().unwrap();
+
+            let table = step.table().unwrap().clone();
+
+            world.matrix_a = table_to_matrix(table, (width, height));
         };
 
         given "the following matrix B:" |world, step| {
@@ -219,6 +229,14 @@ mod example_steps {
             let expected = table_to_matrix(table, (4, 4));
 
             assert_eq!(expected, transposed);
+        };
+
+        then regex r"determinant\(A\) = (.*)" |world, matches, step| {
+            let expected: i32 = matches[1].parse().unwrap();
+
+            let actual = world.matrix_a.determinant();
+
+            assert_eq!(expected, actual);
         };
     });
 }

@@ -1,5 +1,6 @@
 use std::ops;
 
+pub mod math;
 pub mod physics;
 pub mod color;
 pub mod canvas;
