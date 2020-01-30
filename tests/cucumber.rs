@@ -231,7 +231,7 @@ mod example_steps {
             assert_eq!(expected, transposed);
         };
 
-        then regex r"determinant\(A\) = (.*)" |world, matches, step| {
+        then regex r"determinant\(A\) = (.*)" |world, matches, _step| {
             let expected: i32 = matches[1].parse().unwrap();
 
             let actual = world.matrix_a.determinant();
