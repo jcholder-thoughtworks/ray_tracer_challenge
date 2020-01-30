@@ -43,3 +43,5 @@ There's plenty of duplication in some of the matrix-assigning Cucumber step impl
 Okay, I _would_ benefit from going through more of this matrix implementation work now that we're getting deeper into the math of it. (It literally makes my head hurt a little.) I'll still go through the features to make sure I at least understand how to use `ndarray` for those tasks. (And I _do_ have to make them work with my `Point` and `Vector` implementations.)
 
 And it's a good thing I _did_ proceed to implement more tests! I made the false assumption that the `*` operator would perform matrix multiplication but it only performs element multiplication in the `ndarray` crate. That would have lead to some confusing results later!
+
+The "A matrix multiplied by a tuple" scenario was particularly interesting. Going to take a quick peek into any helper methods for tuple to/from matrix conversion. After all, that scenario is truly testing my ability to multiply my custom types against matrices.
