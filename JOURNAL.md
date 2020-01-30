@@ -39,3 +39,7 @@ Customizing the Cucumber code to work with the examples from the book is going w
 Back to work! It still feels like "cheating" to not implement matrices on my own, which makes it tempting to revisit that later. But actually getting to a render matters more! Maintain that momentum.
 
 There's plenty of duplication in some of the matrix-assigning Cucumber step implementations but it's so incredibly unlikely that we'll be changing this code that I won't prioritize refactoring that. Similarly, I'll refrain from reimplementing my earlier unit tests as Cucumber tests because those tests already provide their value as-is. If I were publishing this in a book or otherwise polishing the code then yes, I would refactor that. But I'm not.
+
+Okay, I _would_ benefit from going through more of this matrix implementation work now that we're getting deeper into the math of it. (It literally makes my head hurt a little.) I'll still go through the features to make sure I at least understand how to use `ndarray` for those tasks. (And I _do_ have to make them work with my `Point` and `Vector` implementations.)
+
+And it's a good thing I _did_ proceed to implement more tests! I made the false assumption that the `*` operator would perform matrix multiplication but it only performs element multiplication in the `ndarray` crate. That would have lead to some confusing results later!

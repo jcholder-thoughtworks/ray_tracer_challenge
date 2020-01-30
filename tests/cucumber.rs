@@ -130,6 +130,12 @@ mod example_steps {
         then "A != B" |world, _step| {
             assert_ne!(world.matrix_a, world.matrix_b);
         };
+
+        then "A * identity_matrix = A" |world, _step| {
+            let identity_matrix: Array<i32, Ix2> = Array::eye(4);
+
+            assert_eq!(world.matrix_a.dot(&identity_matrix), world.matrix_a)
+        };
     });
 }
 
