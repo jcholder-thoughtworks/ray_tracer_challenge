@@ -32,10 +32,13 @@ mod example_steps {
     
     // Any type that implements cucumber::World + Default can be the world
     steps!(crate::MyWorld => {
-        given "the following 4x4 matrix M:" |world, step| {
+        given regex r"the following (.*)x(.*) matrix M:" |world, matches, step| {
+            let width = matches[1].parse().unwrap();
+            let height = matches[2].parse().unwrap();
+
             let table = step.table().unwrap().clone();
 
-            world.matrix = Array::from_elem((4, 4), 0.0);
+            world.matrix = Array::from_elem((width, height), 0.0);
 
             for (x, value) in table.header.iter().enumerate() {
                 world.matrix[[0,x]] = value.parse().unwrap();
