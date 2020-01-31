@@ -145,6 +145,13 @@ mod example_steps {
             world.tuple = (t1, t2, t3, t4);
         };
 
+        given regex r"B ← submatrix\(A, (.*), (.*)\)" |world, matches, _step| {
+            let row_i: usize = matches[1].parse().unwrap();
+            let col_i: usize = matches[2].parse().unwrap();
+
+            world.matrix_b = world.matrix_a.submatrix(row_i, col_i);
+        };
+
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
             let color_i1: usize = matches[1].parse().unwrap();
             let color1 = world.colors[color_i1];
@@ -235,6 +242,25 @@ mod example_steps {
             let expected: i32 = matches[1].parse().unwrap();
 
             let actual = world.matrix_a.determinant();
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"determinant\(B\) = (.*)" |world, matches, _step| {
+            let expected: i32 = matches[1].parse().unwrap();
+
+            let actual = world.matrix_b.determinant();
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"minor\(A, (.*), (.*)\) = (.*)" |world, matches, _step| {
+            let row_i: usize = matches[1].parse().unwrap();
+            let col_i: usize = matches[2].parse().unwrap();
+
+            let expected: i32 = matches[3].parse().unwrap();
+
+            let actual = world.matrix_a.minor(row_i, col_i);
 
             assert_eq!(expected, actual);
         };

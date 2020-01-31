@@ -6,6 +6,8 @@ pub trait RaytracerMatrix {
     fn determinant(&self) -> Self::Unit;
 
     fn submatrix(&self, row: usize, col: usize) -> Self;
+
+    fn minor(&self, row: usize, col: usize) -> Self::Unit;
 }
 
 impl RaytracerMatrix for Array<i32, Ix2> {
@@ -24,6 +26,10 @@ impl RaytracerMatrix for Array<i32, Ix2> {
         let cols_to_keep: Vec<usize> = (0..(self.ncols())).filter(|n| *n != col).collect();
 
         self.select(Axis(0), &rows_to_keep).select(Axis(1), &cols_to_keep)
+    }
+
+    fn minor(&self, row: usize, col: usize) -> Self::Unit {
+        self.submatrix(row, col).determinant()
     }
 }
 
@@ -44,6 +50,10 @@ impl RaytracerMatrix for Array<f32, Ix2> {
         let cols_to_keep: Vec<usize> = (0..(self.ncols())).filter(|n| *n != col).collect();
 
         self.select(Axis(0), &rows_to_keep).select(Axis(1), &cols_to_keep)
+    }
+
+    fn minor(&self, row: usize, col: usize) -> Self::Unit {
+        self.submatrix(row, col).determinant()
     }
 }
 

@@ -63,3 +63,9 @@ Hrm. Extracting submatrices seems more troublesome than I expected, at least wit
 Rust 1.14.0 was released today! Let's upgrade! And success!
 
 And submatrix success! I needed `Array#select`. Combining two of those did the trice (one for each axis). Behold the power of (a) taking a break and (b) reading the documentation more thoroughly! Well, near success? Let's debug this. Success! For real! Inclusive vs. exclusive range confusion.
+
+Quick refactor to make our traits less redundant.
+
+Coworker was excited to see math in action!
+
+Time to write up a `minor` method! ... Well, that was easy! One line function!
