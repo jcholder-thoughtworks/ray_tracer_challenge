@@ -11,9 +11,19 @@ pub trait RaytracerMatrix: Clone {
         self.submatrix(row, col).determinant()
     }
 
-    fn cofactor(&self, row: usize, col: usize) -> Self::Unit;
+    fn cofactor(&self, row: usize, col: usize) -> Self::Unit {
+        let minor = self.minor(row, col);
+
+        if (row + col) % 2 == 0 { // if even
+            minor
+        } else {
+            Self::negate(minor)
+        }
+    }
 
     fn invertible(&self) -> bool;
+
+    fn negate(number: Self::Unit) -> Self::Unit;
 }
 
 impl RaytracerMatrix for Array<i32, Ix2> {
@@ -33,18 +43,12 @@ impl RaytracerMatrix for Array<i32, Ix2> {
         self.select(Axis(0), &rows_to_keep).select(Axis(1), &cols_to_keep)
     }
 
-    fn cofactor(&self, row: usize, col: usize) -> Self::Unit {
-        let minor = self.minor(row, col);
-
-        if (row + col) % 2 == 0 { // if even
-            minor
-        } else {
-            -minor
-        }
-    }
-
     fn invertible(&self) -> bool {
         self.determinant() != 0
+    }
+
+    fn negate(number: Self::Unit) -> Self::Unit {
+        -number
     }
 }
 
@@ -65,18 +69,12 @@ impl RaytracerMatrix for Array<f32, Ix2> {
         self.select(Axis(0), &rows_to_keep).select(Axis(1), &cols_to_keep)
     }
 
-    fn cofactor(&self, row: usize, col: usize) -> Self::Unit {
-        let minor = self.minor(row, col);
-
-        if (row + col) % 2 == 0 { // if even
-            minor
-        } else {
-            -minor
-        }
-    }
-
     fn invertible(&self) -> bool {
         self.determinant() != 0.0
+    }
+
+    fn negate(number: Self::Unit) -> Self::Unit {
+        -number
     }
 }
 
