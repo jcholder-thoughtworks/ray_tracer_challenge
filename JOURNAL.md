@@ -72,4 +72,4 @@ Time to write up a `minor` method! ... Well, that was easy! One line function!
 
 Phew! Done with determinants! That wasn't too bad. I'm definitely learning about matrix math as I go along.
 
-Matrix inversion time! Going to try out some default implementations for traits, too. Good a time as any!
+Matrix inversion time! Going to try out some default implementations for traits, too. Good a time as any! Darn, no luck with extracting `submatrix`. Need to figure out the right type system stuff for that. Probably just need to read the docs for `ndarray` more. Other than that, I'm done for now!
