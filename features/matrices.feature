@@ -118,15 +118,15 @@ Scenario: Calculating the determinant of a 2x2 matrix
     | -3 | 2 |
   Then determinant(A) = 17
 
-#Scenario: A submatrix of a 3x3 matrix is a 2x2 matrix
-#  Given the following 3x3 matrix A:
-#    |  1 | 5 |  0 |
-#    | -3 | 2 |  7 |
-#    |  0 | 6 | -3 |
-#  Then submatrix(A, 0, 2) is the following 2x2 matrix:
-#    | -3 | 2 |
-#    |  0 | 6 |
-#
+Scenario: A submatrix of a 3x3 matrix is a 2x2 matrix
+  Given the following 3x3 matrix A:
+    |  1 | 5 |  0 |
+    | -3 | 2 |  7 |
+    |  0 | 6 | -3 |
+  Then submatrix(A, 0, 2) is the following 2x2 matrix:
+    | -3 | 2 |
+    |  0 | 6 |
+
 #Scenario: A submatrix of a 4x4 matrix is a 3x3 matrix
 #  Given the following 4x4 matrix A:
 #    | -6 |  1 |  1 |  6 |

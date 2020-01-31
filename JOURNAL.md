@@ -55,3 +55,11 @@ Never mind on duplicating the code for matrix generation from scenario table dat
 Determinants might prove _interesting_. Wanted to try the ` ndarray-linalg` crate in combination with `openblas` but getting compiler errors. MacOS is explicitly not supported and I want to avoid the non-free Intel MKL library. I then looked at the `linxal` crate but it's explicitly non-optimized for low-dimensional arithmetic. Given that these libraries might make this code of mine impractical for WASM port, I think I'll actually attempt a manual implementation.
 
 Took a few tries but I finally figured out how to make implementing a determinant function work with associated types! I'm leveling up on the Rust type system! I'd like to generalize the implementation to any numeric type but I only really care about i32 and f32 so it won't be that much duplicate code.
+
+Hrm. Extracting submatrices seems more troublesome than I expected, at least with `ndarray`. I've looked but haven't found a built-in way to produce the kinds of axis-excluding submatrices described in the book. Maybe I'm overthinking it?
+
+31Jan2020
+
+Rust 1.14.0 was released today! Let's upgrade! And success!
+
+And submatrix success! I needed `Array#select`. Combining two of those did the trice (one for each axis). Behold the power of (a) taking a break and (b) reading the documentation more thoroughly! Well, near success? Let's debug this. Success! For real! Inclusive vs. exclusive range confusion.

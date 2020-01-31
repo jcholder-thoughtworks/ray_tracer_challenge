@@ -6,6 +6,12 @@ pub trait Determinantable {
     fn determinant(&self) -> Self::Unit;
 }
 
+pub trait Submatrixable {
+    type Unit;
+
+    fn submatrix(&self, row: usize, col: usize) -> Self;
+}
+
 impl Determinantable for Array<i32, Ix2> {
     type Unit = i32;
 
@@ -37,5 +43,16 @@ impl Determinantable for Array<f32, Ix2> {
         let d = self[[1,1]];
 
         (a*d) - (b*c)
+    }
+}
+
+impl Submatrixable for Array<i32, Ix2> {
+    type Unit = i32;
+
+    fn submatrix(&self, row: usize, col: usize) -> Self {
+        let rows_to_keep: Vec<usize> = (0..(self.nrows())).filter(|n| *n != row).collect();
+        let cols_to_keep: Vec<usize> = (0..(self.ncols())).filter(|n| *n != col).collect();
+
+        self.select(Axis(0), &rows_to_keep).select(Axis(1), &cols_to_keep)
     }
 }

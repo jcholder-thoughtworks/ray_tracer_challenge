@@ -238,6 +238,17 @@ mod example_steps {
 
             assert_eq!(expected, actual);
         };
+
+        then regex r"submatrix\(A, (.*), (.*)\) is the following 2x2 matrix" |world, matches, step| {
+            let row_i: usize = matches[1].parse().unwrap();
+            let col_i: usize = matches[2].parse().unwrap();
+
+            let actual = world.matrix_a.submatrix(row_i, col_i);
+
+            let expected = table_to_matrix(step.table().unwrap().clone(), (2, 2));
+
+            assert_eq!(expected, actual);
+        };
     });
 }
 
