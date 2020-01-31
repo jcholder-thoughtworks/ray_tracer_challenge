@@ -8,6 +8,8 @@ pub trait RaytracerMatrix {
     fn submatrix(&self, row: usize, col: usize) -> Self;
 
     fn minor(&self, row: usize, col: usize) -> Self::Unit;
+
+    fn cofactor(&self, row: usize, col: usize) -> Self::Unit;
 }
 
 impl RaytracerMatrix for Array<i32, Ix2> {
@@ -30,6 +32,16 @@ impl RaytracerMatrix for Array<i32, Ix2> {
 
     fn minor(&self, row: usize, col: usize) -> Self::Unit {
         self.submatrix(row, col).determinant()
+    }
+
+    fn cofactor(&self, row: usize, col: usize) -> Self::Unit {
+        let minor = self.minor(row, col);
+
+        if (row + col) % 2 == 0 { // if even
+            minor
+        } else {
+            -minor
+        }
     }
 }
 
@@ -54,6 +66,16 @@ impl RaytracerMatrix for Array<f32, Ix2> {
 
     fn minor(&self, row: usize, col: usize) -> Self::Unit {
         self.submatrix(row, col).determinant()
+    }
+
+    fn cofactor(&self, row: usize, col: usize) -> Self::Unit {
+        let minor = self.minor(row, col);
+
+        if (row + col) % 2 == 0 { // if even
+            minor
+        } else {
+            -minor
+        }
     }
 }
 
