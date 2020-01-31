@@ -10,6 +10,8 @@ pub trait RaytracerMatrix {
     fn minor(&self, row: usize, col: usize) -> Self::Unit;
 
     fn cofactor(&self, row: usize, col: usize) -> Self::Unit;
+
+    fn invertible(&self) -> bool;
 }
 
 impl RaytracerMatrix for Array<i32, Ix2> {
@@ -42,6 +44,10 @@ impl RaytracerMatrix for Array<i32, Ix2> {
             -minor
         }
     }
+
+    fn invertible(&self) -> bool {
+        self.determinant() != 0
+    }
 }
 
 impl RaytracerMatrix for Array<f32, Ix2> {
@@ -73,6 +79,10 @@ impl RaytracerMatrix for Array<f32, Ix2> {
         } else {
             -minor
         }
+    }
+
+    fn invertible(&self) -> bool {
+        self.determinant() != 0.0
     }
 }
 

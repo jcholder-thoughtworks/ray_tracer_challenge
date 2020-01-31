@@ -69,3 +69,7 @@ Quick refactor to make our traits less redundant.
 Coworker was excited to see math in action!
 
 Time to write up a `minor` method! ... Well, that was easy! One line function!
+
+Phew! Done with determinants! That wasn't too bad. I'm definitely learning about matrix math as I go along.
+
+Matrix inversion time!

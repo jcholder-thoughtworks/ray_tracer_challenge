@@ -289,6 +289,14 @@ mod example_steps {
 
             assert_eq!(expected, actual);
         };
+
+        then "A is invertible" |world, _step| {
+            assert!(world.matrix_a.invertible());
+        };
+
+        then "A is not invertible" |world, _step| {
+            assert!(!world.matrix_a.invertible());
+        };
     });
 }
 
