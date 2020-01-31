@@ -1,18 +1,14 @@
 use ndarray::*;
 
-pub trait Determinantable {
+pub trait RaytracerMatrix {
     type Unit;
 
     fn determinant(&self) -> Self::Unit;
-}
-
-pub trait Submatrixable {
-    type Unit;
 
     fn submatrix(&self, row: usize, col: usize) -> Self;
 }
 
-impl Determinantable for Array<i32, Ix2> {
+impl RaytracerMatrix for Array<i32, Ix2> {
     type Unit = i32;
 
     fn determinant(&self) -> Self::Unit {
@@ -22,18 +18,16 @@ impl Determinantable for Array<i32, Ix2> {
             unimplemented!("Matrices with dimensions {:?} are unsupported", self.dim())
         }
     }
+
+    fn submatrix(&self, row: usize, col: usize) -> Self {
+        let rows_to_keep: Vec<usize> = (0..(self.nrows())).filter(|n| *n != row).collect();
+        let cols_to_keep: Vec<usize> = (0..(self.ncols())).filter(|n| *n != col).collect();
+
+        self.select(Axis(0), &rows_to_keep).select(Axis(1), &cols_to_keep)
+    }
 }
 
-fn determinant_i32_2x2(matrix: &Array<i32, Ix2>) -> i32{
-        let a = matrix[[0,0]];
-        let b = matrix[[0,1]];
-        let c = matrix[[1,0]];
-        let d = matrix[[1,1]];
-
-        (a*d) - (b*c)
-}
-
-impl Determinantable for Array<f32, Ix2> {
+impl RaytracerMatrix for Array<f32, Ix2> {
     type Unit = f32;
 
     fn determinant(&self) -> Self::Unit {
@@ -44,10 +38,6 @@ impl Determinantable for Array<f32, Ix2> {
 
         (a*d) - (b*c)
     }
-}
-
-impl Submatrixable for Array<i32, Ix2> {
-    type Unit = i32;
 
     fn submatrix(&self, row: usize, col: usize) -> Self {
         let rows_to_keep: Vec<usize> = (0..(self.nrows())).filter(|n| *n != row).collect();
@@ -55,4 +45,23 @@ impl Submatrixable for Array<i32, Ix2> {
 
         self.select(Axis(0), &rows_to_keep).select(Axis(1), &cols_to_keep)
     }
+}
+
+fn determinant_i32_2x2(matrix: &Array<i32, Ix2>) -> i32 {
+        let a = matrix[[0,0]];
+        let b = matrix[[0,1]];
+        let c = matrix[[1,0]];
+        let d = matrix[[1,1]];
+
+        (a*d) - (b*c)
+}
+
+#[allow(dead_code)]
+fn determinant_f32_2x2(matrix: &Array<f32, Ix2>) -> f32 {
+        let a = matrix[[0,0]];
+        let b = matrix[[0,1]];
+        let c = matrix[[1,0]];
+        let d = matrix[[1,1]];
+
+        (a*d) - (b*c)
 }
