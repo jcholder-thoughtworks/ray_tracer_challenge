@@ -63,7 +63,7 @@ impl ops::Sub<Vector> for Point {
     }
 }
 
-#[derive(Copy,Clone,Debug)]
+#[derive(Copy,Clone,Debug,PartialEq)]
 pub struct Vector {
     pub x: f32,
     pub y: f32,
@@ -145,6 +145,10 @@ impl ops::Div<f32> for Vector {
 }
 
 impl Vector {
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
+        Vector { x, y, z }
+    }
+
     pub fn equalish_to(&self, other: &Self) -> bool {
         equalish(self.x, other.x) &&
             equalish(self.y, other.y) &&
