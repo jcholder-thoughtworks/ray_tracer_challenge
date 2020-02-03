@@ -239,16 +239,16 @@ Scenario: Calculating the inverse of a third matrix
     | -0.02901 | -0.14630 | -0.10926 |  0.12963 |
     |  0.17778 |  0.06667 | -0.26667 |  0.33333 |
 
-#Scenario: Multiplying a product by its inverse
-#  Given the following 4x4 matrix A:
-#      |  3 | -9 |  7 |  3 |
-#      |  3 | -8 |  2 | -9 |
-#      | -4 |  4 |  4 |  1 |
-#      | -6 |  5 | -1 |  1 |
-#    And the following 4x4 matrix B:
-#      |  8 |  2 |  2 |  2 |
-#      |  3 | -1 |  7 |  0 |
-#      |  7 |  0 |  5 |  4 |
-#      |  6 | -2 |  0 |  5 |
-#    And C ← A * B
-#  Then C * inverse(B) = A
+Scenario: Multiplying a product by its inverse
+  Given the following 4x4 matrix A:
+      |  3 | -9 |  7 |  3 |
+      |  3 | -8 |  2 | -9 |
+      | -4 |  4 |  4 |  1 |
+      | -6 |  5 | -1 |  1 |
+    And the following 4x4 matrix B:
+      |  8 |  2 |  2 |  2 |
+      |  3 | -1 |  7 |  0 |
+      |  7 |  0 |  5 |  4 |
+      |  6 | -2 |  0 |  5 |
+    And C ← A * B
+  Then C * inverse(B) = A

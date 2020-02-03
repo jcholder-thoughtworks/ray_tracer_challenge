@@ -12,6 +12,7 @@ pub struct MyWorld {
     matrix: Array<f32, Ix2>,
     matrix_a: Array<f32, Ix2>,
     matrix_b: Array<f32, Ix2>,
+    matrix_c: Array<f32, Ix2>,
     tuple: (f32, f32, f32, f32),
 }
 
@@ -24,6 +25,7 @@ impl std::default::Default for MyWorld {
             matrix: Array::from_elem((4, 4), 0.0),
             matrix_a: Array::from_elem((4, 4), 0.0),
             matrix_b: Array::from_elem((4, 4), 0.0),
+            matrix_c: Array::from_elem((4, 4), 0.0),
             tuple: (0.0, 0.0, 0.0, 0.0),
         }
     }
@@ -84,6 +86,15 @@ mod example_steps {
             world.matrix_a = table_to_matrix(table, (width, height));
         };
 
+        given regex r"the following (.*)x(.*) matrix B:" |world, matches, step| {
+            let width = matches[1].parse().unwrap();
+            let height = matches[2].parse().unwrap();
+
+            let table = step.table().unwrap().clone();
+
+            world.matrix_b = table_to_matrix(table, (width, height));
+        };
+
         given "the following matrix B:" |world, step| {
             let table = step.table().unwrap().clone();
 
@@ -114,6 +125,10 @@ mod example_steps {
                     world.matrix_a[[r + 1,c]] = value.parse().unwrap();
                 }
             }
+        };
+
+        given "C ← A * B" |world, _step| {
+            world.matrix_c = world.matrix_a.dot(&world.matrix_b);
         };
 
         then regex r"M\[(.*),(.*)\] = (.*)" |world, matches, _step| {
@@ -336,6 +351,10 @@ mod example_steps {
             let expected = table_to_matrix(table, (width, height));
 
             assert_eq!(expected, world.matrix_a.inverse().rounded());
+        };
+
+        then "C * inverse(B) = A" |world, _step| {
+            assert_eq!(world.matrix_a, world.matrix_c.dot(&world.matrix_b.inverse()).rounded());
         };
     });
 }
