@@ -90,4 +90,4 @@ Not happy with the implementation of `transposed`. Too effort-heavy. Demonstrate
 
 Transformations time! We're going to find out whether or not it was wise to implement `Pointer` and `Vector` as their own types instead of as identical tuples.
 
-Not happy with the type specificity of `translation_f32` but then it's not like I'll actually need it to be generalizable for my purposes. Priorities! In fact, I'll go ahead and rename it to `translation`.
+Not happy with the type specificity of `translation_f32` but then it's not like I'll actually need it to be generalizable for my purposes. Priorities! In fact, I'll go ahead and rename it to `translation`. The good news? It doesn't seem insurmountable! (And a small mental break helped here. Just had to flip some of my thinking around.) Feels like I'm doing some unnecessary conversion just to make use of the type system, though. Something to refactor out _later_, only after I get things working!

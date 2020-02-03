@@ -1,6 +1,9 @@
+use std::ops;
+use std::convert::From;
+
 use ndarray::*;
 
-use super::EPSILON_DIGITS;
+use super::{Point, EPSILON_DIGITS};
 
 pub trait RaytracerMatrix: Clone {
     type Unit;
@@ -216,7 +219,42 @@ fn determinant_f32_n_x_n(matrix: &Array<f32, Ix2>) -> f32 {
 }
 
 pub fn translation(_t1: f32, _t2: f32, _t3: f32) -> Array<f32, Ix2> {
-    let array: Array<f32, Ix2> = arr2(&[[0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]]);
+    let array: Array<f32, Ix2> = arr2(&[
+                                      [0.0, 0.0, 0.0, 0.0],
+                                      [0.0, 0.0, 0.0, 0.0],
+                                      [0.0, 0.0, 0.0, 0.0],
+                                      [0.0, 0.0, 0.0, 0.0],
+    ]);
 
     array
+}
+
+impl From<Point> for Array<f32, Ix1> {
+    fn from(item: Point) -> Self {
+        arr1(&[item.x, item.y, item.z, 1.0])
+    }
+}
+
+impl From<Array<f32, Ix1>> for Point {
+    fn from(item: Array<f32, Ix1>) -> Self {
+        Point::new(item[[0]], item[[1]], item[[2]])
+    }
+}
+
+// TODO: Feels like we should be able to use a `where` clause here
+impl ops::Mul<Array<f32, Ix2>> for Point {
+    type Output = Self;
+
+    fn mul(self, rhs: Array<f32, Ix2>) -> Self::Output {
+        rhs.dot(&arr1(&[self.x, self.y, self.z, 1.0])).into()
+    }
+}
+
+// TODO: Feels like we should be able to use a `where` clause here
+impl ops::Mul<Point> for Array<f32, Ix2> {
+    type Output = Point;
+
+    fn mul(self, rhs: Point) -> Self::Output {
+        self.dot(&arr1(&[rhs.x, rhs.y, rhs.z, 1.0])).into()
+    }
 }
