@@ -10,9 +10,9 @@ pub struct MyWorld {
     // You can use this struct for mutable context in scenarios.
     colors: Vec<Color>,
     matrix: Array<f32, Ix2>,
-    matrix_a: Array<i32, Ix2>,
-    matrix_b: Array<i32, Ix2>,
-    tuple: (i32, i32, i32, i32),
+    matrix_a: Array<f32, Ix2>,
+    matrix_b: Array<f32, Ix2>,
+    tuple: (f32, f32, f32, f32),
 }
 
 impl cucumber::World for MyWorld {}
@@ -22,9 +22,9 @@ impl std::default::Default for MyWorld {
         MyWorld {
             colors: vec![BLACK; 3],
             matrix: Array::from_elem((4, 4), 0.0),
-            matrix_a: Array::from_elem((4, 4), 0),
-            matrix_b: Array::from_elem((4, 4), 0),
-            tuple: (0, 0, 0, 0),
+            matrix_a: Array::from_elem((4, 4), 0.0),
+            matrix_b: Array::from_elem((4, 4), 0.0),
+            tuple: (0.0, 0.0, 0.0, 0.0),
         }
     }
 }
@@ -38,8 +38,8 @@ mod example_steps {
     use ray_tracer_challenge::color::*;
     use ray_tracer_challenge::math::*;
 
-    fn table_to_matrix(table: gherkin::Table, size: (Ix, Ix)) -> Array<i32, Ix2> {
-        let mut matrix = Array::from_elem(size, 0);
+    fn table_to_matrix(table: gherkin::Table, size: (Ix, Ix)) -> Array<f32, Ix2> {
+        let mut matrix = Array::from_elem(size, 0.0);
 
         for (c, value) in table.header.iter().enumerate() {
             matrix[[0,c]] = value.parse().unwrap();
@@ -87,7 +87,7 @@ mod example_steps {
         given "the following matrix B:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            world.matrix_b = Array::from_elem((4, 4), 0);
+            world.matrix_b = Array::from_elem((4, 4), 0.0);
 
             for (c, value) in table.header.iter().enumerate() {
                 world.matrix_b[[0,c]] = value.parse().unwrap();
@@ -103,7 +103,7 @@ mod example_steps {
         given "the following matrix A:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            world.matrix_a = Array::from_elem((4, 4), 0);
+            world.matrix_a = Array::from_elem((4, 4), 0.0);
 
             for (c, value) in table.header.iter().enumerate() {
                 world.matrix_a[[0,c]] = value.parse().unwrap();
@@ -137,10 +137,10 @@ mod example_steps {
         };
 
         given regex r"b ← tuple\((.*), (.*), (.*), (.*)\)" |world, matches, _step| {
-            let t1: i32 = matches[1].parse().unwrap();
-            let t2: i32 = matches[2].parse().unwrap();
-            let t3: i32 = matches[3].parse().unwrap();
-            let t4: i32 = matches[4].parse().unwrap();
+            let t1: f32 = matches[1].parse().unwrap();
+            let t2: f32 = matches[2].parse().unwrap();
+            let t3: f32 = matches[3].parse().unwrap();
+            let t4: f32 = matches[4].parse().unwrap();
 
             world.tuple = (t1, t2, t3, t4);
         };
@@ -181,12 +181,12 @@ mod example_steps {
         };
 
         then regex r"A \* b = tuple\((.*), (.*), (.*), (.*)\)" |world, matches, _step| {
-            let t1: i32 = matches[1].parse().unwrap();
-            let t2: i32 = matches[2].parse().unwrap();
-            let t3: i32 = matches[3].parse().unwrap();
-            let t4: i32 = matches[4].parse().unwrap();
+            let t1: f32 = matches[1].parse().unwrap();
+            let t2: f32 = matches[2].parse().unwrap();
+            let t3: f32 = matches[3].parse().unwrap();
+            let t4: f32 = matches[4].parse().unwrap();
 
-            let mut tuple_matrix: Array<i32, Ix1> = Array::from_elem(4, 0);
+            let mut tuple_matrix: Array<f32, Ix1> = Array::from_elem(4, 0.0);
             tuple_matrix[[0]] = world.tuple.0;
             tuple_matrix[[1]] = world.tuple.1;
             tuple_matrix[[2]] = world.tuple.2;
@@ -209,7 +209,7 @@ mod example_steps {
         then "A * B is the following 4x4 matrix:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            let mut expected_matrix: Array<i32, Ix2> = Array::from_elem((4, 4), 0);
+            let mut expected_matrix: Array<f32, Ix2> = Array::from_elem((4, 4), 0.0);
 
             for (c, value) in table.header.iter().enumerate() {
                 expected_matrix[[0,c]] = value.parse().unwrap();
@@ -227,7 +227,7 @@ mod example_steps {
         };
 
         then "A * identity_matrix = A" |world, _step| {
-            let identity_matrix: Array<i32, Ix2> = Array::eye(4);
+            let identity_matrix: Array<f32, Ix2> = Array::eye(4);
 
             assert_eq!(world.matrix_a.dot(&identity_matrix), world.matrix_a)
         };
@@ -243,7 +243,7 @@ mod example_steps {
         };
 
         then regex r"determinant\(A\) = (.*)" |world, matches, _step| {
-            let expected: i32 = matches[1].parse().unwrap();
+            let expected: f32 = matches[1].parse().unwrap();
 
             let actual = world.matrix_a.determinant();
 
@@ -251,7 +251,7 @@ mod example_steps {
         };
 
         then regex r"determinant\(B\) = (.*)" |world, matches, _step| {
-            let expected: i32 = matches[1].parse().unwrap();
+            let expected: f32 = matches[1].parse().unwrap();
 
             let actual = world.matrix_b.determinant();
 
@@ -262,7 +262,7 @@ mod example_steps {
             let row_i: usize = matches[1].parse().unwrap();
             let col_i: usize = matches[2].parse().unwrap();
 
-            let expected: i32 = matches[3].parse().unwrap();
+            let expected: f32 = matches[3].parse().unwrap();
 
             let actual = world.matrix_a.minor(row_i, col_i);
 
@@ -273,7 +273,7 @@ mod example_steps {
             let row_i: usize = matches[1].parse().unwrap();
             let col_i: usize = matches[2].parse().unwrap();
 
-            let expected: i32 = matches[3].parse().unwrap();
+            let expected: f32 = matches[3].parse().unwrap();
 
             let actual = world.matrix_a.cofactor(row_i, col_i);
 
@@ -306,8 +306,8 @@ mod example_steps {
             let row_i: usize = matches[1].parse().unwrap();
             let col_i: usize = matches[2].parse().unwrap();
 
-            let numerator: i32 = matches[3].parse().unwrap();
-            let denominator: i32 = matches[4].parse().unwrap();
+            let numerator: f32 = matches[3].parse().unwrap();
+            let denominator: f32 = matches[4].parse().unwrap();
 
             let expected: f32 = (numerator as f32) / (denominator as f32);
 
