@@ -16,6 +16,8 @@ pub struct MyWorld {
     matrix_c: Array<f32, Ix2>,
     transform: Array<f32, Ix2>,
     p: Point,
+    v: Vector,
+    inv: Array<f32, Ix2>,
     tuple: (f32, f32, f32, f32),
 }
 
@@ -31,6 +33,8 @@ impl std::default::Default for MyWorld {
             matrix_c: Array::from_elem((4, 4), 0.0),
             transform: Array::from_elem((4, 4), 0.0),
             p: Point::new(0.0, 0.0, 0.0),
+            v: Vector::new(0.0, 0.0, 0.0),
+            inv: Array::from_elem((4, 4), 0.0),
             tuple: (0.0, 0.0, 0.0, 0.0),
         }
     }
@@ -191,6 +195,18 @@ mod example_steps {
             let z: f32 = matches[3].parse().unwrap();
 
             world.p = Point::new(x, y, z);
+        };
+
+        given regex r"v ← vector\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.v = Vector::new(x, y, z);
+        };
+
+        given "inv ← inverse(transform)" |world, _step| {
+            world.inv = world.transform.inverse();
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -387,6 +403,26 @@ mod example_steps {
             let expected = Point::new(x, y, z);
 
             let actual = world.transform.clone() * world.p;
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"inv \* p = point\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Point::new(x, y, z);
+
+            let actual = world.inv.clone() * world.p;
+
+            assert_eq!(expected, actual);
+        };
+
+        then "transform * v = v" |world, _step| {
+            let expected = world.v;
+
+            let actual = world.transform.clone() * world.v;
 
             assert_eq!(expected, actual);
         };
