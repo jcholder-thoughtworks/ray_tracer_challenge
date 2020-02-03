@@ -326,6 +326,17 @@ mod example_steps {
 
             assert_eq!(expected, world.matrix_b.rounded());
         };
+
+        then regex r"inverse\(A\) is the following (.*)x(.*) matrix" |world, matches, step| {
+            let width = matches[1].parse().unwrap();
+            let height = matches[2].parse().unwrap();
+
+            let table = step.table().unwrap().clone();
+
+            let expected = table_to_matrix(table, (width, height));
+
+            assert_eq!(expected, world.matrix_a.inverse().rounded());
+        };
     });
 }
 
