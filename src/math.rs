@@ -3,7 +3,7 @@ use std::convert::From;
 
 use ndarray::*;
 
-use super::{Point, EPSILON_DIGITS};
+use super::{Point, Vector, EPSILON_DIGITS};
 
 pub trait RaytracerMatrix: Clone {
     type Unit;
@@ -241,6 +241,18 @@ impl From<Array<f32, Ix1>> for Point {
     }
 }
 
+impl From<Vector> for Array<f32, Ix1> {
+    fn from(item: Vector) -> Self {
+        arr1(&[item.x, item.y, item.z, 0.0])
+    }
+}
+
+impl From<Array<f32, Ix1>> for Vector {
+    fn from(item: Array<f32, Ix1>) -> Self {
+        Vector::new(item[[0]], item[[1]], item[[2]])
+    }
+}
+
 // TODO: Feels like we should be able to use a `where` clause here
 impl ops::Mul<Array<f32, Ix2>> for Point {
     type Output = Self;
@@ -255,6 +267,27 @@ impl ops::Mul<Point> for Array<f32, Ix2> {
     type Output = Point;
 
     fn mul(self, rhs: Point) -> Self::Output {
+        self.dot(&arr1(&[rhs.x, rhs.y, rhs.z, 1.0])).into()
+    }
+}
+
+// TODO: Feels like we should be able to use a `where` clause here
+impl ops::Mul<Array<f32, Ix2>> for Vector {
+    type Output = Self;
+
+    fn mul(self, rhs: Array<f32, Ix2>) -> Self::Output {
+        rhs.dot(&arr1(&[self.x, self.y, self.z, 1.0])).into()
+    }
+}
+
+// TODO: I could probably consolidate some of these operations with default trait implementations.
+// Both structs can convert to 1D 4x arrays, after all
+
+// TODO: Feels like we should be able to use a `where` clause here
+impl ops::Mul<Vector> for Array<f32, Ix2> {
+    type Output = Vector;
+
+    fn mul(self, rhs: Vector) -> Self::Output {
         self.dot(&arr1(&[rhs.x, rhs.y, rhs.z, 1.0])).into()
     }
 }
