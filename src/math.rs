@@ -30,6 +30,8 @@ pub trait RaytracerMatrix: Clone {
     fn inverse(&self) -> Self;
 
     fn rounded(&self) -> Self;
+
+    fn transposed(&self) -> Self;
 }
 
 impl RaytracerMatrix for Array<i32, Ix2> {
@@ -79,6 +81,21 @@ impl RaytracerMatrix for Array<i32, Ix2> {
 
     fn rounded(&self) -> Self {
         self.clone()
+    }
+
+    // TODO: Figure out how to avoid this manual copying.
+    // Might need to change these implementations to target ArrayBase instead of Array
+    fn transposed(&self) -> Self {
+        let transposed_view = self.t();
+        let mut transposed_matrix = Array2::zeros(self.dim());
+
+        for r in 0..(self.nrows()) {
+            for c in 0..(self.ncols()) {
+                transposed_matrix[[r, c]] = transposed_view[[r, c]];
+            }
+        }
+
+        transposed_matrix
     }
 }
 
@@ -136,6 +153,21 @@ impl RaytracerMatrix for Array<f32, Ix2> {
         }
 
         rounded_matrix
+    }
+
+    // TODO: Figure out how to avoid this manual copying.
+    // Might need to change these implementations to target ArrayBase instead of Array
+    fn transposed(&self) -> Self {
+        let transposed_view = self.t();
+        let mut transposed_matrix = Array2::zeros(self.dim());
+
+        for r in 0..(self.nrows()) {
+            for c in 0..(self.ncols()) {
+                transposed_matrix[[r, c]] = transposed_view[[r, c]];
+            }
+        }
+
+        transposed_matrix
     }
 }
 
