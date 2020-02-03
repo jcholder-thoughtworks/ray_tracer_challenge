@@ -19,7 +19,7 @@ impl cucumber::World for MyWorld {}
 impl std::default::Default for MyWorld {
     fn default() -> MyWorld {
         // This function is called every time a new scenario is started
-        MyWorld { 
+        MyWorld {
             colors: vec![BLACK; 3],
             matrix: Array::from_elem((4, 4), 0.0),
             matrix_a: Array::from_elem((4, 4), 0),
@@ -53,7 +53,7 @@ mod example_steps {
 
         matrix
     }
-    
+
     // Any type that implements cucumber::World + Default can be the world
     steps!(crate::MyWorld => {
         given regex r"the following (.*)x(.*) matrix M:" |world, matches, step| {
@@ -150,6 +150,10 @@ mod example_steps {
             let col_i: usize = matches[2].parse().unwrap();
 
             world.matrix_b = world.matrix_a.submatrix(row_i, col_i);
+        };
+
+        given "B ← inverse(A)" |world, _step| {
+            world.matrix_b = world.matrix_a.inverse();
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -297,6 +301,20 @@ mod example_steps {
         then "A is not invertible" |world, _step| {
             assert!(!world.matrix_a.invertible());
         };
+
+        then regex r"B\[(.*),(.*)\] = (.*)/(.*)" |world, matches, _step| {
+            let row_i: usize = matches[1].parse().unwrap();
+            let col_i: usize = matches[2].parse().unwrap();
+
+            let numerator: i32 = matches[3].parse().unwrap();
+            let denominator: i32 = matches[4].parse().unwrap();
+
+            let expected: f32 = (numerator as f32) / (denominator as f32);
+
+            let actual = world.matrix_b[[row_i, col_i]] as f32;
+
+            assert_eq!(expected, actual);
+        };
     });
 }
 
@@ -312,7 +330,6 @@ after!(an_after_fn => |_scenario| {
 
 // A setup function to be called before everything else
 fn setup() {
-    
 }
 
 cucumber! {
@@ -324,8 +341,8 @@ cucumber! {
     setup: setup, // Optional; called once before everything
     before: &[
         a_before_fn // Optional; called before each scenario
-    ], 
+    ],
     after: &[
         an_after_fn // Optional; called after each scenario
-    ] 
+    ]
 }

@@ -24,6 +24,8 @@ pub trait RaytracerMatrix: Clone {
     fn invertible(&self) -> bool;
 
     fn negate(number: Self::Unit) -> Self::Unit;
+
+    fn inverse(&self) -> Self;
 }
 
 impl RaytracerMatrix for Array<i32, Ix2> {
@@ -50,6 +52,26 @@ impl RaytracerMatrix for Array<i32, Ix2> {
     fn negate(number: Self::Unit) -> Self::Unit {
         -number
     }
+
+    fn inverse(&self) -> Self {
+        // TODO: Put this safety check behind a debug flag so that we can disable it for
+        // optimization
+        if ! self.invertible() {
+            panic!("Cannot invert a matrix with a determinant of zero");
+        }
+
+        let mut inverted = Array2::zeros(self.dim());
+
+        for row_i in 0..self.nrows() {
+            for col_i in 0..self.ncols() {
+                let cofactor = self.cofactor(row_i, col_i);
+
+                inverted[[col_i, row_i]] = cofactor / self.determinant();
+            }
+        }
+
+        inverted
+    }
 }
 
 impl RaytracerMatrix for Array<f32, Ix2> {
@@ -75,6 +97,10 @@ impl RaytracerMatrix for Array<f32, Ix2> {
 
     fn negate(number: Self::Unit) -> Self::Unit {
         -number
+    }
+
+    fn inverse(&self) -> Self {
+        unimplemented!("WIP")
     }
 }
 

@@ -58,7 +58,7 @@ Took a few tries but I finally figured out how to make implementing a determinan
 
 Hrm. Extracting submatrices seems more troublesome than I expected, at least with `ndarray`. I've looked but haven't found a built-in way to produce the kinds of axis-excluding submatrices described in the book. Maybe I'm overthinking it?
 
-31Jan2020
+# 31Jan2020
 
 Rust 1.14.0 was released today! Let's upgrade! And success!
 
@@ -73,3 +73,11 @@ Time to write up a `minor` method! ... Well, that was easy! One line function!
 Phew! Done with determinants! That wasn't too bad. I'm definitely learning about matrix math as I go along.
 
 Matrix inversion time! Going to try out some default implementations for traits, too. Good a time as any! Darn, no luck with extracting `submatrix`. Need to figure out the right type system stuff for that. Probably just need to read the docs for `ndarray` more. Other than that, I'm done for now!
+
+Joke's on me! Now I need to handle fractional values from matrices with previously only integer values.
+
+# 03Feb2020
+
+Back after the weekend! Dithered a while before starting today because I knew I was neglecting some other, non-coding matters at work that took priority. Helped to, well, actually act on those nagging feelings before starting today.
+
+Damn. Might as well go back and refactor everything matrix-y to use f32 instead of i32.
