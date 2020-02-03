@@ -8,7 +8,7 @@ pub mod canvas;
 pub const EPSILON: f32 = 0.00001;
 pub const EPSILON_DIGITS: i32 = 5;
 
-#[derive(Copy,Clone,Debug)]
+#[derive(Copy,Clone,Debug,PartialEq)]
 pub struct Point {
     pub x: f32,
     pub y: f32,
@@ -16,6 +16,10 @@ pub struct Point {
 }
 
 impl Point {
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
+        Point { x, y, z }
+    }
+
     pub fn equalish_to(&self, other: &Self) -> bool {
         equalish(self.x, other.x) &&
             equalish(self.y, other.y) &&
