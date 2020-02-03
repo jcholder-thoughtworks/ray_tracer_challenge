@@ -193,7 +193,6 @@ fn determinant_i32_n_x_n(matrix: &Array<i32, Ix2>) -> i32 {
     determinant
 }
 
-#[allow(dead_code)]
 fn determinant_f32_2x2(matrix: &Array<f32, Ix2>) -> f32 {
         let a = matrix[[0,0]];
         let b = matrix[[0,1]];
@@ -203,7 +202,6 @@ fn determinant_f32_2x2(matrix: &Array<f32, Ix2>) -> f32 {
         (a*d) - (b*c)
 }
 
-#[allow(dead_code)]
 fn determinant_f32_n_x_n(matrix: &Array<f32, Ix2>) -> f32 {
     let mut determinant: f32 = 0.0;
 
