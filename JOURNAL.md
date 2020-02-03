@@ -81,3 +81,5 @@ Joke's on me! Now I need to handle fractional values from matrices with previous
 Back after the weekend! Dithered a while before starting today because I knew I was neglecting some other, non-coding matters at work that took priority. Helped to, well, actually act on those nagging feelings before starting today.
 
 Damn. Might as well go back and refactor everything matrix-y to use f32 instead of i32.
+
+Well, holy crap that was quick and easy! That's what happens when I keep my f32 implemention of RaytracerMatrix up to date with the i32 one and refactor for default implementations proactively! Shout out to Rust's type system for making this foolproof, too!

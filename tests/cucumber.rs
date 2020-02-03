@@ -37,6 +37,18 @@ mod example_steps {
 
     use ray_tracer_challenge::color::*;
     use ray_tracer_challenge::math::*;
+    use ray_tracer_challenge::EPSILON_DIGITS;
+
+    fn rounded(matrix: &Array<f32, Ix2>) -> Array<f32, Ix2> {
+        let mut rounded_matrix = matrix.clone();
+
+        for el in rounded_matrix.iter_mut() {
+            let factor = (10.0 as f32).powi(EPSILON_DIGITS);
+            *el = (*el * factor).round() / factor;
+        }
+
+        rounded_matrix
+    }
 
     fn table_to_matrix(table: gherkin::Table, size: (Ix, Ix)) -> Array<f32, Ix2> {
         let mut matrix = Array::from_elem(size, 0.0);
@@ -314,6 +326,17 @@ mod example_steps {
             let actual = world.matrix_b[[row_i, col_i]] as f32;
 
             assert_eq!(expected, actual);
+        };
+
+        then regex r"B is the following (.*)x(.*) matrix" |world, matches, step| {
+            let width = matches[1].parse().unwrap();
+            let height = matches[2].parse().unwrap();
+
+            let table = step.table().unwrap().clone();
+
+            let expected = table_to_matrix(table, (width, height));
+
+            assert_eq!(expected, rounded(&world.matrix_b));
         };
     });
 }

@@ -5,7 +5,8 @@ pub mod physics;
 pub mod color;
 pub mod canvas;
 
-const EPSILON: f32 = 0.00001;
+pub const EPSILON: f32 = 0.00001;
+pub const EPSILON_DIGITS: i32 = 5;
 
 #[derive(Copy,Clone,Debug)]
 pub struct Point {
