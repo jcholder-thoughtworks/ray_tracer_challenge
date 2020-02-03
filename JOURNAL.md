@@ -87,3 +87,5 @@ Well, holy crap that was quick and easy! That's what happens when I keep my f32 
 Phew! Matrix progress. But still so far to go until _Ray-Sphere Intersection_. Still so far ... Wouldn't mind seeing more visual results in the interim in order to keep me going. Anyway, back to the code mines!
 
 Not happy with the implementation of `transposed`. Too effort-heavy. Demonstrates a gap in my knowledge of how I can best take advantage of the typing system in Rust. Something to refactor before starting the next chapter. Also betrays a gap in my knowledge of what exactly happens when we transpose a matrix.
+
+Transformations time! We're going to find out whether or not it was wise to implement `Pointer` and `Vector` as their own types instead of as identical tuples.
