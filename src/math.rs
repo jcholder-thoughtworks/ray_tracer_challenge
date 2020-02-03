@@ -1,5 +1,7 @@
 use ndarray::*;
 
+use super::EPSILON_DIGITS;
+
 pub trait RaytracerMatrix: Clone {
     type Unit;
 
@@ -26,6 +28,8 @@ pub trait RaytracerMatrix: Clone {
     fn negate(number: Self::Unit) -> Self::Unit;
 
     fn inverse(&self) -> Self;
+
+    fn rounded(&self) -> Self;
 }
 
 impl RaytracerMatrix for Array<i32, Ix2> {
@@ -72,6 +76,10 @@ impl RaytracerMatrix for Array<i32, Ix2> {
 
         inverted
     }
+
+    fn rounded(&self) -> Self {
+        self.clone()
+    }
 }
 
 impl RaytracerMatrix for Array<f32, Ix2> {
@@ -117,6 +125,17 @@ impl RaytracerMatrix for Array<f32, Ix2> {
         }
 
         inverted
+    }
+
+    fn rounded(&self) -> Self {
+        let mut rounded_matrix = self.clone();
+
+        for el in rounded_matrix.iter_mut() {
+            let factor = (10.0 as f32).powi(EPSILON_DIGITS);
+            *el = (*el * factor).round() / factor;
+        }
+
+        rounded_matrix
     }
 }
 
