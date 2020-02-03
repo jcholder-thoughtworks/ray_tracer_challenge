@@ -218,16 +218,19 @@ fn determinant_f32_n_x_n(matrix: &Array<f32, Ix2>) -> f32 {
     determinant
 }
 
-pub fn translation(_t1: f32, _t2: f32, _t3: f32) -> Array<f32, Ix2> {
+pub fn translation(x: f32, y: f32, z: f32) -> Array<f32, Ix2> {
     let array: Array<f32, Ix2> = arr2(&[
-                                      [0.0, 0.0, 0.0, 0.0],
-                                      [0.0, 0.0, 0.0, 0.0],
-                                      [0.0, 0.0, 0.0, 0.0],
-                                      [0.0, 0.0, 0.0, 0.0],
+                                      [1.0, 0.0, 0.0, x],
+                                      [0.0, 1.0, 0.0, y],
+                                      [0.0, 0.0, 1.0, z],
+                                      [0.0, 0.0, 0.0, 1.0],
     ]);
 
     array
 }
+
+// TODO: Double-check all these magic numbers. Knowledge of p(1) vs v(1) belongs alongside
+// those structs rather than here
 
 impl From<Point> for Array<f32, Ix1> {
     fn from(item: Point) -> Self {
@@ -276,7 +279,7 @@ impl ops::Mul<Array<f32, Ix2>> for Vector {
     type Output = Self;
 
     fn mul(self, rhs: Array<f32, Ix2>) -> Self::Output {
-        rhs.dot(&arr1(&[self.x, self.y, self.z, 1.0])).into()
+        rhs.dot(&arr1(&[self.x, self.y, self.z, 0.0])).into()
     }
 }
 
@@ -288,6 +291,6 @@ impl ops::Mul<Vector> for Array<f32, Ix2> {
     type Output = Vector;
 
     fn mul(self, rhs: Vector) -> Self::Output {
-        self.dot(&arr1(&[rhs.x, rhs.y, rhs.z, 1.0])).into()
+        self.dot(&arr1(&[rhs.x, rhs.y, rhs.z, 0.0])).into()
     }
 }
