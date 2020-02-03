@@ -4,6 +4,7 @@ use ndarray::*;
 
 use cucumber::{cucumber, before, after};
 
+use ray_tracer_challenge::*;
 use ray_tracer_challenge::color::*;
 
 pub struct MyWorld {
@@ -13,6 +14,8 @@ pub struct MyWorld {
     matrix_a: Array<f32, Ix2>,
     matrix_b: Array<f32, Ix2>,
     matrix_c: Array<f32, Ix2>,
+    transform: Array<f32, Ix2>,
+    p: Point,
     tuple: (f32, f32, f32, f32),
 }
 
@@ -26,6 +29,8 @@ impl std::default::Default for MyWorld {
             matrix_a: Array::from_elem((4, 4), 0.0),
             matrix_b: Array::from_elem((4, 4), 0.0),
             matrix_c: Array::from_elem((4, 4), 0.0),
+            transform: Array::from_elem((4, 4), 0.0),
+            p: Point::new(0.0, 0.0, 0.0),
             tuple: (0.0, 0.0, 0.0, 0.0),
         }
     }
@@ -37,6 +42,7 @@ mod example_steps {
     use ndarray::*;
     use gherkin;
 
+    use ray_tracer_challenge::*;
     use ray_tracer_challenge::color::*;
     use ray_tracer_challenge::math::*;
 
@@ -169,6 +175,22 @@ mod example_steps {
 
         given "B ← inverse(A)" |world, _step| {
             world.matrix_b = world.matrix_a.inverse();
+        };
+
+        given regex r"transform ← translation\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let t1: f32 = matches[1].parse().unwrap();
+            let t2: f32 = matches[2].parse().unwrap();
+            let t3: f32 = matches[3].parse().unwrap();
+
+            world.transform = translation(t1, t2, t3);
+        };
+
+        given regex r"p ← point\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.p = Point::new(x, y, z);
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -355,6 +377,18 @@ mod example_steps {
 
         then "C * inverse(B) = A" |world, _step| {
             assert_eq!(world.matrix_a, world.matrix_c.dot(&world.matrix_b.inverse()).rounded());
+        };
+
+        then regex r"transform \* p = point\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Point::new(x, y, z);
+
+            let actual = world.transform.clone() * world.p;
+
+            assert_eq!(expected, actual);
         };
     });
 }
