@@ -214,3 +214,9 @@ fn determinant_f32_n_x_n(matrix: &Array<f32, Ix2>) -> f32 {
 
     determinant
 }
+
+pub fn translation(_t1: f32, _t2: f32, _t3: f32) -> Array<f32, Ix2> {
+    let array: Array<f32, Ix2> = arr2(&[[0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]]);
+
+    array
+}

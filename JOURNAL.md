@@ -89,3 +89,5 @@ Phew! Matrix progress. But still so far to go until _Ray-Sphere Intersection_. S
 Not happy with the implementation of `transposed`. Too effort-heavy. Demonstrates a gap in my knowledge of how I can best take advantage of the typing system in Rust. Something to refactor before starting the next chapter. Also betrays a gap in my knowledge of what exactly happens when we transpose a matrix.
 
 Transformations time! We're going to find out whether or not it was wise to implement `Pointer` and `Vector` as their own types instead of as identical tuples.
+
+Not happy with the type specificity of `translation_f32` but then it's not like I'll actually need it to be generalizable for my purposes. Priorities! In fact, I'll go ahead and rename it to `translation`.
