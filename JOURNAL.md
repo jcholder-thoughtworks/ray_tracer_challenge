@@ -113,3 +113,5 @@ Yay, shearing is easy!
 Back from lunch. Rather perplexed that the last step in the `Individual transformations are applied in sequence` scenario is failing for me. Oops! Just a little array index mistake that I duplicated a few times. Fixed!
 
 Observation: I'm using `clone` too much in the specs. It shouldn't be necessary for the `Mul` overload of matrices. Will take a stab at fixing this before proceeding ... Or I could use `dot` as intended. (The former point still holds, just not for the present scenario.) Good news! That refactoring was much easier than expected. Multiplying against references feels a bit odd but that will spare us a lot of unnecessary cloning.
+
+And now, clock time! (After a break.) Aside: I am so very glad for the "example" functionality built into `cargo`. It makes it so much easier to demonstrate how to use the crate.
