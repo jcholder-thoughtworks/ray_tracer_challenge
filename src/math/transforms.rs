@@ -57,3 +57,12 @@ pub fn rotation_z(radians: f32) -> Array<f32, Ix2> {
 
     arr2(&[r1, r2, r3, r4])
 }
+
+pub fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Array<f32, Ix2> {
+    let r1: [f32; 4] = [1.0, xy, xz, 0.0];
+    let r2: [f32; 4] = [yx, 1.0, yz, 0.0];
+    let r3: [f32; 4] = [zx, zy, 1.0, 0.0];
+    let r4: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
+
+    arr2(&[r1, r2, r3, r4])
+}

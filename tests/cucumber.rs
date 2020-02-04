@@ -264,6 +264,17 @@ mod example_steps {
             world.inv = world.half_quarter.inverse();
         };
 
+        given regex r"transform ← shearing\((.*), (.*), (.*), (.*), (.*), (.*)\)" |world, matches, _step| {
+            let xy: f32 = matches[1].parse().unwrap();
+            let xz: f32 = matches[2].parse().unwrap();
+            let yx: f32 = matches[3].parse().unwrap();
+            let yz: f32 = matches[4].parse().unwrap();
+            let zx: f32 = matches[5].parse().unwrap();
+            let zy: f32 = matches[6].parse().unwrap();
+
+            world.transform = shearing(xy, xz, yx, yz, zx, zy);
+        };
+
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
             let color_i1: usize = matches[1].parse().unwrap();
             let color1 = world.colors[color_i1];
