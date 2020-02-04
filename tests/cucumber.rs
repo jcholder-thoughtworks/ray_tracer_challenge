@@ -230,10 +230,22 @@ mod example_steps {
             world.half_quarter = rotation_x(PI / denominator);
         };
 
+        given regex r"half_quarter ← rotation_y\(π / (.*)\)" |world, matches, _step| {
+            let denominator: f32 = matches[1].parse().unwrap();
+
+            world.half_quarter = rotation_y(PI / denominator);
+        };
+
         given regex r"full_quarter ← rotation_x\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
             world.full_quarter = rotation_x(PI / denominator);
+        };
+
+        given regex r"full_quarter ← rotation_y\(π / (.*)\)" |world, matches, _step| {
+            let denominator: f32 = matches[1].parse().unwrap();
+
+            world.full_quarter = rotation_y(PI / denominator);
         };
 
         given "inv ← inverse(half_quarter)" |world, _step| {
@@ -494,10 +506,22 @@ mod example_steps {
             assert_eq!(expected, actual);
         };
 
-        then regex r"half_quarter \* p = point\(0, √2/2, √2/2\)" |world, _matches, _step| {
-            let x = 0.0;
-            let y = (2.0_f32).sqrt() / 2.0;
-            let z = y;
+        then regex r"half_quarter \* p = point\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = match matches[1].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[1].parse().unwrap(),
+            };
+            let y: f32 = match matches[2].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[2].parse().unwrap(),
+            };
+            let z: f32 = match matches[3].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[3].parse().unwrap(),
+            };
 
             let expected = Point::new(x, y, z);
 
