@@ -99,3 +99,5 @@ On to scaling! But first, some refactoring to make the API more consistent. It's
 Might end up deleting all of the `i32` implementations for `RaytracerMatrix`, too, if I end up with no code that uses it.
 
 Silly me, I don't need `RaytracerMatrix::translation`. I just need a `Translation` type! Actually, back to the original idea! I don't need `Translation::new`; that's habituation from other languages (particularly Ruby) speaking. Best to have a `translated` method on `RaytracerMatrix`. Waaaait, why am I worried about this at all? I need `translation` for the tests (as written) anyway. Just leave it alone for now. Packages. Specifically, a `transformations` package. _That_ is what I wanted.
+
+Well! Scaling sure was easy after all that.

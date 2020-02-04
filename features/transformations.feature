@@ -26,12 +26,12 @@ Scenario: A scaling matrix applied to a vector
     And v ← vector(-4, 6, 8)
    Then transform * v = vector(-8, 18, 32)
 
-#Scenario: Multiplying by the inverse of a scaling matrix
-#  Given transform ← scaling(2, 3, 4)
-#    And inv ← inverse(transform)
-#    And v ← vector(-4, 6, 8)
-#   Then inv * v = vector(-2, 2, 2)
-#
+Scenario: Multiplying by the inverse of a scaling matrix
+  Given transform ← scaling(2, 3, 4)
+    And inv ← inverse(transform)
+    And v ← vector(-4, 6, 8)
+   Then inv * v = vector(-2, 2, 2)
+
 #Scenario: Reflection is scaling by a negative value
 #  Given transform ← scaling(-1, 1, 1)
 #    And p ← point(2, 3, 4)

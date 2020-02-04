@@ -446,6 +446,18 @@ mod example_steps {
 
             assert_eq!(expected, actual);
         };
+
+        then regex r"inv \* v = vector\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Vector::new(x, y, z);
+
+            let actual = world.inv.clone() * world.v;
+
+            assert_eq!(expected, actual);
+        };
     });
 }
 
