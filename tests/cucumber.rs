@@ -14,6 +14,8 @@ pub struct MyWorld {
     matrix_a: Array<f32, Ix2>,
     matrix_b: Array<f32, Ix2>,
     matrix_c: Array<f32, Ix2>,
+    half_quarter: Array<f32, Ix2>,
+    full_quarter: Array<f32, Ix2>,
     transform: Array<f32, Ix2>,
     p: Point,
     v: Vector,
@@ -31,6 +33,8 @@ impl std::default::Default for MyWorld {
             matrix_a: Array::from_elem((4, 4), 0.0),
             matrix_b: Array::from_elem((4, 4), 0.0),
             matrix_c: Array::from_elem((4, 4), 0.0),
+            half_quarter: Array::from_elem((4, 4), 0.0),
+            full_quarter: Array::from_elem((4, 4), 0.0),
             transform: Array::from_elem((4, 4), 0.0),
             p: Point::new(0.0, 0.0, 0.0),
             v: Vector::new(0.0, 0.0, 0.0),
@@ -41,6 +45,8 @@ impl std::default::Default for MyWorld {
 }
 
 mod example_steps {
+    use std::f32::consts::PI;
+
     use cucumber::steps;
 
     use ndarray::*;
@@ -216,6 +222,22 @@ mod example_steps {
 
         given "inv ← inverse(transform)" |world, _step| {
             world.inv = world.transform.inverse();
+        };
+
+        given regex r"half_quarter ← rotation_x\(π / (.*)\)" |world, matches, _step| {
+            let denominator: f32 = matches[1].parse().unwrap();
+
+            world.half_quarter = rotation_x(PI / denominator);
+        };
+
+        given regex r"full_quarter ← rotation_x\(π / (.*)\)" |world, matches, _step| {
+            let denominator: f32 = matches[1].parse().unwrap();
+
+            world.full_quarter = rotation_x(PI / denominator);
+        };
+
+        given "inv ← inverse(half_quarter)" |world, _step| {
+            world.inv = world.half_quarter.inverse();
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -417,15 +439,27 @@ mod example_steps {
         };
 
         then regex r"inv \* p = point\((.*), (.*), (.*)\)" |world, matches, _step| {
-            let x: f32 = matches[1].parse().unwrap();
-            let y: f32 = matches[2].parse().unwrap();
-            let z: f32 = matches[3].parse().unwrap();
+            let x: f32 = match matches[1].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[1].parse().unwrap(),
+            };
+            let y: f32 = match matches[2].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[2].parse().unwrap(),
+            };
+            let z: f32 = match matches[3].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[3].parse().unwrap(),
+            };
 
             let expected = Point::new(x, y, z);
 
             let actual = world.inv.clone() * world.p;
 
-            assert_eq!(expected, actual);
+            assert_eq!(expected.rounded(), actual.rounded());
         };
 
         then "transform * v = v" |world, _step| {
@@ -458,6 +492,30 @@ mod example_steps {
             let actual = world.inv.clone() * world.v;
 
             assert_eq!(expected, actual);
+        };
+
+        then regex r"half_quarter \* p = point\(0, √2/2, √2/2\)" |world, _matches, _step| {
+            let x = 0.0;
+            let y = (2.0_f32).sqrt() / 2.0;
+            let z = y;
+
+            let expected = Point::new(x, y, z);
+
+            let actual = world.half_quarter.clone() * world.p;
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"full_quarter \* p = point\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Point::new(x, y, z);
+
+            let actual = world.full_quarter.clone() * world.p;
+
+            assert_eq!(expected, actual.rounded());
         };
     });
 }

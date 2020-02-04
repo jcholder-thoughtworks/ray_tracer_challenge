@@ -149,6 +149,7 @@ impl RaytracerMatrix for Array<f32, Ix2> {
         inverted
     }
 
+    // TODO: Refactor to use round()
     fn rounded(&self) -> Self {
         let mut rounded_matrix = self.clone();
 
