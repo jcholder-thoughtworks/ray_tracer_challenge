@@ -236,6 +236,12 @@ mod example_steps {
             world.half_quarter = rotation_y(PI / denominator);
         };
 
+        given regex r"half_quarter ← rotation_z\(π / (.*)\)" |world, matches, _step| {
+            let denominator: f32 = matches[1].parse().unwrap();
+
+            world.half_quarter = rotation_z(PI / denominator);
+        };
+
         given regex r"full_quarter ← rotation_x\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
@@ -246,6 +252,12 @@ mod example_steps {
             let denominator: f32 = matches[1].parse().unwrap();
 
             world.full_quarter = rotation_y(PI / denominator);
+        };
+
+        given regex r"full_quarter ← rotation_z\(π / (.*)\)" |world, matches, _step| {
+            let denominator: f32 = matches[1].parse().unwrap();
+
+            world.full_quarter = rotation_z(PI / denominator);
         };
 
         given "inv ← inverse(half_quarter)" |world, _step| {

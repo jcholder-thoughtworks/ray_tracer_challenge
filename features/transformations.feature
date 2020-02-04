@@ -57,13 +57,13 @@ Scenario: Rotating a point around the y axis
   Then half_quarter * p = point(√2/2, 0, √2/2)
     And full_quarter * p = point(1, 0, 0)
 
-#Scenario: Rotating a point around the z axis
-#  Given p ← point(0, 1, 0)
-#    And half_quarter ← rotation_z(π / 4)
-#    And full_quarter ← rotation_z(π / 2)
-#  Then half_quarter * p = point(-√2/2, √2/2, 0)
-#    And full_quarter * p = point(-1, 0, 0)
-#
+Scenario: Rotating a point around the z axis
+  Given p ← point(0, 1, 0)
+    And half_quarter ← rotation_z(π / 4)
+    And full_quarter ← rotation_z(π / 2)
+  Then half_quarter * p = point(-√2/2, √2/2, 0)
+    And full_quarter * p = point(-1, 0, 0)
+
 #Scenario: A shearing transformation moves x in proportion to y
 #  Given transform ← shearing(1, 0, 0, 0, 0, 0)
 #    And p ← point(2, 3, 4)

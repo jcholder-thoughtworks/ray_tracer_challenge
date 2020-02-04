@@ -45,3 +45,15 @@ pub fn rotation_y(radians: f32) -> Array<f32, Ix2> {
 
     arr2(&[r1, r2, r3, r4])
 }
+
+pub fn rotation_z(radians: f32) -> Array<f32, Ix2> {
+    let cr = radians.cos();
+    let sr = radians.sin();
+
+    let r1: [f32; 4] = [cr, -sr, 0.0, 0.0];
+    let r2: [f32; 4] = [sr, cr, 0.0, 0.0];
+    let r3: [f32; 4] = [0.0, 0.0, 1.0, 0.0];
+    let r4: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
+
+    arr2(&[r1, r2, r3, r4])
+}
