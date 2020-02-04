@@ -28,6 +28,8 @@ pub struct MyWorld {
     inv: Array<f32, Ix2>,
     tuple: (f32, f32, f32, f32),
     r: Ray,
+    s: Sphere,
+    xs: Vec<f32>,
 }
 
 impl cucumber::World for MyWorld {}
@@ -54,6 +56,8 @@ impl std::default::Default for MyWorld {
             inv: Array::from_elem((4, 4), 0.0),
             tuple: (0.0, 0.0, 0.0, 0.0),
             r: Ray::new(CENTER_ORIGIN, STATIONARY),
+            s: Sphere::new(CENTER_ORIGIN),
+            xs: vec![],
         }
     }
 }
@@ -339,6 +343,10 @@ mod example_steps {
             world.r = Ray::new(Point::new(px, py, pz), Vector::new(vx, vy, vz));
         };
 
+        given "s ← sphere()" |world, _step| {
+            world.s = Sphere::new(CENTER_ORIGIN);
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = &world.matrix_a * world.p;
         };
@@ -357,6 +365,10 @@ mod example_steps {
 
         when "r ← ray(origin, direction)" |world, _step| {
             world.r = Ray::new(world.origin, world.direction);
+        };
+
+        when "xs ← intersect(s, r)" |world, _step| {
+            world.xs = world.s.intersect(world.r);
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -716,6 +728,27 @@ mod example_steps {
             let actual = world.r.position(t);
 
             assert_eq!(expected, actual.rounded());
+        };
+
+        then regex r"xs.count = (.*)" |world, matches, _step| {
+            let count: usize = matches[1].parse().unwrap();
+
+            let expected = count;
+
+            let actual = world.xs.len();
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"xs\[(.*)\] = (.*)" |world, matches, _step| {
+            let index: usize = matches[1].parse().unwrap();
+            let time: f32 = matches[2].parse().unwrap();
+
+            let expected = time;
+
+            let actual = world.xs[index];
+
+            assert_eq!(expected, actual);
         };
     });
 }
