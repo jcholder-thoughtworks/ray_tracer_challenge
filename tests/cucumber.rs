@@ -14,6 +14,7 @@ pub struct MyWorld {
     matrix_a: Array<f32, Ix2>,
     matrix_b: Array<f32, Ix2>,
     matrix_c: Array<f32, Ix2>,
+    matrix_t: Array<f32, Ix2>,
     half_quarter: Array<f32, Ix2>,
     full_quarter: Array<f32, Ix2>,
     transform: Array<f32, Ix2>,
@@ -36,6 +37,7 @@ impl std::default::Default for MyWorld {
             matrix_a: Array::from_elem((4, 4), 0.0),
             matrix_b: Array::from_elem((4, 4), 0.0),
             matrix_c: Array::from_elem((4, 4), 0.0),
+            matrix_t: Array::from_elem((4, 4), 0.0),
             half_quarter: Array::from_elem((4, 4), 0.0),
             full_quarter: Array::from_elem((4, 4), 0.0),
             transform: Array::from_elem((4, 4), 0.0),
@@ -313,6 +315,10 @@ mod example_steps {
 
         when "p4 ← C * p3" |world, _step| {
             world.p4 = world.matrix_c.clone() * world.p3;
+        };
+
+        when "T ← C * B * A" |world, _step| {
+            world.matrix_t = world.matrix_c.dot(&world.matrix_b.dot(&world.matrix_a));
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -637,6 +643,18 @@ mod example_steps {
             let expected = Point::new(x, y, z);
 
             let actual = world.p4;
+
+            assert_eq!(expected, actual.rounded());
+        };
+
+        then regex r"T \* p = point\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Point::new(x, y, z);
+
+            let actual = world.matrix_t.clone() * world.p;
 
             assert_eq!(expected, actual.rounded());
         };

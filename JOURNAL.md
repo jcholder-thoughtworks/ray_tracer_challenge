@@ -111,3 +111,5 @@ I do not feel like I understand the rotation transformations. A topic to dwell o
 Yay, shearing is easy!
 
 Back from lunch. Rather perplexed that the last step in the `Individual transformations are applied in sequence` scenario is failing for me. Oops! Just a little array index mistake that I duplicated a few times. Fixed!
+
+Observation: I'm using `clone` too much in the specs. It shouldn't be necessary for the `Mul` overload of matrices. Will take a stab at fixing this before proceeding ... Or I could use `dot` as intended. (The former point still holds, just not for the present scenario.)

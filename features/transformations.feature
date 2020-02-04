@@ -109,14 +109,14 @@ Scenario: Individual transformations are applied in sequence
   When p4 ← C * p3
   Then p4 = point(15, 0, 7)
 
-#Scenario: Chained transformations must be applied in reverse order
-#  Given p ← point(1, 0, 1)
-#    And A ← rotation_x(π / 2)
-#    And B ← scaling(5, 5, 5)
-#    And C ← translation(10, 5, 7)
-#  When T ← C * B * A
-#  Then T * p = point(15, 0, 7)
-#
+Scenario: Chained transformations must be applied in reverse order
+  Given p ← point(1, 0, 1)
+    And A ← rotation_x(π / 2)
+    And B ← scaling(5, 5, 5)
+    And C ← translation(10, 5, 7)
+  When T ← C * B * A
+  Then T * p = point(15, 0, 7)
+
 #Scenario: The transformation matrix for the default orientation
 #  Given from ← point(0, 0, 0)
 #    And to ← point(0, 0, -1)
