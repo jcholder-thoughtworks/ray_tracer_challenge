@@ -37,6 +37,12 @@ impl Point {
     pub fn rounded(&self) -> Self {
         Self::new(round(self.x), round(self.y), round(self.z))
     }
+
+    pub fn dot(self, rhs: Self) -> f32 {
+        (self.x * rhs.x) +
+            (self.y * rhs.y) +
+            (self.z * rhs.z)
+    }
 }
 
 impl ops::Add<Vector> for Point {
@@ -213,6 +219,7 @@ impl Vector {
     }
 }
 
+#[derive(Copy,Clone,Debug,PartialEq)]
 pub struct Ray {
     pub origin: Point,
     pub direction: Vector,
@@ -225,6 +232,41 @@ impl Ray {
 
     pub fn position(&self, time: f32) -> Point {
         self.origin + (self.direction * time)
+    }
+}
+
+#[derive(Copy,Clone,Debug,PartialEq)]
+pub struct Sphere {
+    pub origin: Point,
+}
+
+impl Sphere {
+    pub fn new(origin: Point) -> Self {
+        Sphere { origin }
+    }
+
+    pub fn intersect(&self, ray: Ray) -> Vec<f32> {
+        let sphere_to_ray = ray.origin - self.origin;
+
+        let a = ray.direction.dot(ray.direction);
+        let b = 2.0 * ray.direction.dot(sphere_to_ray);
+        let c = sphere_to_ray.dot(sphere_to_ray) - 1.0;
+
+        let discriminant = b.powi(2) - 4.0 * a * c;
+
+        if discriminant < 0.0 {
+            return vec![];
+        }
+
+        let t1 = (-b - discriminant.sqrt()) / (2.0 * a);
+        let t2 = (-b + discriminant.sqrt()) / (2.0 * a);
+
+        // return in increasing order
+        if t1 < t2 {
+            vec![t1, t2]
+        } else {
+            vec![t2, t1]
+        }
     }
 }
 
