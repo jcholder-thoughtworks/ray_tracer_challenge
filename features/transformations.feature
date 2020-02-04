@@ -32,11 +32,11 @@ Scenario: Multiplying by the inverse of a scaling matrix
     And v ← vector(-4, 6, 8)
    Then inv * v = vector(-2, 2, 2)
 
-#Scenario: Reflection is scaling by a negative value
-#  Given transform ← scaling(-1, 1, 1)
-#    And p ← point(2, 3, 4)
-#   Then transform * p = point(-2, 3, 4)
-#
+Scenario: Reflection is scaling by a negative value
+  Given transform ← scaling(-1, 1, 1)
+    And p ← point(2, 3, 4)
+   Then transform * p = point(-2, 3, 4)
+
 #Scenario: Rotating a point around the x axis
 #  Given p ← point(0, 1, 0)
 #    And half_quarter ← rotation_x(π / 4)
