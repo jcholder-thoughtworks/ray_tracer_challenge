@@ -107,3 +107,5 @@ Not super happy about implementing the `radians` parameter on `rotation_x` as an
 Mental note to only use `round` and `rounded` at the last possible moment (e.g. when calling `assert_eq!` and no sooner).
 
 I do not feel like I understand the rotation transformations. A topic to dwell on later.
+
+Yay, shearing is easy!
