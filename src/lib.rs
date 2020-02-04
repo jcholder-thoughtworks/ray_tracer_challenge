@@ -8,6 +8,9 @@ pub mod canvas;
 pub const EPSILON: f32 = 0.00001;
 pub const EPSILON_DIGITS: i32 = 5;
 
+pub const CENTER_ORIGIN: Point = Point { x: 0.0, y: 0.0, z: 0.0 };
+pub const STATIONARY: Vector = Vector { x: 0.0, y: 0.0, z: 0.0 };
+
 pub fn round(v: f32) -> f32 {
     let factor = (10.0 as f32).powi(EPSILON_DIGITS);
     (v * factor).round() / factor
@@ -194,6 +197,17 @@ impl Vector {
 
     pub fn rounded(&self) -> Self {
         Self::new(round(self.x), round(self.y), round(self.z))
+    }
+}
+
+pub struct Ray {
+    pub origin: Point,
+    pub direction: Vector,
+}
+
+impl Ray {
+    pub fn new(origin: Point, direction: Vector) -> Self {
+        Ray { origin, direction }
     }
 }
 
