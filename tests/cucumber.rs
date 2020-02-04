@@ -189,6 +189,14 @@ mod example_steps {
             world.transform = translation(t1, t2, t3);
         };
 
+        given regex r"transform ← scaling\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let t1: f32 = matches[1].parse().unwrap();
+            let t2: f32 = matches[2].parse().unwrap();
+            let t3: f32 = matches[3].parse().unwrap();
+
+            world.transform = scaling(t1, t2, t3);
+        };
+
         given regex r"p ← point\((.*), (.*), (.*)\)" |world, matches, _step| {
             let x: f32 = matches[1].parse().unwrap();
             let y: f32 = matches[2].parse().unwrap();
@@ -421,6 +429,18 @@ mod example_steps {
 
         then "transform * v = v" |world, _step| {
             let expected = world.v;
+
+            let actual = world.transform.clone() * world.v;
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"transform \* v = vector\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Vector::new(x, y, z);
 
             let actual = world.transform.clone() * world.v;
 

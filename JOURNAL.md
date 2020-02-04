@@ -91,3 +91,11 @@ Not happy with the implementation of `transposed`. Too effort-heavy. Demonstrate
 Transformations time! We're going to find out whether or not it was wise to implement `Pointer` and `Vector` as their own types instead of as identical tuples.
 
 Not happy with the type specificity of `translation_f32` but then it's not like I'll actually need it to be generalizable for my purposes. Priorities! In fact, I'll go ahead and rename it to `translation`. The good news? It doesn't seem insurmountable! (And a small mental break helped here. Just had to flip some of my thinking around.) Feels like I'm doing some unnecessary conversion just to make use of the type system, though. Something to refactor out _later_, only after I get things working!
+
+# 04Feb2020
+
+On to scaling! But first, some refactoring to make the API more consistent. It's odd to have `translation` as a stand-alone function.
+
+Might end up deleting all of the `i32` implementations for `RaytracerMatrix`, too, if I end up with no code that uses it.
+
+Silly me, I don't need `RaytracerMatrix::translation`. I just need a `Translation` type! Actually, back to the original idea! I don't need `Translation::new`; that's habituation from other languages (particularly Ruby) speaking. Best to have a `translated` method on `RaytracerMatrix`. Waaaait, why am I worried about this at all? I need `translation` for the tests (as written) anyway. Just leave it alone for now. Packages. Specifically, a `transformations` package. _That_ is what I wanted.

@@ -16,16 +16,16 @@ Scenario: Translation does not affect vectors
     And v ← vector(-3, 4, 5)
    Then transform * v = v
 
-#Scenario: A scaling matrix applied to a point
-#  Given transform ← scaling(2, 3, 4)
-#    And p ← point(-4, 6, 8)
-#   Then transform * p = point(-8, 18, 32)
-#
-#Scenario: A scaling matrix applied to a vector
-#  Given transform ← scaling(2, 3, 4)
-#    And v ← vector(-4, 6, 8)
-#   Then transform * v = vector(-8, 18, 32)
-#
+Scenario: A scaling matrix applied to a point
+  Given transform ← scaling(2, 3, 4)
+    And p ← point(-4, 6, 8)
+   Then transform * p = point(-8, 18, 32)
+
+Scenario: A scaling matrix applied to a vector
+  Given transform ← scaling(2, 3, 4)
+    And v ← vector(-4, 6, 8)
+   Then transform * v = vector(-8, 18, 32)
+
 #Scenario: Multiplying by the inverse of a scaling matrix
 #  Given transform ← scaling(2, 3, 4)
 #    And inv ← inverse(transform)
