@@ -103,3 +103,5 @@ Silly me, I don't need `RaytracerMatrix::translation`. I just need a `Translatio
 Well! Scaling sure was easy after all that.
 
 Not super happy about implementing the `radians` parameter on `rotation_x` as an `f32` instead of using a more abstract representation, but I'll only revisit that if it proves onerous.
+
+Mental note to only use `round` and `rounded` at the last possible moment (e.g. when calling `assert_eq!` and no sooner).
