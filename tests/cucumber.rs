@@ -49,6 +49,7 @@ mod example_steps {
     use ray_tracer_challenge::*;
     use ray_tracer_challenge::color::*;
     use ray_tracer_challenge::math::*;
+    use ray_tracer_challenge::math::transforms::*;
 
     fn table_to_matrix(table: gherkin::Table, size: (Ix, Ix)) -> Array<f32, Ix2> {
         let mut matrix = Array::from_elem(size, 0.0);
