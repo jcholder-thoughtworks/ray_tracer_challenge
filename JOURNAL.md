@@ -119,3 +119,5 @@ And now, clock time! (After a break.) Aside: I am so very glad for the "example"
 "Good" old overflow error! At least I eventually figured it out. And I didn't have to look at the hints in the book at all! Let's clean up some of these magic numbers and questionable type conversions.
 
 And _finally_, time to work on ray-sphere intersections! (But only after a walk break.)
+
+Sphere time! Oh, the meme potential.
