@@ -9,6 +9,7 @@ use ray_tracer_challenge::canvas::*;
 
 const CANVAS_WIDTH: u32 = 400;
 const CANVAS_HEIGHT: u32 = 400;
+const HOURS: u32 = 12;
 
 fn main() -> std::io::Result<()> {
     let mut canvas = Canvas::of_color(CANVAS_WIDTH, CANVAS_HEIGHT, BLACK);
@@ -17,13 +18,15 @@ fn main() -> std::io::Result<()> {
 
     let mut hand = Point::new(0.0, 1.0, 0.0);
 
-    let hour_turn = rotation_z(-(2.0 * PI) / 12.0);
+    // We could simplify this to PI / 6 but this makes it more obvious where
+    // the numbers come from
+    let hour_turn = rotation_z(-(2.0 * PI) / HOURS as f32);
 
-    for hour in 0..12 {
+    for _hour in 0..HOURS {
         println!("{:?}", hand);
 
-        let x: i32 = ((CANVAS_WIDTH as f32 * 0.4) * hand.x).round() as i32;
-        let y: i32 = ((CANVAS_HEIGHT as f32 * 0.4) * hand.y).round() as i32;
+        let x: i32 = ((CANVAS_WIDTH as f32 * 0.4) * hand.x) as i32;
+        let y: i32 = ((CANVAS_HEIGHT as f32 * 0.4) * hand.y) as i32;
 
         println!("Starting here: {}, {}", x, y);
 
