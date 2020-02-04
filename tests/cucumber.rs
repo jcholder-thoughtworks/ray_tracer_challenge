@@ -306,15 +306,15 @@ mod example_steps {
         };
 
         when "p2 ← A * p" |world, _step| {
-            world.p2 = world.matrix_a.clone() * world.p;
+            world.p2 = &world.matrix_a * world.p;
         };
 
         when "p3 ← B * p2" |world, _step| {
-            world.p3 = world.matrix_b.clone() * world.p2;
+            world.p3 = &world.matrix_b * world.p2;
         };
 
         when "p4 ← C * p3" |world, _step| {
-            world.p4 = world.matrix_c.clone() * world.p3;
+            world.p4 = &world.matrix_c * world.p3;
         };
 
         when "T ← C * B * A" |world, _step| {
@@ -514,7 +514,7 @@ mod example_steps {
 
             let expected = Point::new(x, y, z);
 
-            let actual = world.transform.clone() * world.p;
+            let actual = &world.transform * world.p;
 
             assert_eq!(expected, actual);
         };
@@ -538,7 +538,7 @@ mod example_steps {
 
             let expected = Point::new(x, y, z);
 
-            let actual = world.inv.clone() * world.p;
+            let actual = &world.inv * world.p;
 
             assert_eq!(expected.rounded(), actual.rounded());
         };
@@ -546,7 +546,7 @@ mod example_steps {
         then "transform * v = v" |world, _step| {
             let expected = world.v;
 
-            let actual = world.transform.clone() * world.v;
+            let actual = &world.transform * world.v;
 
             assert_eq!(expected, actual);
         };
@@ -558,7 +558,7 @@ mod example_steps {
 
             let expected = Vector::new(x, y, z);
 
-            let actual = world.transform.clone() * world.v;
+            let actual = &world.transform * world.v;
 
             assert_eq!(expected, actual);
         };
@@ -570,7 +570,7 @@ mod example_steps {
 
             let expected = Vector::new(x, y, z);
 
-            let actual = world.inv.clone() * world.v;
+            let actual = &world.inv * world.v;
 
             assert_eq!(expected, actual);
         };
@@ -594,7 +594,7 @@ mod example_steps {
 
             let expected = Point::new(x, y, z);
 
-            let actual = world.half_quarter.clone() * world.p;
+            let actual = &world.half_quarter * world.p;
 
             assert_eq!(expected, actual);
         };
@@ -606,7 +606,7 @@ mod example_steps {
 
             let expected = Point::new(x, y, z);
 
-            let actual = world.full_quarter.clone() * world.p;
+            let actual = &world.full_quarter * world.p;
 
             assert_eq!(expected, actual.rounded());
         };
@@ -654,7 +654,7 @@ mod example_steps {
 
             let expected = Point::new(x, y, z);
 
-            let actual = world.matrix_t.clone() * world.p;
+            let actual = &world.matrix_t * world.p;
 
             assert_eq!(expected, actual.rounded());
         };

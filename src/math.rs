@@ -256,7 +256,7 @@ impl ops::Mul<Array<f32, Ix2>> for Point {
 }
 
 // TODO: Feels like we should be able to use a `where` clause here
-impl ops::Mul<Point> for Array<f32, Ix2> {
+impl ops::Mul<Point> for &Array<f32, Ix2> {
     type Output = Point;
 
     fn mul(self, rhs: Point) -> Self::Output {
@@ -277,7 +277,7 @@ impl ops::Mul<Array<f32, Ix2>> for Vector {
 // Both structs can convert to 1D 4x arrays, after all
 
 // TODO: Feels like we should be able to use a `where` clause here
-impl ops::Mul<Vector> for Array<f32, Ix2> {
+impl ops::Mul<Vector> for &Array<f32, Ix2> {
     type Output = Vector;
 
     fn mul(self, rhs: Vector) -> Self::Output {
