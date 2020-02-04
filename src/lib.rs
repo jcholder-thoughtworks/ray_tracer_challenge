@@ -75,6 +75,19 @@ impl ops::Sub<Vector> for Point {
     }
 }
 
+// TODO: Template for float type
+impl ops::Mul<f32> for Point {
+    type Output = Self;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        Self::Output {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
 #[derive(Copy,Clone,Debug,PartialEq)]
 pub struct Vector {
     pub x: f32,
@@ -208,6 +221,10 @@ pub struct Ray {
 impl Ray {
     pub fn new(origin: Point, direction: Vector) -> Self {
         Ray { origin, direction }
+    }
+
+    pub fn position(&self, time: f32) -> Point {
+        self.origin + (self.direction * time)
     }
 }
 

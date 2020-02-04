@@ -327,6 +327,18 @@ mod example_steps {
             world.direction = Vector::new(x, y, z);
         };
 
+        given regex r"r ← ray\(point\((.*), (.*), (.*)\), vector\((.*), (.*), (.*)\)\)" |world, matches, _step| {
+            let px: f32 = matches[1].parse().unwrap();
+            let py: f32 = matches[2].parse().unwrap();
+            let pz: f32 = matches[3].parse().unwrap();
+
+            let vx: f32 = matches[4].parse().unwrap();
+            let vy: f32 = matches[5].parse().unwrap();
+            let vz: f32 = matches[6].parse().unwrap();
+
+            world.r = Ray::new(Point::new(px, py, pz), Vector::new(vx, vy, vz));
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = &world.matrix_a * world.p;
         };
@@ -691,6 +703,19 @@ mod example_steps {
 
         then "r.direction = direction" |world, _step| {
             assert_eq!(world.direction, world.r.direction);
+        };
+
+        then regex r"position\(r, (.*)\) = point\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let t: f32 = matches[1].parse().unwrap();
+            let x: f32 = matches[2].parse().unwrap();
+            let y: f32 = matches[3].parse().unwrap();
+            let z: f32 = matches[4].parse().unwrap();
+
+            let expected = Point::new(x, y, z);
+
+            let actual = world.r.position(t);
+
+            assert_eq!(expected, actual.rounded());
         };
     });
 }
