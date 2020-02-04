@@ -101,3 +101,5 @@ Might end up deleting all of the `i32` implementations for `RaytracerMatrix`, to
 Silly me, I don't need `RaytracerMatrix::translation`. I just need a `Translation` type! Actually, back to the original idea! I don't need `Translation::new`; that's habituation from other languages (particularly Ruby) speaking. Best to have a `translated` method on `RaytracerMatrix`. Waaaait, why am I worried about this at all? I need `translation` for the tests (as written) anyway. Just leave it alone for now. Packages. Specifically, a `transformations` package. _That_ is what I wanted.
 
 Well! Scaling sure was easy after all that.
+
+Not super happy about implementing the `radians` parameter on `rotation_x` as an `f32` instead of using a more abstract representation, but I'll only revisit that if it proves onerous.
