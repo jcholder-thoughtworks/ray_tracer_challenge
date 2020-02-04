@@ -8,6 +8,11 @@ pub mod canvas;
 pub const EPSILON: f32 = 0.00001;
 pub const EPSILON_DIGITS: i32 = 5;
 
+pub fn round(v: f32) -> f32 {
+    let factor = (10.0 as f32).powi(EPSILON_DIGITS);
+    (v * factor).round() / factor
+}
+
 #[derive(Copy,Clone,Debug,PartialEq)]
 pub struct Point {
     pub x: f32,
@@ -24,6 +29,10 @@ impl Point {
         equalish(self.x, other.x) &&
             equalish(self.y, other.y) &&
             equalish(self.z, other.z)
+    }
+
+    pub fn rounded(&self) -> Self {
+        Self::new(round(self.x), round(self.y), round(self.z))
     }
 }
 
@@ -181,6 +190,10 @@ impl Vector {
             y: (self.z * rhs.x) - (self.x * rhs.z),
             z: (self.x * rhs.y) - (self.y * rhs.x),
         }
+    }
+
+    pub fn rounded(&self) -> Self {
+        Self::new(round(self.x), round(self.y), round(self.z))
     }
 }
 
