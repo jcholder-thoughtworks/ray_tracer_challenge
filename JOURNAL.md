@@ -117,3 +117,5 @@ Observation: I'm using `clone` too much in the specs. It shouldn't be necessary 
 And now, clock time! (After a break.) Aside: I am so very glad for the "example" functionality built into `cargo`. It makes it so much easier to demonstrate how to use the crate.
 
 "Good" old overflow error! At least I eventually figured it out. And I didn't have to look at the hints in the book at all! Let's clean up some of these magic numbers and questionable type conversions.
+
+And _finally_, time to work on ray-sphere intersections! (But only after a walk break.)
