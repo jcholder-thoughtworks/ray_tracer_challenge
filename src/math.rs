@@ -3,7 +3,7 @@ use std::convert::From;
 
 use ndarray::*;
 
-use super::{Point, Vector, EPSILON_DIGITS};
+use super::{Point, Vector, round};
 
 pub mod transforms;
 
@@ -149,13 +149,11 @@ impl RaytracerMatrix for Array<f32, Ix2> {
         inverted
     }
 
-    // TODO: Refactor to use round()
     fn rounded(&self) -> Self {
         let mut rounded_matrix = self.clone();
 
         for el in rounded_matrix.iter_mut() {
-            let factor = (10.0 as f32).powi(EPSILON_DIGITS);
-            *el = (*el * factor).round() / factor;
+            *el = round(*el);
         }
 
         rounded_matrix
