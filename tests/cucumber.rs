@@ -22,9 +22,12 @@ pub struct MyWorld {
     p2: Point,
     p3: Point,
     p4: Point,
+    origin: Point,
     v: Vector,
+    direction: Vector,
     inv: Array<f32, Ix2>,
     tuple: (f32, f32, f32, f32),
+    r: Ray,
 }
 
 impl cucumber::World for MyWorld {}
@@ -45,9 +48,12 @@ impl std::default::Default for MyWorld {
             p2: Point::new(0.0, 0.0, 0.0),
             p3: Point::new(0.0, 0.0, 0.0),
             p4: Point::new(0.0, 0.0, 0.0),
+            origin: Point::new(0.0, 0.0, 0.0),
             v: Vector::new(0.0, 0.0, 0.0),
+            direction: Vector::new(0.0, 0.0, 0.0),
             inv: Array::from_elem((4, 4), 0.0),
             tuple: (0.0, 0.0, 0.0, 0.0),
+            r: Ray::new(CENTER_ORIGIN, STATIONARY),
         }
     }
 }
@@ -305,6 +311,22 @@ mod example_steps {
             world.matrix_c = translation(x, y, z);
         };
 
+        given regex r"origin ← point\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.origin = Point::new(x, y, z);
+        };
+
+        given regex r"direction ← vector\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.direction = Vector::new(x, y, z);
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = &world.matrix_a * world.p;
         };
@@ -319,6 +341,10 @@ mod example_steps {
 
         when "T ← C * B * A" |world, _step| {
             world.matrix_t = world.matrix_c.dot(&world.matrix_b.dot(&world.matrix_a));
+        };
+
+        when "r ← ray(origin, direction)" |world, _step| {
+            world.r = Ray::new(world.origin, world.direction);
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -657,6 +683,14 @@ mod example_steps {
             let actual = &world.matrix_t * world.p;
 
             assert_eq!(expected, actual.rounded());
+        };
+
+        then "r.origin = origin" |world, _step| {
+            assert_eq!(world.origin, world.r.origin);
+        };
+
+        then "r.direction = direction" |world, _step| {
+            assert_eq!(world.direction, world.r.direction);
         };
     });
 }
