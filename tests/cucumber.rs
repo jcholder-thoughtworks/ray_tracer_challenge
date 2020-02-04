@@ -18,6 +18,9 @@ pub struct MyWorld {
     full_quarter: Array<f32, Ix2>,
     transform: Array<f32, Ix2>,
     p: Point,
+    p2: Point,
+    p3: Point,
+    p4: Point,
     v: Vector,
     inv: Array<f32, Ix2>,
     tuple: (f32, f32, f32, f32),
@@ -37,6 +40,9 @@ impl std::default::Default for MyWorld {
             full_quarter: Array::from_elem((4, 4), 0.0),
             transform: Array::from_elem((4, 4), 0.0),
             p: Point::new(0.0, 0.0, 0.0),
+            p2: Point::new(0.0, 0.0, 0.0),
+            p3: Point::new(0.0, 0.0, 0.0),
+            p4: Point::new(0.0, 0.0, 0.0),
             v: Vector::new(0.0, 0.0, 0.0),
             inv: Array::from_elem((4, 4), 0.0),
             tuple: (0.0, 0.0, 0.0, 0.0),
@@ -273,6 +279,40 @@ mod example_steps {
             let zy: f32 = matches[6].parse().unwrap();
 
             world.transform = shearing(xy, xz, yx, yz, zx, zy);
+        };
+
+        given regex r"A ← rotation_x\(π / (.*)\)" |world, matches, _step| {
+            let denominator: f32 = matches[1].parse().unwrap();
+
+            world.matrix_a = rotation_x(PI / denominator);
+        };
+
+        given regex r"B ← scaling\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.matrix_b = scaling(x, y, z);
+        };
+
+        given regex r"C ← translation\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.matrix_c = translation(x, y, z);
+        };
+
+        when "p2 ← A * p" |world, _step| {
+            world.p2 = world.matrix_a.clone() * world.p;
+        };
+
+        when "p3 ← B * p2" |world, _step| {
+            world.p3 = world.matrix_b.clone() * world.p2;
+        };
+
+        when "p4 ← C * p3" |world, _step| {
+            world.p4 = world.matrix_c.clone() * world.p3;
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -561,6 +601,42 @@ mod example_steps {
             let expected = Point::new(x, y, z);
 
             let actual = world.full_quarter.clone() * world.p;
+
+            assert_eq!(expected, actual.rounded());
+        };
+
+        then regex r"p2 = point\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Point::new(x, y, z);
+
+            let actual = world.p2;
+
+            assert_eq!(expected, actual.rounded());
+        };
+
+        then regex r"p3 = point\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Point::new(x, y, z);
+
+            let actual = world.p3;
+
+            assert_eq!(expected, actual.rounded());
+        };
+
+        then regex r"p4 = point\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Point::new(x, y, z);
+
+            let actual = world.p4;
 
             assert_eq!(expected, actual.rounded());
         };

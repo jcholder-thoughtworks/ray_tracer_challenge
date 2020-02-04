@@ -109,3 +109,5 @@ Mental note to only use `round` and `rounded` at the last possible moment (e.g. 
 I do not feel like I understand the rotation transformations. A topic to dwell on later.
 
 Yay, shearing is easy!
+
+Back from lunch. Rather perplexed that the last step in the `Individual transformations are applied in sequence` scenario is failing for me. Oops! Just a little array index mistake that I duplicated a few times. Fixed!
