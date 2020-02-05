@@ -863,6 +863,20 @@ mod example_steps {
 
             assert_eq!(expected, actual);
         };
+
+        then "i = i2" |world, _step| {
+            let expected = match world.i.as_ref() {
+                Some(interception) => interception.object.id(),
+                None => panic!("world.i was not assigned"),
+            };
+
+            let actual = match world.i2.as_ref() {
+                Some(interception) => interception.object.id(),
+                None => panic!("world.i2 was not assigned"),
+            };
+
+            assert_eq!(expected, actual);
+        };
     });
 }
 
