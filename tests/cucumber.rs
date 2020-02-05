@@ -877,6 +877,13 @@ mod example_steps {
 
             assert_eq!(expected, actual);
         };
+
+        then "i is nothing" |world, _step| {
+            match world.i.as_ref() {
+                Some(i) => panic!("world.i should have been None but it was {:?}", i),
+                _ => assert!(true),
+            };
+        };
     });
 }
 
