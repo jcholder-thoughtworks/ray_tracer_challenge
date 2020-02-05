@@ -121,3 +121,7 @@ And now, clock time! (After a break.) Aside: I am so very glad for the "example"
 And _finally_, time to work on ray-sphere intersections! (But only after a walk break.)
 
 Sphere time! Oh, the meme potential.
+
+# 05Feb2020
+
+Back to work! Okay, this `intersection` object will prove interesting. Since it stores a reference to the intersected object, I predict that I'll have to think more about Rust lifetimes while implementing this than I have for all the preceding code. Huh, this _first_ stab at it hasn't been too bad but the proof is in the eating of the pudding and I still haven't really taken a bite.

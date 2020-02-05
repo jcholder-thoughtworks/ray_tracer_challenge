@@ -235,6 +235,15 @@ impl Ray {
     }
 }
 
+pub trait Interceptable {
+    fn intersections_with(&self, ray: Ray) -> Vec<Intersection>;
+}
+
+pub struct Intersection<'a> {
+    time: f32,
+    object: &'a Interceptable,
+}
+
 #[derive(Copy,Clone,Debug,PartialEq)]
 pub struct Sphere {
     pub origin: Point,
@@ -267,6 +276,14 @@ impl Sphere {
         } else {
             vec![t2, t1]
         }
+    }
+}
+
+impl Interceptable for Sphere {
+    fn intersections_with(&self, ray: Ray) -> Vec<Intersection> {
+        let times = self.intersect(ray);
+
+        times.iter().map(|t| Intersection { time: *t, object: self }).collect()
     }
 }
 
