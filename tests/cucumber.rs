@@ -32,7 +32,7 @@ pub struct MyWorld {
     tuple: (f32, f32, f32, f32),
     r: Ray,
     s: Sphere,
-    xs: Vec<Rc<Intersection>>,
+    xs: Intersections,
     i: Option<Intersection>,
     i1: Option<Rc<Intersection>>,
     i2: Option<Rc<Intersection>>,

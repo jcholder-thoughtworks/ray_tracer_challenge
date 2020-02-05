@@ -13,6 +13,8 @@ pub const EPSILON_DIGITS: i32 = 5;
 pub const CENTER_ORIGIN: Point = Point { x: 0.0, y: 0.0, z: 0.0 };
 pub const STATIONARY: Vector = Vector { x: 0.0, y: 0.0, z: 0.0 };
 
+pub type Intersections = Vec<Rc<Intersection>>;
+
 pub fn round(v: f32) -> f32 {
     let factor = (10.0 as f32).powi(EPSILON_DIGITS);
     (v * factor).round() / factor
@@ -259,7 +261,7 @@ impl Ray {
 }
 
 pub trait Interceptable: RaytracerObject + fmt::Debug {
-    fn intersections_with(&self, ray: Ray) -> Vec<Rc<Intersection>>;
+    fn intersections_with(&self, ray: Ray) -> Intersections;
 }
 
 #[derive(Debug)]
@@ -270,7 +272,7 @@ pub struct Intersection {
 
 #[derive(Copy,Clone,Debug,PartialEq)]
 pub struct Sphere {
-    id: usize, // TODO: Make private
+    id: usize,
     pub origin: Point,
 }
 
@@ -311,7 +313,7 @@ impl RaytracerObject for Sphere {
 }
 
 impl Interceptable for Sphere {
-    fn intersections_with(&self, ray: Ray) -> Vec<Rc<Intersection>> {
+    fn intersections_with(&self, ray: Ray) -> Intersections {
         let times = self.intersect(ray);
 
         times.iter().map(|t| Rc::new(Intersection { time: *t, object: Rc::new(*self) })).collect()
