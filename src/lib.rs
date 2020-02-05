@@ -236,19 +236,14 @@ impl Ray {
     }
 }
 
-pub trait Interceptable {
+pub trait Interceptable: fmt::Debug {
     fn intersections_with(&self, ray: Ray) -> Vec<Intersection>;
 }
 
+#[derive(Debug)]
 pub struct Intersection {
     pub time: f32,
     pub object: Box<dyn Interceptable>,
-}
-
-impl fmt::Debug for Intersection {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Intersection {{ time: {}, object: {{ /* debug goes here */ }} }}", self.time)
-    }
 }
 
 #[derive(Copy,Clone,Debug,PartialEq)]
