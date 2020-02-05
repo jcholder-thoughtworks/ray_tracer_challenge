@@ -133,3 +133,9 @@ Now comparing objects will be the sticky widget. Rust doesn't have automatic obj
 That wasn't too bad after all! Comparing IDs directly in the test feels a bit like cheating but it avoided confusing variable type issues.
 
 Back from a coffee break and running into borrow complications with the `Aggregating intersections`. I want to think it's an unnecessary test since I already have `Vec` but it does raise important questions (even if I can't enumerate them explicitly, only as a gut feeling). Maybe I need to use `Rc` instead of `Box`. And success! `Rc` _was_ the answer! Feeling pretty smart for having figured that out on my own. My mastery of the Rust memory model grows.
+
+Torn about whether to implement `hit` as a standalone function or as a method on a type. The latter is my default but it's also a habit from OOP. The former _would_ break the pattern established by my API, though, so best to aim for consistency.
+
+Observation: We have too many explicit numerical types floating around. We could use more type aliases, e.g. `Time = f32`. I'm making better use of `Option`, too.
+
+Oops: I think I've used `Intersection` and `Intersections` when I mention to use `Interception` and `Interceptions`. Something to refactor quickly.

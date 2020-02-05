@@ -266,7 +266,7 @@ pub trait Interceptable: RaytracerObject + fmt::Debug {
 
 #[derive(Debug)]
 pub struct Intersection {
-    pub time: f32,
+    pub time: f32, // TODO: Extract a type alias for this
     pub object: Rc<dyn Interceptable>,
 }
 
@@ -317,6 +317,26 @@ impl Interceptable for Sphere {
         let times = self.intersect(ray);
 
         times.iter().map(|t| Rc::new(Intersection { time: *t, object: Rc::new(*self) })).collect()
+    }
+}
+
+pub trait Hittable {
+    fn hit(&self) -> Option<Rc<Intersection>>;
+}
+
+impl Hittable for Intersections {
+    fn hit(&self) -> Option<Rc<Intersection>> {
+        let mut h: Option<Rc<Intersection>> = None;
+        let mut min_t: f32 = 0.0;
+
+        for i in self.iter() {
+            if i.time >= min_t && i.time >= 0.0 {
+                min_t = i.time;
+                h = Some(i.clone());
+            }
+        }
+
+        h
     }
 }
 
