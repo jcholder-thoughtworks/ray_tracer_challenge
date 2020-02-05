@@ -31,6 +31,7 @@ pub struct MyWorld {
     r: Ray,
     s: Sphere,
     xs: Vec<Intersection>,
+    i: Option<Intersection>,
 }
 
 impl cucumber::World for MyWorld {}
@@ -63,6 +64,7 @@ impl std::default::Default for MyWorld {
             r: Ray::new(CENTER_ORIGIN, STATIONARY),
             s,
             xs: vec![],
+            i: None,
         }
     }
 }
@@ -374,6 +376,12 @@ mod example_steps {
 
         when "xs ← intersect(s, r)" |world, _step| {
             world.xs = world.s.intersections_with(world.r);
+        };
+
+        when regex r"i ← intersection\((.*), s\)" |world, matches, _step| {
+            let time: f32 = matches[1].parse().unwrap();
+
+            world.i = Some(Intersection { time, object: Box::new(world.s) });
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -762,6 +770,30 @@ mod example_steps {
             let expected = world.s.id();
 
             let actual = world.xs[index].object.id();
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"i.t = (.*)" |world, matches, _step| {
+            let time: f32 = matches[1].parse().unwrap();
+
+            let expected = time;
+
+            let actual = match world.i.as_ref() {
+                Some(interception) => interception.time,
+                None => panic!("world.i was not assigned"),
+            };
+
+            assert_eq!(expected, actual);
+        };
+
+        then "i.object = s" |world, _step| {
+            let expected = world.s.id();
+
+            let actual = match world.i.as_ref() {
+                Some(interception) => interception.object.id(),
+                None => panic!("world.i was not assigned"),
+            };
 
             assert_eq!(expected, actual);
         };

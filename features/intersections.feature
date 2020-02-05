@@ -1,11 +1,11 @@
-#Feature: Intersections
-#
-#Scenario: An intersection encapsulates t and object
-#  Given s ← sphere()
-#  When i ← intersection(3.5, s)
-#  Then i.t = 3.5
-#    And i.object = s
-#
+Feature: Intersections
+
+Scenario: An intersection encapsulates t and object
+  Given s ← sphere()
+  When i ← intersection(3.5, s)
+  Then i.t = 3.5
+    And i.object = s
+
 #Scenario: Precomputing the state of an intersection
 #  Given r ← ray(point(0, 0, -5), vector(0, 0, 1))
 #    And shape ← sphere()
