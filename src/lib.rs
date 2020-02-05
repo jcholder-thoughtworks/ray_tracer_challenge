@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use std::fmt;
 use std::ops;
 
@@ -258,13 +259,13 @@ impl Ray {
 }
 
 pub trait Interceptable: RaytracerObject + fmt::Debug {
-    fn intersections_with(&self, ray: Ray) -> Vec<Intersection>;
+    fn intersections_with(&self, ray: Ray) -> Vec<Rc<Intersection>>;
 }
 
 #[derive(Debug)]
 pub struct Intersection {
     pub time: f32,
-    pub object: Box<dyn Interceptable>,
+    pub object: Rc<dyn Interceptable>,
 }
 
 #[derive(Copy,Clone,Debug,PartialEq)]
@@ -310,10 +311,10 @@ impl RaytracerObject for Sphere {
 }
 
 impl Interceptable for Sphere {
-    fn intersections_with(&self, ray: Ray) -> Vec<Intersection> {
+    fn intersections_with(&self, ray: Ray) -> Vec<Rc<Intersection>> {
         let times = self.intersect(ray);
 
-        times.iter().map(|t| Intersection { time: *t, object: Box::new(*self) }).collect()
+        times.iter().map(|t| Rc::new(Intersection { time: *t, object: Rc::new(*self) })).collect()
     }
 }
 

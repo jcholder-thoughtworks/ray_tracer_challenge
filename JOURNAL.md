@@ -131,3 +131,5 @@ And yep, the trouble starts as soon as I try using `Intersection` (with its life
 Now comparing objects will be the sticky widget. Rust doesn't have automatic object IDs like an object-oriented language would so I'll have to do something different. We can't just compare values, after all, since two spheres with the exact same coordinates are still distinct spheres. Unique integer IDs are an adequate solution but  _something_ has to uniquely increment those IDs. It's time for a `World` of some kind.
 
 That wasn't too bad after all! Comparing IDs directly in the test feels a bit like cheating but it avoided confusing variable type issues.
+
+Back from a coffee break and running into borrow complications with the `Aggregating intersections`. I want to think it's an unnecessary test since I already have `Vec` but it does raise important questions (even if I can't enumerate them explicitly, only as a gut feeling). Maybe I need to use `Rc` instead of `Box`. And success! `Rc` _was_ the answer! Feeling pretty smart for having figured that out on my own. My mastery of the Rust memory model grows.

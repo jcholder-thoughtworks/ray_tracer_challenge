@@ -1,5 +1,7 @@
 // Derived from example at https://github.com/bbqsrc/cucumber-rust/blob/master/README.md
 
+use std::rc::Rc;
+
 use ndarray::*;
 
 use cucumber::{cucumber, before, after};
@@ -30,8 +32,10 @@ pub struct MyWorld {
     tuple: (f32, f32, f32, f32),
     r: Ray,
     s: Sphere,
-    xs: Vec<Intersection>,
+    xs: Vec<Rc<Intersection>>,
     i: Option<Intersection>,
+    i1: Option<Rc<Intersection>>,
+    i2: Option<Rc<Intersection>>,
 }
 
 impl cucumber::World for MyWorld {}
@@ -65,11 +69,14 @@ impl std::default::Default for MyWorld {
             s,
             xs: vec![],
             i: None,
+            i1: None,
+            i2: None,
         }
     }
 }
 
 mod example_steps {
+    use std::rc::Rc;
     use std::f32::consts::PI;
 
     use cucumber::steps;
@@ -354,6 +361,18 @@ mod example_steps {
             world.s = world.rw.new_sphere(CENTER_ORIGIN);
         };
 
+        given regex r"i1 ← intersection\((.*), s\)" |world, matches, _step| {
+            let time: f32 = matches[1].parse().unwrap();
+
+            world.i1 = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
+        };
+
+        given regex r"i2 ← intersection\((.*), s\)" |world, matches, _step| {
+            let time: f32 = matches[1].parse().unwrap();
+
+            world.i2 = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = &world.matrix_a * world.p;
         };
@@ -378,10 +397,24 @@ mod example_steps {
             world.xs = world.s.intersections_with(world.r);
         };
 
+        when "xs ← intersections(i1, i2)" |world, _step| {
+            let i1 = match &world.i1 {
+                Some(i) => i.clone(),
+                None => panic!("world.i1 was not assigned"),
+            };
+
+            let i2 = match &world.i2 {
+                Some(i) => i.clone(),
+                None => panic!("world.i2 was not assigned"),
+            };
+
+            world.xs = vec![i1, i2];
+        };
+
         when regex r"i ← intersection\((.*), s\)" |world, matches, _step| {
             let time: f32 = matches[1].parse().unwrap();
 
-            world.i = Some(Intersection { time, object: Box::new(world.s) });
+            world.i = Some(Intersection { time, object: Rc::new(world.s) });
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
