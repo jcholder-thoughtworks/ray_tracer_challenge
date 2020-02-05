@@ -366,25 +366,25 @@ mod example_steps {
         };
 
         given regex r"i1 ← intersection\((.*), s\)" |world, matches, _step| {
-            let time: f32 = matches[1].parse().unwrap();
+            let time: Time = matches[1].parse().unwrap();
 
             world.i1 = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
         };
 
         given regex r"i2 ← intersection\((.*), s\)" |world, matches, _step| {
-            let time: f32 = matches[1].parse().unwrap();
+            let time: Time = matches[1].parse().unwrap();
 
             world.i2 = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
         };
 
         given regex r"i3 ← intersection\((.*), s\)" |world, matches, _step| {
-            let time: f32 = matches[1].parse().unwrap();
+            let time: Time = matches[1].parse().unwrap();
 
             world.i3 = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
         };
 
         given regex r"i4 ← intersection\((.*), s\)" |world, matches, _step| {
-            let time: f32 = matches[1].parse().unwrap();
+            let time: Time = matches[1].parse().unwrap();
 
             world.i4 = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
         };
@@ -466,7 +466,7 @@ mod example_steps {
         };
 
         when regex r"i ← intersection\((.*), s\)" |world, matches, _step| {
-            let time: f32 = matches[1].parse().unwrap();
+            let time: Time = matches[1].parse().unwrap();
 
             world.i = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
         };
@@ -846,7 +846,7 @@ mod example_steps {
 
         then regex r"xs\[(.*)\].t = (.*)" |world, matches, _step| {
             let index: usize = matches[1].parse().unwrap();
-            let time: f32 = matches[2].parse().unwrap();
+            let time: Time = matches[2].parse().unwrap();
 
             let expected = time;
 
@@ -866,7 +866,7 @@ mod example_steps {
         };
 
         then regex r"i.t = (.*)" |world, matches, _step| {
-            let time: f32 = matches[1].parse().unwrap();
+            let time: Time = matches[1].parse().unwrap();
 
             let expected = time;
 

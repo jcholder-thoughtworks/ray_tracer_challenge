@@ -141,3 +141,5 @@ Observation: We have too many explicit numerical types floating around. We could
 Oops: I think I've used `Intersection` and `Intersections` when I mention to use `Interception` and `Interceptions`. Something to refactor quickly. Actually, nevermind! Looks like I used both those words correctly.
 
 I do feel bad copying and pasting so much for these specs but, on the other hand, that has lead to only nominal subsequent inconveniences. Sometimes bad practice for production code, sure, but test code should change even less frequently than production code.
+
+I misspoke earlier about my API patterns. I was looking at `lib.rs`, which focuses on methods, but `transforms` _does_ use a few stand-alone functions. One more reason to do some refactoring sooner rather than later, perhaps?

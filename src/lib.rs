@@ -13,6 +13,7 @@ pub const EPSILON_DIGITS: i32 = 5;
 pub const CENTER_ORIGIN: Point = Point { x: 0.0, y: 0.0, z: 0.0 };
 pub const STATIONARY: Vector = Vector { x: 0.0, y: 0.0, z: 0.0 };
 
+pub type Time = f32;
 pub type Intersections = Vec<Rc<Intersection>>;
 
 pub fn round(v: f32) -> f32 {
@@ -255,7 +256,7 @@ impl Ray {
         Ray { origin, direction }
     }
 
-    pub fn position(&self, time: f32) -> Point {
+    pub fn position(&self, time: Time) -> Point {
         self.origin + (self.direction * time)
     }
 }
@@ -266,7 +267,7 @@ pub trait Interceptable: RaytracerObject + fmt::Debug {
 
 #[derive(Debug)]
 pub struct Intersection {
-    pub time: f32, // TODO: Extract a type alias for this
+    pub time: Time,
     pub object: Rc<dyn Interceptable>,
 }
 
@@ -281,7 +282,7 @@ impl Sphere {
         Sphere { origin, id }
     }
 
-    pub fn intersect(&self, ray: Ray) -> Vec<f32> {
+    pub fn intersect(&self, ray: Ray) -> Vec<Time> {
         let sphere_to_ray = ray.origin - self.origin;
 
         let a = ray.direction.dot(ray.direction);
@@ -327,7 +328,7 @@ pub trait Hittable {
 impl Hittable for Intersections {
     fn hit(&self) -> Option<Rc<Intersection>> {
         let mut h: Option<Rc<Intersection>> = None;
-        let mut min_t: f32 = 0.0;
+        let mut min_t: Time = 0.0;
 
         for i in self.iter() {
             if i.time >= min_t && i.time >= 0.0 {
