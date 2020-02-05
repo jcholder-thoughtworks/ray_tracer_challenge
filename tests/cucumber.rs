@@ -36,6 +36,8 @@ pub struct MyWorld {
     i: Option<Rc<Intersection>>,
     i1: Option<Rc<Intersection>>,
     i2: Option<Rc<Intersection>>,
+    i3: Option<Rc<Intersection>>,
+    i4: Option<Rc<Intersection>>,
 }
 
 impl cucumber::World for MyWorld {}
@@ -71,6 +73,8 @@ impl std::default::Default for MyWorld {
             i: None,
             i1: None,
             i2: None,
+            i3: None,
+            i4: None,
         }
     }
 }
@@ -373,6 +377,56 @@ mod example_steps {
             world.i2 = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
         };
 
+        given regex r"i3 ← intersection\((.*), s\)" |world, matches, _step| {
+            let time: f32 = matches[1].parse().unwrap();
+
+            world.i3 = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
+        };
+
+        given regex r"i4 ← intersection\((.*), s\)" |world, matches, _step| {
+            let time: f32 = matches[1].parse().unwrap();
+
+            world.i4 = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
+        };
+
+        given "xs ← intersections(i2, i1)" |world, _step| {
+            let i1 = match &world.i1 {
+                Some(i) => i.clone(),
+                None => panic!("world.i1 was not assigned"),
+            };
+
+            let i2 = match &world.i2 {
+                Some(i) => i.clone(),
+                None => panic!("world.i2 was not assigned"),
+            };
+
+            world.xs = vec![i2, i1];
+        };
+
+        given "xs ← intersections(i1, i2, i3, i4)" |world, _step| {
+            let i1 = match &world.i1 {
+                Some(i) => i.clone(),
+                None => panic!("world.i1 was not assigned"),
+            };
+
+            let i2 = match &world.i2 {
+                Some(i) => i.clone(),
+                None => panic!("world.i2 was not assigned"),
+            };
+
+            let i3 = match &world.i3 {
+                Some(i) => i.clone(),
+                None => panic!("world.i3 was not assigned"),
+            };
+
+            let i4 = match &world.i4 {
+                Some(i) => i.clone(),
+                None => panic!("world.i4 was not assigned"),
+            };
+
+            world.xs = vec![i1, i2, i3, i4];
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = &world.matrix_a * world.p;
         };
@@ -409,21 +463,6 @@ mod example_steps {
             };
 
             world.xs = vec![i1, i2];
-        };
-
-        // TODO: Move this to up with the other given rules
-        given "xs ← intersections(i2, i1)" |world, _step| {
-            let i1 = match &world.i1 {
-                Some(i) => i.clone(),
-                None => panic!("world.i1 was not assigned"),
-            };
-
-            let i2 = match &world.i2 {
-                Some(i) => i.clone(),
-                None => panic!("world.i2 was not assigned"),
-            };
-
-            world.xs = vec![i2, i1];
         };
 
         when regex r"i ← intersection\((.*), s\)" |world, matches, _step| {
@@ -873,6 +912,20 @@ mod example_steps {
             let actual = match world.i2.as_ref() {
                 Some(interception) => interception.object.id(),
                 None => panic!("world.i2 was not assigned"),
+            };
+
+            assert_eq!(expected, actual);
+        };
+
+        then "i = i4" |world, _step| {
+            let expected = match world.i.as_ref() {
+                Some(interception) => interception.object.id(),
+                None => panic!("world.i was not assigned"),
+            };
+
+            let actual = match world.i4.as_ref() {
+                Some(interception) => interception.object.id(),
+                None => panic!("world.i4 was not assigned"),
             };
 
             assert_eq!(expected, actual);
