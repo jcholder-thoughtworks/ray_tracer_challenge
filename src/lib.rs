@@ -17,6 +17,27 @@ pub fn round(v: f32) -> f32 {
     (v * factor).round() / factor
 }
 
+pub struct RaytracerWorld {
+    next_id: usize,
+}
+
+impl RaytracerWorld {
+    pub fn new() -> Self {
+        RaytracerWorld { next_id: 0 }
+    }
+
+    pub fn create_sphere(&mut self) -> Sphere {
+        let id = self.next_id;
+        self.next_id += 1;
+
+        Sphere { id, origin: CENTER_ORIGIN }
+    }
+}
+
+pub trait RaytracerObject {
+    fn id(&self) -> usize;
+}
+
 #[derive(Copy,Clone,Debug,PartialEq)]
 pub struct Point {
     pub x: f32,
@@ -236,7 +257,7 @@ impl Ray {
     }
 }
 
-pub trait Interceptable: fmt::Debug {
+pub trait Interceptable: RaytracerObject + fmt::Debug {
     fn intersections_with(&self, ray: Ray) -> Vec<Intersection>;
 }
 
@@ -248,12 +269,13 @@ pub struct Intersection {
 
 #[derive(Copy,Clone,Debug,PartialEq)]
 pub struct Sphere {
+    pub id: usize, // TODO: Make private
     pub origin: Point,
 }
 
 impl Sphere {
     pub fn new(origin: Point) -> Self {
-        Sphere { origin }
+        Sphere { origin, id: 0 } // TODO: Have RaytracerWorld provide ID
     }
 
     pub fn intersect(&self, ray: Ray) -> Vec<f32> {
@@ -278,6 +300,12 @@ impl Sphere {
         } else {
             vec![t2, t1]
         }
+    }
+}
+
+impl RaytracerObject for Sphere {
+    fn id(&self) -> usize {
+        self.id
     }
 }
 
