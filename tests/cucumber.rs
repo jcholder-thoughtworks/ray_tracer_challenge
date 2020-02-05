@@ -29,7 +29,7 @@ pub struct MyWorld {
     tuple: (f32, f32, f32, f32),
     r: Ray,
     s: Sphere,
-    xs: Vec<f32>,
+    xs: Vec<Intersection>,
 }
 
 impl cucumber::World for MyWorld {}
@@ -368,7 +368,7 @@ mod example_steps {
         };
 
         when "xs ← intersect(s, r)" |world, _step| {
-            world.xs = world.s.intersect(world.r);
+            world.xs = world.s.intersections_with(world.r);
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -740,13 +740,13 @@ mod example_steps {
             assert_eq!(expected, actual);
         };
 
-        then regex r"xs\[(.*)\] = (.*)" |world, matches, _step| {
+        then regex r"xs\[(.*)\].t = (.*)" |world, matches, _step| {
             let index: usize = matches[1].parse().unwrap();
             let time: f32 = matches[2].parse().unwrap();
 
             let expected = time;
 
-            let actual = world.xs[index];
+            let actual = world.xs[index].time;
 
             assert_eq!(expected, actual);
         };
