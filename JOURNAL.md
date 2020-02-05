@@ -138,4 +138,4 @@ Torn about whether to implement `hit` as a standalone function or as a method on
 
 Observation: We have too many explicit numerical types floating around. We could use more type aliases, e.g. `Time = f32`. I'm making better use of `Option`, too.
 
-Oops: I think I've used `Intersection` and `Intersections` when I mention to use `Interception` and `Interceptions`. Something to refactor quickly.
+Oops: I think I've used `Intersection` and `Intersections` when I mention to use `Interception` and `Interceptions`. Something to refactor quickly. Actually, nevermind! Looks like I used both those words correctly.

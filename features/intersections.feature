@@ -70,14 +70,14 @@ Scenario: Aggregating intersections
     And xs[0].t = 1
     And xs[1].t = 2
 
-#Scenario: The hit, when all intersections have positive t
-#  Given s ← sphere()
-#    And i1 ← intersection(1, s)
-#    And i2 ← intersection(2, s)
-#    And xs ← intersections(i2, i1)
-#  When i ← hit(xs)
-#  Then i = i1
-#
+Scenario: The hit, when all intersections have positive t
+  Given s ← sphere()
+    And i1 ← intersection(1, s)
+    And i2 ← intersection(2, s)
+    And xs ← intersections(i2, i1)
+  When i ← hit(xs)
+  Then i = i1
+
 #Scenario: The hit, when some intersections have negative t
 #  Given s ← sphere()
 #    And i1 ← intersection(-1, s)

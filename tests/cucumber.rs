@@ -33,7 +33,7 @@ pub struct MyWorld {
     r: Ray,
     s: Sphere,
     xs: Intersections,
-    i: Option<Intersection>,
+    i: Option<Rc<Intersection>>,
     i1: Option<Rc<Intersection>>,
     i2: Option<Rc<Intersection>>,
 }
@@ -411,10 +411,29 @@ mod example_steps {
             world.xs = vec![i1, i2];
         };
 
+        // TODO: Move this to up with the other given rules
+        given "xs ← intersections(i2, i1)" |world, _step| {
+            let i1 = match &world.i1 {
+                Some(i) => i.clone(),
+                None => panic!("world.i1 was not assigned"),
+            };
+
+            let i2 = match &world.i2 {
+                Some(i) => i.clone(),
+                None => panic!("world.i2 was not assigned"),
+            };
+
+            world.xs = vec![i2, i1];
+        };
+
         when regex r"i ← intersection\((.*), s\)" |world, matches, _step| {
             let time: f32 = matches[1].parse().unwrap();
 
-            world.i = Some(Intersection { time, object: Rc::new(world.s) });
+            world.i = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
+        };
+
+        when "i ← hit(xs)" |world, _step| {
+            world.i = world.xs.hit();
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -826,6 +845,20 @@ mod example_steps {
             let actual = match world.i.as_ref() {
                 Some(interception) => interception.object.id(),
                 None => panic!("world.i was not assigned"),
+            };
+
+            assert_eq!(expected, actual);
+        };
+
+        then "i = i1" |world, _step| {
+            let expected = match world.i.as_ref() {
+                Some(interception) => interception.object.id(),
+                None => panic!("world.i was not assigned"),
+            };
+
+            let actual = match world.i1.as_ref() {
+                Some(interception) => interception.object.id(),
+                None => panic!("world.i1 was not assigned"),
             };
 
             assert_eq!(expected, actual);
