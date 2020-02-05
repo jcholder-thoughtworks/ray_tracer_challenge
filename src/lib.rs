@@ -1,3 +1,4 @@
+use std::fmt;
 use std::ops;
 
 pub mod math;
@@ -239,9 +240,15 @@ pub trait Interceptable {
     fn intersections_with(&self, ray: Ray) -> Vec<Intersection>;
 }
 
-pub struct Intersection<'a> {
-    time: f32,
-    object: &'a Interceptable,
+pub struct Intersection {
+    pub time: f32,
+    pub object: Box<dyn Interceptable>,
+}
+
+impl fmt::Debug for Intersection {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Intersection {{ time: {}, object: {{ /* debug goes here */ }} }}", self.time)
+    }
 }
 
 #[derive(Copy,Clone,Debug,PartialEq)]
@@ -283,7 +290,7 @@ impl Interceptable for Sphere {
     fn intersections_with(&self, ray: Ray) -> Vec<Intersection> {
         let times = self.intersect(ray);
 
-        times.iter().map(|t| Intersection { time: *t, object: self }).collect()
+        times.iter().map(|t| Intersection { time: *t, object: Box::new(*self) }).collect()
     }
 }
 

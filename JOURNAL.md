@@ -125,3 +125,5 @@ Sphere time! Oh, the meme potential.
 # 05Feb2020
 
 Back to work! Okay, this `intersection` object will prove interesting. Since it stores a reference to the intersected object, I predict that I'll have to think more about Rust lifetimes while implementing this than I have for all the preceding code. Huh, this _first_ stab at it hasn't been too bad but the proof is in the eating of the pudding and I still haven't really taken a bite.
+
+And yep, the trouble starts as soon as I try using `Intersection` (with its lifetimed reference property) on the `MyWorld` struct of the Cucumber code. Still haven't fixed my lifetime issues but I'm incredibly grateful for the diagnostic usefulness of the Rust compiler's error messages. The devs have done such good work here. And _huh_! Looks like good old `Box` did the trick. I hope I'm using it right.
