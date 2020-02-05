@@ -9,6 +9,7 @@ use ray_tracer_challenge::color::*;
 
 pub struct MyWorld {
     // You can use this struct for mutable context in scenarios.
+    rw: RaytracerWorld,
     colors: Vec<Color>,
     matrix: Array<f32, Ix2>,
     matrix_a: Array<f32, Ix2>,
@@ -35,8 +36,12 @@ pub struct MyWorld {
 impl cucumber::World for MyWorld {}
 impl std::default::Default for MyWorld {
     fn default() -> MyWorld {
+        let mut rw = RaytracerWorld::new();
+        let s = rw.new_sphere(CENTER_ORIGIN);
+
         // This function is called every time a new scenario is started
         MyWorld {
+            rw,
             colors: vec![BLACK; 3],
             matrix: Array::from_elem((4, 4), 0.0),
             matrix_a: Array::from_elem((4, 4), 0.0),
@@ -56,7 +61,7 @@ impl std::default::Default for MyWorld {
             inv: Array::from_elem((4, 4), 0.0),
             tuple: (0.0, 0.0, 0.0, 0.0),
             r: Ray::new(CENTER_ORIGIN, STATIONARY),
-            s: Sphere::new(CENTER_ORIGIN),
+            s,
             xs: vec![],
         }
     }
@@ -344,7 +349,7 @@ mod example_steps {
         };
 
         given "s ← sphere()" |world, _step| {
-            world.s = Sphere::new(CENTER_ORIGIN);
+            world.s = world.rw.new_sphere(CENTER_ORIGIN);
         };
 
         when "p2 ← A * p" |world, _step| {
@@ -750,6 +755,18 @@ mod example_steps {
 
             assert_eq!(expected, actual);
         };
+
+        /*
+        then regex r"xs\[(.*)\].object = s" |world, matches, _step| {
+            let index: usize = matches[1].parse().unwrap();
+
+            let expected = world.s;
+
+            let actual: Sphere = *world.xs[index].object;
+
+            assert_eq!(expected, actual);
+        };
+        */
     });
 }
 

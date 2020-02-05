@@ -26,11 +26,11 @@ impl RaytracerWorld {
         RaytracerWorld { next_id: 0 }
     }
 
-    pub fn create_sphere(&mut self) -> Sphere {
+    pub fn new_sphere(&mut self, origin: Point) -> Sphere {
         let id = self.next_id;
         self.next_id += 1;
 
-        Sphere { id, origin: CENTER_ORIGIN }
+        Sphere::new(id, origin)
     }
 }
 
@@ -269,13 +269,13 @@ pub struct Intersection {
 
 #[derive(Copy,Clone,Debug,PartialEq)]
 pub struct Sphere {
-    pub id: usize, // TODO: Make private
+    id: usize, // TODO: Make private
     pub origin: Point,
 }
 
 impl Sphere {
-    pub fn new(origin: Point) -> Self {
-        Sphere { origin, id: 0 } // TODO: Have RaytracerWorld provide ID
+    pub fn new(id: usize, origin: Point) -> Self {
+        Sphere { origin, id }
     }
 
     pub fn intersect(&self, ray: Ray) -> Vec<f32> {
