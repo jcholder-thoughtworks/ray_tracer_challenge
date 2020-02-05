@@ -756,17 +756,15 @@ mod example_steps {
             assert_eq!(expected, actual);
         };
 
-        /*
         then regex r"xs\[(.*)\].object = s" |world, matches, _step| {
             let index: usize = matches[1].parse().unwrap();
 
-            let expected = world.s;
+            let expected = world.s.id();
 
-            let actual: Sphere = *world.xs[index].object;
+            let actual = world.xs[index].object.id();
 
             assert_eq!(expected, actual);
         };
-        */
     });
 }
 

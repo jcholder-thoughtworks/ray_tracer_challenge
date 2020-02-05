@@ -129,3 +129,5 @@ Back to work! Okay, this `intersection` object will prove interesting. Since it 
 And yep, the trouble starts as soon as I try using `Intersection` (with its lifetimed reference property) on the `MyWorld` struct of the Cucumber code. Still haven't fixed my lifetime issues but I'm incredibly grateful for the diagnostic usefulness of the Rust compiler's error messages. The devs have done such good work here. And _huh_! Looks like good old `Box` did the trick. I hope I'm using it right.
 
 Now comparing objects will be the sticky widget. Rust doesn't have automatic object IDs like an object-oriented language would so I'll have to do something different. We can't just compare values, after all, since two spheres with the exact same coordinates are still distinct spheres. Unique integer IDs are an adequate solution but  _something_ has to uniquely increment those IDs. It's time for a `World` of some kind.
+
+That wasn't too bad after all! Comparing IDs directly in the test feels a bit like cheating but it avoided confusing variable type issues.
