@@ -290,7 +290,7 @@ impl Ray {
 }
 
 pub trait Interceptable: RaytracerObject + fmt::Debug {
-    fn intersections_with(&self, ray: Ray) -> Intersections;
+    fn intersect(&self, ray: &Ray) -> Vec<Time>;
 }
 
 #[derive(Debug)]
@@ -299,18 +299,37 @@ pub struct Intersection {
     pub object: Rc<dyn Interceptable>,
 }
 
-#[derive(Copy,Clone,Debug,PartialEq)]
+#[derive(Clone,Debug,PartialEq)]
 pub struct Sphere {
     id: usize,
     pub origin: Point,
+    pub transform: TransformationMatrix,
 }
 
 impl Sphere {
     pub fn new(id: usize, origin: Point) -> Self {
-        Sphere { origin, id }
-    }
+        let transform = Array::eye(4);
 
-    pub fn intersect(&self, ray: Ray) -> Vec<Time> {
+        Sphere { origin, id, transform }
+    }
+}
+
+pub fn intersect(interceptable: &Rc<dyn Interceptable>, ray: &Ray) -> Intersections {
+    let times = interceptable.intersect(ray);
+
+    times.iter().map({ |t|
+        Rc::new(Intersection { time: *t, object: Rc::clone(&interceptable) })
+    }).collect()
+}
+
+impl RaytracerObject for Sphere {
+    fn id(&self) -> usize {
+        self.id
+    }
+}
+
+impl Interceptable for Sphere {
+    fn intersect(&self, ray: &Ray) -> Vec<Time> {
         let sphere_to_ray = ray.origin - self.origin;
 
         let a = ray.direction.dot(ray.direction);
@@ -332,20 +351,6 @@ impl Sphere {
         } else {
             vec![t2, t1]
         }
-    }
-}
-
-impl RaytracerObject for Sphere {
-    fn id(&self) -> usize {
-        self.id
-    }
-}
-
-impl Interceptable for Sphere {
-    fn intersections_with(&self, ray: Ray) -> Intersections {
-        let times = self.intersect(ray);
-
-        times.iter().map(|t| Rc::new(Intersection { time: *t, object: Rc::new(*self) })).collect()
     }
 }
 

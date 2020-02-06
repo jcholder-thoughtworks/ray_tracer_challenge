@@ -393,25 +393,33 @@ mod example_steps {
         given regex r"i1 ← intersection\((.*), s\)" |world, matches, _step| {
             let time: Time = matches[1].parse().unwrap();
 
-            world.i1 = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
+            let object = Rc::new(world.s.clone());
+
+            world.i1 = Some(Rc::new(Intersection { time, object }));
         };
 
         given regex r"i2 ← intersection\((.*), s\)" |world, matches, _step| {
             let time: Time = matches[1].parse().unwrap();
 
-            world.i2 = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
+            let object = Rc::new(world.s.clone());
+
+            world.i2 = Some(Rc::new(Intersection { time, object }));
         };
 
         given regex r"i3 ← intersection\((.*), s\)" |world, matches, _step| {
             let time: Time = matches[1].parse().unwrap();
 
-            world.i3 = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
+            let object = Rc::new(world.s.clone());
+
+            world.i3 = Some(Rc::new(Intersection { time, object }));
         };
 
         given regex r"i4 ← intersection\((.*), s\)" |world, matches, _step| {
             let time: Time = matches[1].parse().unwrap();
 
-            world.i4 = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
+            let object = Rc::new(world.s.clone());
+
+            world.i4 = Some(Rc::new(Intersection { time, object }));
         };
 
         given "xs ← intersections(i2, i1)" |world, _step| {
@@ -473,7 +481,9 @@ mod example_steps {
         };
 
         when "xs ← intersect(s, r)" |world, _step| {
-            world.xs = world.s.intersections_with(world.r);
+            let sphere_rc: Rc<dyn Interceptable> = Rc::new(world.s.clone());
+
+            world.xs = intersect(&sphere_rc, &world.r);
         };
 
         when "xs ← intersections(i1, i2)" |world, _step| {
@@ -493,7 +503,9 @@ mod example_steps {
         when regex r"i ← intersection\((.*), s\)" |world, matches, _step| {
             let time: Time = matches[1].parse().unwrap();
 
-            world.i = Some(Rc::new(Intersection { time, object: Rc::new(world.s) }));
+            let object = Rc::new(world.s.clone());
+
+            world.i = Some(Rc::new(Intersection { time, object }));
         };
 
         when "i ← hit(xs)" |world, _step| {
@@ -998,6 +1010,14 @@ mod example_steps {
                 Some(i) => panic!("world.i should have been None but it was {:?}", i),
                 _ => assert!(true),
             };
+        };
+
+        then "s.transform = identity_matrix" |world, _step| {
+            let expected: &Array<f32, Ix2> = &Array::eye(4);
+
+            let actual = &world.s.transform;
+
+            assert_eq!(expected, actual);
         };
     });
 }
