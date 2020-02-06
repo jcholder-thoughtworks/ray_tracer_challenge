@@ -14,13 +14,14 @@ pub struct MyWorld {
     rw: RaytracerWorld,
     colors: Vec<Color>,
     matrix: Array<f32, Ix2>,
-    matrix_a: Array<f32, Ix2>,
-    matrix_b: Array<f32, Ix2>,
-    matrix_c: Array<f32, Ix2>,
-    matrix_t: Array<f32, Ix2>,
-    half_quarter: Array<f32, Ix2>,
-    full_quarter: Array<f32, Ix2>,
-    transform: Array<f32, Ix2>,
+    matrix_a: Rc<Array<f32, Ix2>>,
+    matrix_b: Rc<Array<f32, Ix2>>,
+    matrix_c: Rc<Array<f32, Ix2>>,
+    matrix_t: Rc<Array<f32, Ix2>>,
+    half_quarter: Rc<Array<f32, Ix2>>,
+    full_quarter: Rc<Array<f32, Ix2>>,
+    transform: Rc<Array<f32, Ix2>>,
+    m: Rc<Array<f32, Ix2>>,
     p: Point,
     p2: Point,
     p3: Point,
@@ -31,6 +32,7 @@ pub struct MyWorld {
     inv: Array<f32, Ix2>,
     tuple: (f32, f32, f32, f32),
     r: Ray,
+    r2: Ray,
     s: Sphere,
     xs: Intersections,
     i: Option<Rc<Intersection>>,
@@ -50,14 +52,16 @@ impl std::default::Default for MyWorld {
         MyWorld {
             rw,
             colors: vec![BLACK; 3],
+            // TODO: Consider using Option here to make it more obvious when they haven't been set
             matrix: Array::from_elem((4, 4), 0.0),
-            matrix_a: Array::from_elem((4, 4), 0.0),
-            matrix_b: Array::from_elem((4, 4), 0.0),
-            matrix_c: Array::from_elem((4, 4), 0.0),
-            matrix_t: Array::from_elem((4, 4), 0.0),
-            half_quarter: Array::from_elem((4, 4), 0.0),
-            full_quarter: Array::from_elem((4, 4), 0.0),
-            transform: Array::from_elem((4, 4), 0.0),
+            matrix_a: Rc::new(Array::from_elem((4, 4), 4.0)),
+            matrix_b: Rc::new(Array::from_elem((4, 4), 0.0)),
+            matrix_c: Rc::new(Array::from_elem((4, 4), 0.0)),
+            matrix_t: Rc::new(Array::from_elem((4, 4), 0.0)),
+            half_quarter: Rc::new(Array::from_elem((4, 4), 0.0)),
+            full_quarter: Rc::new(Array::from_elem((4, 4), 0.0)),
+            transform: Rc::new(Array::from_elem((4, 4), 0.0)),
+            m: Rc::new(Array::from_elem((4, 4), 0.0)),
             p: CENTER_ORIGIN,
             p2: CENTER_ORIGIN,
             p3: CENTER_ORIGIN,
@@ -68,6 +72,7 @@ impl std::default::Default for MyWorld {
             inv: Array::from_elem((4, 4), 0.0),
             tuple: (0.0, 0.0, 0.0, 0.0),
             r: Ray::new(CENTER_ORIGIN, STATIONARY),
+            r2: Ray::new(CENTER_ORIGIN, STATIONARY),
             s,
             xs: vec![],
             i: None,
@@ -136,7 +141,7 @@ mod example_steps {
 
             let table = step.table().unwrap().clone();
 
-            world.matrix_a = table_to_matrix(table, (width, height));
+            world.matrix_a = Rc::new(table_to_matrix(table, (width, height)));
         };
 
         given regex r"the following (.*)x(.*) matrix B:" |world, matches, step| {
@@ -145,43 +150,47 @@ mod example_steps {
 
             let table = step.table().unwrap().clone();
 
-            world.matrix_b = table_to_matrix(table, (width, height));
+            world.matrix_b = Rc::new(table_to_matrix(table, (width, height)));
         };
 
         given "the following matrix B:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            world.matrix_b = Array::from_elem((4, 4), 0.0);
+            let mut array = Array::from_elem((4, 4), 0.0);
 
             for (c, value) in table.header.iter().enumerate() {
-                world.matrix_b[[0,c]] = value.parse().unwrap();
+                array[[0,c]] = value.parse().unwrap();
             }
 
             for (r, row) in table.rows.iter().enumerate() {
                 for (c, value) in row.iter().enumerate() {
-                    world.matrix_b[[r + 1,c]] = value.parse().unwrap();
+                    array[[r + 1,c]] = value.parse().unwrap();
                 }
             }
+
+            world.matrix_b = Rc::new(array);
         };
 
         given "the following matrix A:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            world.matrix_a = Array::from_elem((4, 4), 0.0);
+            let mut array = Array::from_elem((4, 4), 0.0);
 
             for (c, value) in table.header.iter().enumerate() {
-                world.matrix_a[[0,c]] = value.parse().unwrap();
+                array[[0,c]] = value.parse().unwrap();
             }
 
             for (r, row) in table.rows.iter().enumerate() {
                 for (c, value) in row.iter().enumerate() {
-                    world.matrix_a[[r + 1,c]] = value.parse().unwrap();
+                    array[[r + 1,c]] = value.parse().unwrap();
                 }
             }
+
+            world.matrix_a = Rc::new(array);
         };
 
         given "C ← A * B" |world, _step| {
-            world.matrix_c = world.matrix_a.dot(&world.matrix_b);
+            world.matrix_c = Rc::new(world.matrix_a.dot(world.matrix_b.as_ref()));
         };
 
         then regex r"M\[(.*),(.*)\] = (.*)" |world, matches, _step| {
@@ -217,11 +226,11 @@ mod example_steps {
             let row_i: usize = matches[1].parse().unwrap();
             let col_i: usize = matches[2].parse().unwrap();
 
-            world.matrix_b = world.matrix_a.submatrix(row_i, col_i);
+            world.matrix_b = Rc::new(world.matrix_a.submatrix(row_i, col_i));
         };
 
         given "B ← inverse(A)" |world, _step| {
-            world.matrix_b = world.matrix_a.inverse();
+            world.matrix_b = Rc::new(world.matrix_a.inverse());
         };
 
         given regex r"transform ← translation\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -229,7 +238,15 @@ mod example_steps {
             let t2: f32 = matches[2].parse().unwrap();
             let t3: f32 = matches[3].parse().unwrap();
 
-            world.transform = translation(t1, t2, t3);
+            world.transform = translation(t1, t2, t3).matrix;
+        };
+
+        given regex r"m ← translation\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let t1: f32 = matches[1].parse().unwrap();
+            let t2: f32 = matches[2].parse().unwrap();
+            let t3: f32 = matches[3].parse().unwrap();
+
+            world.m = translation(t1, t2, t3).matrix;
         };
 
         given regex r"transform ← scaling\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -237,7 +254,7 @@ mod example_steps {
             let t2: f32 = matches[2].parse().unwrap();
             let t3: f32 = matches[3].parse().unwrap();
 
-            world.transform = scaling(t1, t2, t3);
+            world.transform = scaling(t1, t2, t3).matrix;
         };
 
         given regex r"p ← point\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -263,37 +280,37 @@ mod example_steps {
         given regex r"half_quarter ← rotation_x\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.half_quarter = rotation_x(PI / denominator);
+            world.half_quarter = rotation_x(PI / denominator).matrix;
         };
 
         given regex r"half_quarter ← rotation_y\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.half_quarter = rotation_y(PI / denominator);
+            world.half_quarter = rotation_y(PI / denominator).matrix;
         };
 
         given regex r"half_quarter ← rotation_z\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.half_quarter = rotation_z(PI / denominator);
+            world.half_quarter = rotation_z(PI / denominator).matrix;
         };
 
         given regex r"full_quarter ← rotation_x\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.full_quarter = rotation_x(PI / denominator);
+            world.full_quarter = rotation_x(PI / denominator).matrix;
         };
 
         given regex r"full_quarter ← rotation_y\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.full_quarter = rotation_y(PI / denominator);
+            world.full_quarter = rotation_y(PI / denominator).matrix;
         };
 
         given regex r"full_quarter ← rotation_z\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.full_quarter = rotation_z(PI / denominator);
+            world.full_quarter = rotation_z(PI / denominator).matrix;
         };
 
         given "inv ← inverse(half_quarter)" |world, _step| {
@@ -308,13 +325,13 @@ mod example_steps {
             let zx: f32 = matches[5].parse().unwrap();
             let zy: f32 = matches[6].parse().unwrap();
 
-            world.transform = shearing(xy, xz, yx, yz, zx, zy);
+            world.transform = shearing(xy, xz, yx, yz, zx, zy).matrix;
         };
 
         given regex r"A ← rotation_x\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.matrix_a = rotation_x(PI / denominator);
+            world.matrix_a = rotation_x(PI / denominator).matrix;
         };
 
         given regex r"B ← scaling\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -322,7 +339,7 @@ mod example_steps {
             let y: f32 = matches[2].parse().unwrap();
             let z: f32 = matches[3].parse().unwrap();
 
-            world.matrix_b = scaling(x, y, z);
+            world.matrix_b = scaling(x, y, z).matrix;
         };
 
         given regex r"C ← translation\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -330,7 +347,7 @@ mod example_steps {
             let y: f32 = matches[2].parse().unwrap();
             let z: f32 = matches[3].parse().unwrap();
 
-            world.matrix_c = translation(x, y, z);
+            world.matrix_c = translation(x, y, z).matrix;
         };
 
         given regex r"origin ← point\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -428,19 +445,19 @@ mod example_steps {
         };
 
         when "p2 ← A * p" |world, _step| {
-            world.p2 = &world.matrix_a * world.p;
+            world.p2 = world.matrix_a.as_ref() * world.p;
         };
 
         when "p3 ← B * p2" |world, _step| {
-            world.p3 = &world.matrix_b * world.p2;
+            world.p3 = world.matrix_b.as_ref() * world.p2;
         };
 
         when "p4 ← C * p3" |world, _step| {
-            world.p4 = &world.matrix_c * world.p3;
+            world.p4 = world.matrix_c.as_ref() * world.p3;
         };
 
         when "T ← C * B * A" |world, _step| {
-            world.matrix_t = world.matrix_c.dot(&world.matrix_b.dot(&world.matrix_a));
+            world.matrix_t = Rc::new(world.matrix_c.dot(&world.matrix_b.dot(world.matrix_a.as_ref())));
         };
 
         when "r ← ray(origin, direction)" |world, _step| {
@@ -474,6 +491,15 @@ mod example_steps {
         when "i ← hit(xs)" |world, _step| {
             world.i = world.xs.hit();
         };
+
+        /*
+        when "r2 ← transform(r, m)" |world, _step| {
+            let m = Rc::new(world.m);
+            let tm = Transformation::Translation(m);
+            //let tm = Transformation::Translation(translation(0.0, 0.0, 0.0));
+            world.r2 = world.r.transform(&tm);
+        };
+        */
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
             let color_i1: usize = matches[1].parse().unwrap();
@@ -540,7 +566,7 @@ mod example_steps {
                 }
             }
 
-            let actual_matrix = world.matrix_a.dot(&world.matrix_b);
+            let actual_matrix = world.matrix_a.dot(world.matrix_b.as_ref());
 
             assert_eq!(expected_matrix, actual_matrix);
         };
@@ -548,7 +574,12 @@ mod example_steps {
         then "A * identity_matrix = A" |world, _step| {
             let identity_matrix: Array<f32, Ix2> = Array::eye(4);
 
-            assert_eq!(world.matrix_a.dot(&identity_matrix), world.matrix_a)
+            let expected = world.matrix_a.dot(&identity_matrix);
+
+            // TODO: Not an ideal cloning. How to make this more efficient?
+            let actual = (*world.matrix_a).clone();
+
+            assert_eq!(expected, actual);
         };
 
         then "transpose(A) is the following matrix:" |world, step| {
@@ -658,7 +689,11 @@ mod example_steps {
         };
 
         then "C * inverse(B) = A" |world, _step| {
-            assert_eq!(world.matrix_a, world.matrix_c.dot(&world.matrix_b.inverse()).rounded());
+            let expected = (*world.matrix_a).clone();
+
+            let actual = world.matrix_c.dot(&world.matrix_b.inverse()).rounded();
+
+            assert_eq!(expected, actual);
         };
 
         then regex r"transform \* p = point\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -668,7 +703,7 @@ mod example_steps {
 
             let expected = Point::new(x, y, z);
 
-            let actual = &world.transform * world.p;
+            let actual = world.transform.as_ref() * world.p;
 
             assert_eq!(expected, actual);
         };
@@ -700,7 +735,7 @@ mod example_steps {
         then "transform * v = v" |world, _step| {
             let expected = world.v;
 
-            let actual = &world.transform * world.v;
+            let actual = world.transform.as_ref() * world.v;
 
             assert_eq!(expected, actual);
         };
@@ -712,7 +747,7 @@ mod example_steps {
 
             let expected = Vector::new(x, y, z);
 
-            let actual = &world.transform * world.v;
+            let actual = world.transform.as_ref() * world.v;
 
             assert_eq!(expected, actual);
         };
@@ -748,7 +783,7 @@ mod example_steps {
 
             let expected = Point::new(x, y, z);
 
-            let actual = &world.half_quarter * world.p;
+            let actual = world.half_quarter.as_ref() * world.p;
 
             assert_eq!(expected, actual);
         };
@@ -760,7 +795,7 @@ mod example_steps {
 
             let expected = Point::new(x, y, z);
 
-            let actual = &world.full_quarter * world.p;
+            let actual = world.full_quarter.as_ref() * world.p;
 
             assert_eq!(expected, actual.rounded());
         };
@@ -808,7 +843,7 @@ mod example_steps {
 
             let expected = Point::new(x, y, z);
 
-            let actual = &world.matrix_t * world.p;
+            let actual = world.matrix_t.as_ref() * world.p;
 
             assert_eq!(expected, actual.rounded());
         };
@@ -817,8 +852,32 @@ mod example_steps {
             assert_eq!(world.origin, world.r.origin);
         };
 
+        then regex r"r2.origin = point\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Point::new(x, y, z);
+
+            let actual = world.r2.origin;
+
+            assert_eq!(expected, actual);
+        };
+
         then "r.direction = direction" |world, _step| {
             assert_eq!(world.direction, world.r.direction);
+        };
+
+        then regex r"r2.direction = vector\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Vector::new(x, y, z);
+
+            let actual = world.r2.direction;
+
+            assert_eq!(expected, actual);
         };
 
         then regex r"position\(r, (.*)\) = point\((.*), (.*), (.*)\)" |world, matches, _step| {

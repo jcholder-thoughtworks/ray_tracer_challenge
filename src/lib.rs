@@ -2,6 +2,8 @@ use std::rc::Rc;
 use std::fmt;
 use std::ops;
 
+use self::math::transforms::{Transformation,TransformationType};
+
 pub mod math;
 pub mod physics;
 pub mod color;
@@ -258,6 +260,13 @@ impl Ray {
 
     pub fn position(&self, time: Time) -> Point {
         self.origin + (self.direction * time)
+    }
+
+    pub fn transform(&self, transformation: &Transformation) -> Self {
+        match transformation.ttype {
+            TransformationType::Translation => unimplemented!("Getting there!"),
+            _ => unimplemented!("Not there yet!"),
+        }
     }
 }
 

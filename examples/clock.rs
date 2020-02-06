@@ -20,7 +20,7 @@ fn main() -> std::io::Result<()> {
 
     // We could simplify this to PI / 6 but this makes it more obvious where
     // the numbers come from
-    let hour_turn = rotation_z(-(2.0 * PI) / HOURS as f32);
+    let hour_turn = rotation_z(-(2.0 * PI) / HOURS as f32).matrix;
 
     for _hour in 0..HOURS {
         println!("{:?}", hand);
@@ -37,7 +37,7 @@ fn main() -> std::io::Result<()> {
 
         canvas.write_pixel(x, y, WHITE);
 
-        hand = &hour_turn * hand;
+        hand = hour_turn.as_ref() * hand;
     }
 
     let ppm = canvas.to_ppm();

@@ -143,3 +143,24 @@ Oops: I think I've used `Intersection` and `Intersections` when I mention to use
 I do feel bad copying and pasting so much for these specs but, on the other hand, that has lead to only nominal subsequent inconveniences. Sometimes bad practice for production code, sure, but test code should change even less frequently than production code.
 
 I misspoke earlier about my API patterns. I was looking at `lib.rs`, which focuses on methods, but `transforms` _does_ use a few stand-alone functions. One more reason to do some refactoring sooner rather than later, perhaps?
+
+Buh-wah. I have some scenarios that have started failing randomly. Utter confounded since I haven't touched them in ages. Leaves me wondering where the seeming nondeterministic element could have possibly come from.
+
+Phew. Still plugging away at this transformation work but I can see a fair amount of refactoring ahead of me., I'm clearly too brain-drained here at 4:24pm to tackle that, though, so time to call it a day!
+
+
+# 06Feb2020
+
+New day, new challenges! (Well, the same challenges from yesterday!)
+
+I considered having a general `Transformation::Rotation` type that took a new `Axis` type but since we'll only ever have the three axes that might be overkill'. Besides, that would complicate matching down the road. A potential future refactoring.
+
+I will need to refactor so that functions return either `Array` or `Rc<Array>` more consistently. (At least, I think I will.)
+
+Wondering if I'm making unnecessary trouble for myself by having `Transformation` as an enum instead of making each variant its own type. There's probably a more ergonomic way to handle it, though, instead of manually raising errors on mismatches like I am.
+
+It feels like the end of the refactoring is in sight! Goodness knows I'll write more ownership-aware code going forward!
+
+Yeah, I think my instincts were right. `Transformation` needs to be a `struct` with a `matrix` property and a `type` property since every transformation (so far) will have a `matrix` but I don't always care about the `type`.
+
+Refactoring wasn't so bad, it seems! Type system sure helped there. Still need to fix a couple specs, though.
