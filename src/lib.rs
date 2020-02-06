@@ -4,7 +4,7 @@ use std::ops;
 
 use ndarray::*;
 
-use self::math::transforms::{Transformation,TransformationType};
+use self::math::transforms::{TransformationMatrix};
 
 pub mod math;
 pub mod physics;
@@ -276,20 +276,11 @@ impl Ray {
         self.origin + (self.direction * time)
     }
 
-    pub fn transform(&self, transformation: &Transformation) -> Self {
-        let origin = match transformation.ttype {
-            TransformationType::Translation => transformation.matrix.as_ref() * self.origin,
-            TransformationType::Scaling => transformation.matrix.as_ref() * self.origin,
-            _ => unimplemented!("WIP"),
-        };
+    pub fn transform(&self, transformation_matrix: &TransformationMatrix) -> Self {
+        let origin = transformation_matrix * self.origin;
 
         let direction: Array<f32, Ix1> = self.direction.into();
-
-        let direction = match transformation.ttype {
-            TransformationType::Translation => transformation.matrix.dot(&direction).into(),
-            TransformationType::Scaling => transformation.matrix.dot(&direction).into(),
-            _ => unimplemented!("WIP"),
-        };
+        let direction = transformation_matrix.dot(&direction).into();
 
         Self {
             origin,

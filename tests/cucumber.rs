@@ -238,7 +238,7 @@ mod example_steps {
             let t2: f32 = matches[2].parse().unwrap();
             let t3: f32 = matches[3].parse().unwrap();
 
-            world.transform = translation(t1, t2, t3).matrix;
+            world.transform = Rc::new(translation(t1, t2, t3));
         };
 
         given regex r"m ← translation\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -246,7 +246,7 @@ mod example_steps {
             let t2: f32 = matches[2].parse().unwrap();
             let t3: f32 = matches[3].parse().unwrap();
 
-            world.m = translation(t1, t2, t3).matrix;
+            world.m = Rc::new(translation(t1, t2, t3));
         };
 
         given regex r"m ← scaling\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -254,7 +254,7 @@ mod example_steps {
             let t2: f32 = matches[2].parse().unwrap();
             let t3: f32 = matches[3].parse().unwrap();
 
-            world.m = scaling(t1, t2, t3).matrix;
+            world.m = Rc::new(scaling(t1, t2, t3));
         };
 
         given regex r"transform ← scaling\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -262,7 +262,7 @@ mod example_steps {
             let t2: f32 = matches[2].parse().unwrap();
             let t3: f32 = matches[3].parse().unwrap();
 
-            world.transform = scaling(t1, t2, t3).matrix;
+            world.transform = Rc::new(scaling(t1, t2, t3));
         };
 
         given regex r"p ← point\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -288,37 +288,37 @@ mod example_steps {
         given regex r"half_quarter ← rotation_x\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.half_quarter = rotation_x(PI / denominator).matrix;
+            world.half_quarter = Rc::new(rotation_x(PI / denominator));
         };
 
         given regex r"half_quarter ← rotation_y\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.half_quarter = rotation_y(PI / denominator).matrix;
+            world.half_quarter = Rc::new(rotation_y(PI / denominator));
         };
 
         given regex r"half_quarter ← rotation_z\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.half_quarter = rotation_z(PI / denominator).matrix;
+            world.half_quarter = Rc::new(rotation_z(PI / denominator));
         };
 
         given regex r"full_quarter ← rotation_x\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.full_quarter = rotation_x(PI / denominator).matrix;
+            world.full_quarter = Rc::new(rotation_x(PI / denominator));
         };
 
         given regex r"full_quarter ← rotation_y\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.full_quarter = rotation_y(PI / denominator).matrix;
+            world.full_quarter = Rc::new(rotation_y(PI / denominator));
         };
 
         given regex r"full_quarter ← rotation_z\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.full_quarter = rotation_z(PI / denominator).matrix;
+            world.full_quarter = Rc::new(rotation_z(PI / denominator));
         };
 
         given "inv ← inverse(half_quarter)" |world, _step| {
@@ -333,13 +333,13 @@ mod example_steps {
             let zx: f32 = matches[5].parse().unwrap();
             let zy: f32 = matches[6].parse().unwrap();
 
-            world.transform = shearing(xy, xz, yx, yz, zx, zy).matrix;
+            world.transform = Rc::new(shearing(xy, xz, yx, yz, zx, zy));
         };
 
         given regex r"A ← rotation_x\(π / (.*)\)" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.matrix_a = rotation_x(PI / denominator).matrix;
+            world.matrix_a = Rc::new(rotation_x(PI / denominator));
         };
 
         given regex r"B ← scaling\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -347,7 +347,7 @@ mod example_steps {
             let y: f32 = matches[2].parse().unwrap();
             let z: f32 = matches[3].parse().unwrap();
 
-            world.matrix_b = scaling(x, y, z).matrix;
+            world.matrix_b = Rc::new(scaling(x, y, z));
         };
 
         given regex r"C ← translation\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -355,7 +355,7 @@ mod example_steps {
             let y: f32 = matches[2].parse().unwrap();
             let z: f32 = matches[3].parse().unwrap();
 
-            world.matrix_c = translation(x, y, z).matrix;
+            world.matrix_c = Rc::new(translation(x, y, z));
         };
 
         given regex r"origin ← point\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -501,11 +501,7 @@ mod example_steps {
         };
 
         when "r2 ← transform(r, m)" |world, _step| {
-            let m = Transformation {
-                ttype: TransformationType::Translation,
-                matrix: world.m.clone(),
-            };
-            world.r2 = world.r.transform(&m);
+            world.r2 = world.r.transform(&world.m);
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
