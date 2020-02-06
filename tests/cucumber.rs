@@ -249,6 +249,14 @@ mod example_steps {
             world.m = translation(t1, t2, t3).matrix;
         };
 
+        given regex r"m ← scaling\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let t1: f32 = matches[1].parse().unwrap();
+            let t2: f32 = matches[2].parse().unwrap();
+            let t3: f32 = matches[3].parse().unwrap();
+
+            world.m = scaling(t1, t2, t3).matrix;
+        };
+
         given regex r"transform ← scaling\((.*), (.*), (.*)\)" |world, matches, _step| {
             let t1: f32 = matches[1].parse().unwrap();
             let t2: f32 = matches[2].parse().unwrap();

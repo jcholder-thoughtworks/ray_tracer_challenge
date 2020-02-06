@@ -2,6 +2,8 @@ use std::rc::Rc;
 use std::fmt;
 use std::ops;
 
+use ndarray::*;
+
 use self::math::transforms::{Transformation,TransformationType};
 
 pub mod math;
@@ -247,6 +249,18 @@ impl Vector {
     }
 }
 
+impl From<Vector> for Array<f32, Ix1> {
+    fn from(item: Vector) -> Self {
+        arr1(&[item.x, item.y, item.z, 0.0])
+    }
+}
+
+impl From<Array<f32, Ix1>> for Vector {
+    fn from(item: Array<f32, Ix1>) -> Self {
+        Vector::new(item[[0]], item[[1]], item[[2]])
+    }
+}
+
 #[derive(Copy,Clone,Debug,PartialEq)]
 pub struct Ray {
     pub origin: Point,
@@ -265,12 +279,21 @@ impl Ray {
     pub fn transform(&self, transformation: &Transformation) -> Self {
         let origin = match transformation.ttype {
             TransformationType::Translation => transformation.matrix.as_ref() * self.origin,
-            _ => unimplemented!("Not there yet!"),
+            TransformationType::Scaling => transformation.matrix.as_ref() * self.origin,
+            _ => unimplemented!("WIP"),
+        };
+
+        let direction: Array<f32, Ix1> = self.direction.into();
+
+        let direction = match transformation.ttype {
+            TransformationType::Translation => transformation.matrix.dot(&direction).into(),
+            TransformationType::Scaling => transformation.matrix.dot(&direction).into(),
+            _ => unimplemented!("WIP"),
         };
 
         Self {
             origin,
-            direction: self.direction,
+            direction,
         }
     }
 }

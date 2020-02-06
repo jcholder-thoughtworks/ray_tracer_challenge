@@ -164,3 +164,9 @@ It feels like the end of the refactoring is in sight! Goodness knows I'll write 
 Yeah, I think my instincts were right. `Transformation` needs to be a `struct` with a `matrix` property and a `type` property since every transformation (so far) will have a `matrix` but I don't always care about the `type`.
 
 Refactoring wasn't so bad, it seems! Type system sure helped there. Still need to fix a couple specs, though.
+
+Surprised I'm having so much trouble with `scaling`. I wonder what's up with that. Hopefully just getting the math wrong. Well, huh. I recreated the test in a new `transformations` example and it seemed to work just fine! So something is wrong with my test setup. Not surprising since I had already run into intermittently failing tests. Guess it's time to fix those without delay!
+
+I haven't fixed the intermittent errors but I solved the scaling issue: It was the `when "r2 ← transform(r, m)"` step this entire time! I knew that matrix reconstitution was a bad idea. I bet I haven't even needed to distinguish these transformations by type this entire time, either ... That fixed it! Oh well, lesson learned: building out separate `Point`/`Vector` types appears to have been overkill. Something to refactor away later.
+
+I've just seen the specs return different results across multiple runs with no recompilation inbetween. Prediction: The intermittent errors stemmed from `MyWorld` not being reset properly between scenarios and the errors come from the scenarios being run in a randomized order. I'm going to try fixing that now. The comments _say_ the world is being recreated for each scenario, though, so what the heck.

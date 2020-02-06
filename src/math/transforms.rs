@@ -4,7 +4,6 @@ use ndarray::*;
 
 pub type TransformationMatrix = Array<f32, Ix2>;
 
-
 #[derive(Debug)]
 pub enum TransformationType {
     Translation,
