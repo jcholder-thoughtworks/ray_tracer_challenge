@@ -263,9 +263,14 @@ impl Ray {
     }
 
     pub fn transform(&self, transformation: &Transformation) -> Self {
-        match transformation.ttype {
-            TransformationType::Translation => unimplemented!("Getting there!"),
+        let origin = match transformation.ttype {
+            TransformationType::Translation => transformation.matrix.as_ref() * self.origin,
             _ => unimplemented!("Not there yet!"),
+        };
+
+        Self {
+            origin,
+            direction: self.direction,
         }
     }
 }

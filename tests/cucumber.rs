@@ -492,14 +492,13 @@ mod example_steps {
             world.i = world.xs.hit();
         };
 
-        /*
         when "r2 ← transform(r, m)" |world, _step| {
-            let m = Rc::new(world.m);
-            let tm = Transformation::Translation(m);
-            //let tm = Transformation::Translation(translation(0.0, 0.0, 0.0));
-            world.r2 = world.r.transform(&tm);
+            let m = Transformation {
+                ttype: TransformationType::Translation,
+                matrix: world.m.clone(),
+            };
+            world.r2 = world.r.transform(&m);
         };
-        */
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
             let color_i1: usize = matches[1].parse().unwrap();
