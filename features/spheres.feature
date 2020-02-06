@@ -50,12 +50,12 @@ Scenario: A sphere's default transformation
   Given s ← sphere()
   Then s.transform = identity_matrix
 
-#Scenario: Changing a sphere's transformation
-#  Given s ← sphere()
-#    And t ← translation(2, 3, 4)
-#  When set_transform(s, t)
-#  Then s.transform = t
-#
+Scenario: Changing a sphere's transformation
+  Given s ← sphere()
+    And t ← translation(2, 3, 4)
+  When set_transform(s, t)
+  Then s.transform = t
+
 #Scenario: Intersecting a scaled sphere with a ray
 #  Given r ← ray(point(0, 0, -5), vector(0, 0, 1))
 #    And s ← sphere()

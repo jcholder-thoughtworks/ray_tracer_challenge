@@ -22,6 +22,7 @@ pub struct MyWorld {
     full_quarter: Rc<Array<f32, Ix2>>,
     transform: Rc<Array<f32, Ix2>>,
     m: Rc<Array<f32, Ix2>>,
+    t: Rc<Array<f32, Ix2>>,
     p: Point,
     p2: Point,
     p3: Point,
@@ -62,6 +63,7 @@ impl std::default::Default for MyWorld {
             full_quarter: Rc::new(Array::from_elem((4, 4), 0.0)),
             transform: Rc::new(Array::from_elem((4, 4), 0.0)),
             m: Rc::new(Array::from_elem((4, 4), 0.0)),
+            t: Rc::new(Array::from_elem((4, 4), 0.0)),
             p: CENTER_ORIGIN,
             p2: CENTER_ORIGIN,
             p3: CENTER_ORIGIN,
@@ -358,6 +360,14 @@ mod example_steps {
             world.matrix_c = Rc::new(translation(x, y, z));
         };
 
+        given regex r"t ← translation\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.t = Rc::new(translation(x, y, z));
+        };
+
         given regex r"origin ← point\((.*), (.*), (.*)\)" |world, matches, _step| {
             let x: f32 = matches[1].parse().unwrap();
             let y: f32 = matches[2].parse().unwrap();
@@ -514,6 +524,10 @@ mod example_steps {
 
         when "r2 ← transform(r, m)" |world, _step| {
             world.r2 = world.r.transform(&world.m);
+        };
+
+        when "set_transform(s, t)" |world, _step| {
+            world.s.transform = world.t.as_ref().clone();
         };
 
         then regex r"c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)" |world, matches, _step| {
@@ -1016,6 +1030,14 @@ mod example_steps {
             let expected: &Array<f32, Ix2> = &Array::eye(4);
 
             let actual = &world.s.transform;
+
+            assert_eq!(expected, actual);
+        };
+
+        then "s.transform = t" |world, _step| {
+            let expected = world.t.as_ref().clone();
+
+            let actual = world.s.transform.clone();
 
             assert_eq!(expected, actual);
         };
