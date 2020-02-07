@@ -555,11 +555,11 @@ mod example_steps {
             };
             let y: f32 = match matches[2].as_str() {
                 "√3/3" => 3.0_f32.sqrt() / 3.0,
-                _ => matches[1].parse().unwrap(),
+                _ => matches[2].parse().unwrap(),
             };
-            let z: f32 = match matches[2].as_str() {
+            let z: f32 = match matches[3].as_str() {
                 "√3/3" => 3.0_f32.sqrt() / 3.0,
-                _ => matches[1].parse().unwrap(),
+                _ => matches[3].parse().unwrap(),
             };
 
             world.n = world.s.normal_at(Point::new(x, y, z));
@@ -1084,11 +1084,11 @@ mod example_steps {
             };
             let y: f32 = match matches[2].as_str() {
                 "√3/3" => 3.0_f32.sqrt() / 3.0,
-                _ => matches[1].parse().unwrap(),
+                _ => matches[2].parse().unwrap(),
             };
-            let z: f32 = match matches[2].as_str() {
+            let z: f32 = match matches[3].as_str() {
                 "√3/3" => 3.0_f32.sqrt() / 3.0,
-                _ => matches[1].parse().unwrap(),
+                _ => matches[3].parse().unwrap(),
             };
 
             let expected = Vector::new(x, y, z);
