@@ -178,3 +178,5 @@ Uncertain about how to proceed with attaching transformations to `Sphere`. I thi
 # 07Feb2020
 
 It was the regular expressions! I forgot my `^` and `$` anchors!
+
+And now, time to render (the silhouette of) a sphere! And success! (So slow, though! Still a success!)

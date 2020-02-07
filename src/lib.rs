@@ -35,6 +35,7 @@ impl RaytracerWorld {
         RaytracerWorld { next_id: 0 }
     }
 
+    // TODO: Should probably return an Rc<Sphere>
     pub fn new_sphere(&mut self, origin: Point) -> Sphere {
         let id = self.next_id;
         self.next_id += 1;
