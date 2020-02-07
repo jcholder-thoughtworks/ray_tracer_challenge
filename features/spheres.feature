@@ -72,11 +72,11 @@ Scenario: Intersecting a translated sphere with a ray
     And xs ← intersect(s, r)
   Then xs.count = 0
 
-#Scenario: The normal on a sphere at a point on the x axis
-#  Given s ← sphere()
-#  When n ← normal_at(s, point(1, 0, 0))
-#  Then n = vector(1, 0, 0)
-#
+Scenario: The normal on a sphere at a point on the x axis
+  Given s ← sphere()
+  When n ← normal_at(s, point(1, 0, 0))
+  Then n = vector(1, 0, 0)
+
 #Scenario: The normal on a sphere at a point on the y axis
 #  Given s ← sphere()
 #  When n ← normal_at(s, point(0, 1, 0))

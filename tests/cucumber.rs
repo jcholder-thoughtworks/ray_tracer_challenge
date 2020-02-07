@@ -30,6 +30,7 @@ pub struct MyWorld {
     origin: Point,
     v: Vector,
     direction: Vector,
+    n: Vector,
     inv: Array<f32, Ix2>,
     tuple: (f32, f32, f32, f32),
     r: Ray,
@@ -71,6 +72,7 @@ impl std::default::Default for MyWorld {
             origin: CENTER_ORIGIN,
             v: STATIONARY,
             direction: STATIONARY,
+            n: STATIONARY,
             inv: Array::from_elem((4, 4), 0.0),
             tuple: (0.0, 0.0, 0.0, 0.0),
             r: Ray::new(CENTER_ORIGIN, STATIONARY),
@@ -544,6 +546,14 @@ mod example_steps {
             let z: f32 = matches[3].parse().unwrap();
 
             world.s.transform = translation(x, y, z);
+        };
+
+        when regex r"^n ← normal_at\(s, point\((.*), (.*), (.*)\)\)$" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.n = world.s.normal_at(Point::new(x, y, z));
         };
 
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -1056,6 +1066,18 @@ mod example_steps {
             let actual = world.s.transform.clone();
 
             assert_eq!(expected, actual);
+        };
+
+        then regex r"^n = vector\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Vector::new(x, y, z);
+
+            let actual = world.n;
+
+            assert_eq!(expected, actual.rounded());
         };
     });
 }

@@ -314,6 +314,10 @@ impl Sphere {
 
         Sphere { origin, id, transform }
     }
+
+    pub fn normal_at(&self, point: Point) -> Vector {
+        Vector::new(point.x, point.y, point.z)
+    }
 }
 
 pub fn intersect(interceptable: &Rc<dyn Interceptable>, ray: &Ray) -> Intersections {
