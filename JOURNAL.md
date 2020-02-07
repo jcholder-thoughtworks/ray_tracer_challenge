@@ -182,3 +182,7 @@ It was the regular expressions! I forgot my `^` and `$` anchors!
 And now, time to render (the silhouette of) a sphere! And success! (So slow, though! Still a success!)
 
 Trying to use [`cargo-instruments`](https://github.com/cmyr/cargo-instruments/) to determine why the `sphere` example is running so slowly but I get a `failed to parse lock file` error when I run `cargo instruments`. Tried running `cargo update` in case that might help but no luck.
+
+Oops! Forgot to journal. So profiling was a bust _but_ my program is suddenly inexplicably much faster than I expected? Wondering if something in the background was eating up a lot of processing power.
+
+Now onto _amazing_ news: We have perspective projection! Whoooo!
