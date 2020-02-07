@@ -180,3 +180,5 @@ Uncertain about how to proceed with attaching transformations to `Sphere`. I thi
 It was the regular expressions! I forgot my `^` and `$` anchors!
 
 And now, time to render (the silhouette of) a sphere! And success! (So slow, though! Still a success!)
+
+Trying to use [`cargo-instruments`](https://github.com/cmyr/cargo-instruments/) to determine why the `sphere` example is running so slowly but I get a `failed to parse lock file` error when I run `cargo instruments`. Tried running `cargo update` in case that might help but no luck.
