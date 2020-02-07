@@ -1097,6 +1097,14 @@ mod example_steps {
 
             assert_eq!(expected.rounded(), actual.rounded());
         };
+
+        then "n = normalize(n)" |world, _step| {
+            let expected = world.n;
+
+            let actual = world.n.norm();
+
+            assert_eq!(expected.rounded(), actual.rounded());
+        };
     });
 }
 
