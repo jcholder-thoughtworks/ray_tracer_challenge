@@ -530,6 +530,14 @@ mod example_steps {
             world.s.transform = world.t.as_ref().clone();
         };
 
+        when regex r"^set_transform\(s, scaling\((.*), (.*), (.*)\)\)$" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.s.transform = scaling(x, y, z);
+        };
+
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
             let color_i1: usize = matches[1].parse().unwrap();
             let color1 = world.colors[color_i1];

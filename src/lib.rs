@@ -4,6 +4,7 @@ use std::ops;
 
 use ndarray::*;
 
+use self::math::{RaytracerMatrix};
 use self::math::transforms::{TransformationMatrix};
 
 pub mod math;
@@ -329,7 +330,11 @@ impl RaytracerObject for Sphere {
 }
 
 impl Interceptable for Sphere {
-    fn intersect(&self, ray: &Ray) -> Vec<Time> {
+    fn intersect(&self, original_ray: &Ray) -> Vec<Time> {
+        let inverse = self.transform.inverse();
+
+        let ray = original_ray.transform(&inverse);
+
         let sphere_to_ray = ray.origin - self.origin;
 
         let a = ray.direction.dot(ray.direction);
