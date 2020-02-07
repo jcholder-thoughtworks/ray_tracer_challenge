@@ -316,7 +316,8 @@ impl Sphere {
     }
 
     pub fn normal_at(&self, point: Point) -> Vector {
-        Vector::new(point.x, point.y, point.z).norm()
+        let np = (point - self.origin).norm();
+        Vector::new(np.x, np.y, np.z)
     }
 }
 
