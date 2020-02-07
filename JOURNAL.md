@@ -186,3 +186,5 @@ Trying to use [`cargo-instruments`](https://github.com/cmyr/cargo-instruments/) 
 Oops! Forgot to journal. So profiling was a bust _but_ my program is suddenly inexplicably much faster than I expected? Wondering if something in the background was eating up a lot of processing power.
 
 Now onto _amazing_ news: We have perspective projection! Whoooo!
+
+And some privitive shading!!
