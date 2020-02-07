@@ -190,3 +190,5 @@ Now onto _amazing_ news: We have perspective projection! Whoooo!
 And some primitive shading!!
 
 And now, time to calculate some normals! Smooth sailing so far.
+
+Woohoo! The issue I filed for `cargo-instruments` has been addressed! I can profile my code again! That makes _two_ crates improved or fixed because of my work here!

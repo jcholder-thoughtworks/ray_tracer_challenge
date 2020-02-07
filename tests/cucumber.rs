@@ -253,12 +253,23 @@ mod example_steps {
             world.m = Rc::new(translation(t1, t2, t3));
         };
 
-        given regex r"^m ← scaling\((.*), (.*), (.*)\)$" |world, matches, _step| {
+        given regex r"^m ← scaling\(([0-9.]*), ([0-9.]*), ([0-9.]*)\)$" |world, matches, _step| {
             let t1: f32 = matches[1].parse().unwrap();
             let t2: f32 = matches[2].parse().unwrap();
             let t3: f32 = matches[3].parse().unwrap();
 
             world.m = Rc::new(scaling(t1, t2, t3));
+        };
+
+        given regex r"^m ← scaling\(([0-9.]*), ([0-9.]*), ([0-9.]*)\) \* rotation_z\(π/5\)$" |world, matches, _step| {
+            let t1: f32 = matches[1].parse().unwrap();
+            let t2: f32 = matches[2].parse().unwrap();
+            let t3: f32 = matches[3].parse().unwrap();
+
+            let st = scaling(t1, t2, t3);
+            let rzt = rotation_z(PI / 5.0);
+
+            world.m = Rc::new(st.dot(&rzt));
         };
 
         given regex r"^transform ← scaling\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -472,6 +483,18 @@ mod example_steps {
             world.xs = vec![i1, i2, i3, i4];
         };
 
+        given regex r"^set_transform\(s, translation\((.*), (.*), (.*)\)\)$" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.s.transform = translation(x, y, z);
+        };
+
+        given "set_transform(s, m)" |world, _step| {
+            world.s.transform = world.m.as_ref().clone();
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -551,14 +574,20 @@ mod example_steps {
         when regex r"^n ← normal_at\(s, point\((.*), (.*), (.*)\)\)$" |world, matches, _step| {
             let x: f32 = match matches[1].as_str() {
                 "√3/3" => 3.0_f32.sqrt() / 3.0,
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => 2.0_f32.sqrt() / 2.0,
                 _ => matches[1].parse().unwrap(),
             };
             let y: f32 = match matches[2].as_str() {
                 "√3/3" => 3.0_f32.sqrt() / 3.0,
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => 2.0_f32.sqrt() / 2.0,
                 _ => matches[2].parse().unwrap(),
             };
             let z: f32 = match matches[3].as_str() {
                 "√3/3" => 3.0_f32.sqrt() / 3.0,
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => 2.0_f32.sqrt() / 2.0,
                 _ => matches[3].parse().unwrap(),
             };
 
