@@ -87,11 +87,11 @@ Scenario: The normal on a sphere at a point on the z axis
   When n ← normal_at(s, point(0, 0, 1))
   Then n = vector(0, 0, 1)
 
-#Scenario: The normal on a sphere at a nonaxial point
-#  Given s ← sphere()
-#  When n ← normal_at(s, point(√3/3, √3/3, √3/3))
-#  Then n = vector(√3/3, √3/3, √3/3)
-#
+Scenario: The normal on a sphere at a nonaxial point
+  Given s ← sphere()
+  When n ← normal_at(s, point(√3/3, √3/3, √3/3))
+  Then n = vector(√3/3, √3/3, √3/3)
+
 #Scenario: The normal is a normalized vector
 #  Given s ← sphere()
 #  When n ← normal_at(s, point(√3/3, √3/3, √3/3))

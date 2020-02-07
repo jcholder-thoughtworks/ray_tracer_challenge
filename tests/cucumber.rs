@@ -549,9 +549,18 @@ mod example_steps {
         };
 
         when regex r"^n ← normal_at\(s, point\((.*), (.*), (.*)\)\)$" |world, matches, _step| {
-            let x: f32 = matches[1].parse().unwrap();
-            let y: f32 = matches[2].parse().unwrap();
-            let z: f32 = matches[3].parse().unwrap();
+            let x: f32 = match matches[1].as_str() {
+                "√3/3" => 3.0_f32.sqrt() / 3.0,
+                _ => matches[1].parse().unwrap(),
+            };
+            let y: f32 = match matches[2].as_str() {
+                "√3/3" => 3.0_f32.sqrt() / 3.0,
+                _ => matches[1].parse().unwrap(),
+            };
+            let z: f32 = match matches[2].as_str() {
+                "√3/3" => 3.0_f32.sqrt() / 3.0,
+                _ => matches[1].parse().unwrap(),
+            };
 
             world.n = world.s.normal_at(Point::new(x, y, z));
         };
@@ -1069,15 +1078,24 @@ mod example_steps {
         };
 
         then regex r"^n = vector\((.*), (.*), (.*)\)$" |world, matches, _step| {
-            let x: f32 = matches[1].parse().unwrap();
-            let y: f32 = matches[2].parse().unwrap();
-            let z: f32 = matches[3].parse().unwrap();
+            let x: f32 = match matches[1].as_str() {
+                "√3/3" => 3.0_f32.sqrt() / 3.0,
+                _ => matches[1].parse().unwrap(),
+            };
+            let y: f32 = match matches[2].as_str() {
+                "√3/3" => 3.0_f32.sqrt() / 3.0,
+                _ => matches[1].parse().unwrap(),
+            };
+            let z: f32 = match matches[2].as_str() {
+                "√3/3" => 3.0_f32.sqrt() / 3.0,
+                _ => matches[1].parse().unwrap(),
+            };
 
             let expected = Vector::new(x, y, z);
 
             let actual = world.n;
 
-            assert_eq!(expected, actual.rounded());
+            assert_eq!(expected.rounded(), actual.rounded());
         };
     });
 }
