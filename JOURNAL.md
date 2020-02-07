@@ -187,4 +187,6 @@ Oops! Forgot to journal. So profiling was a bust _but_ my program is suddenly in
 
 Now onto _amazing_ news: We have perspective projection! Whoooo!
 
-And some privitive shading!!
+And some primitive shading!!
+
+And now, time to calculate some normals! Smooth sailing so far.
