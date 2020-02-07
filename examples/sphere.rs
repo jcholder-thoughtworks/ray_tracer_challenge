@@ -22,7 +22,7 @@ fn main() -> std::io::Result<()> {
     let mut world = RaytracerWorld::new();
 
     let mut sphere = world.new_sphere(CENTER_ORIGIN);
-    //sphere.transform = scaling(12.0, 15.0, 5.0).dot(&translation(3.0, 3.0, 0.0));
+    sphere.transform = scaling(2.0, 2.0, 5.0).dot(&translation(1.0, 1.0, 1.0));
 
     let sphere_rc: Rc<dyn Interceptable> = Rc::new(sphere.clone());
 
@@ -50,8 +50,9 @@ fn main() -> std::io::Result<()> {
 
             let hit = intersections.hit();
 
-            if let Some(_) = hit {
-                canvas.write_pixel(x, y, red);
+            if let Some(h) = hit {
+                let color = red * (h.time / 140.0);
+                canvas.write_pixel(x, y, color);
             }
         }
     }
