@@ -1,15 +1,13 @@
-use std::rc::Rc;
 use std::fs::File;
 use std::io::prelude::*;
 
 use ray_tracer_challenge::*;
-use ray_tracer_challenge::{Interceptable};
 use ray_tracer_challenge::math::transforms::*;
 use ray_tracer_challenge::color::*;
 use ray_tracer_challenge::canvas::*;
 
-const CANVAS_WIDTH: u32 = 100;
-const CANVAS_HEIGHT: u32 = 100;
+const CANVAS_WIDTH: u32 = 50;
+const CANVAS_HEIGHT: u32 = 50;
 const ZOOM: f32 = 0.01;
 
 fn main() -> std::io::Result<()> {
@@ -23,8 +21,6 @@ fn main() -> std::io::Result<()> {
 
     let mut sphere = world.new_sphere(CENTER_ORIGIN);
     sphere.transform = scaling(2.0, 2.0, 5.0).dot(&translation(1.0, 1.0, 1.0));
-
-    let sphere_rc: Rc<dyn Interceptable> = Rc::new(sphere.clone());
 
     let origin = Point::new(0.0, 0.0, -5.0);
     let direction = Vector::new(0.0, 0.0, 0.1);
@@ -46,9 +42,7 @@ fn main() -> std::io::Result<()> {
 
             let pointed_ray = Ray::new(ray.origin, new_direction);
 
-            let intersections = intersect(&sphere_rc, &pointed_ray);
-
-            let hit = intersections.hit();
+            let hit = sphere.hit_on_intersect(&pointed_ray);
 
             if let Some(h) = hit {
                 let color = red * (h.time / 140.0);
