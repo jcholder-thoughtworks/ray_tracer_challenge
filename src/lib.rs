@@ -315,13 +315,15 @@ pub struct Sphere {
     id: usize,
     pub origin: Point,
     pub transform: TransformationMatrix,
+    pub material: Material,
 }
 
 impl Sphere {
     pub fn new(id: usize, origin: Point) -> Self {
         let transform = Array::eye(4);
+        let material = Material::new();
 
-        Sphere { origin, id, transform }
+        Sphere { origin, id, transform, material }
     }
 
     pub fn normal_at(&self, world_point: Point) -> Vector {
