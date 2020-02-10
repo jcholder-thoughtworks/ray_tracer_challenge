@@ -5,7 +5,7 @@ use super::equalish;
 pub const BLACK: Color = Color { red: 0.0, green: 0.0, blue: 0.0, };
 pub const WHITE: Color = Color { red: 1.0, green: 1.0, blue: 1.0, };
 
-#[derive(Clone,Copy,Debug)]
+#[derive(Clone,Copy,Debug,PartialEq)]
 pub struct Color {
     pub red: f32,
     pub green: f32,
