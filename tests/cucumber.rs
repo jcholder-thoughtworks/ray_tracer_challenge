@@ -34,6 +34,7 @@ pub struct MyWorld {
     inv: Array<f32, Ix2>,
     tuple: (f32, f32, f32, f32),
     r: Ray,
+    rv: Vector,
     r2: Ray,
     s: Sphere,
     xs: Intersections,
@@ -76,6 +77,7 @@ impl std::default::Default for MyWorld {
             inv: Array::from_elem((4, 4), 0.0),
             tuple: (0.0, 0.0, 0.0, 0.0),
             r: Ray::new(CENTER_ORIGIN, STATIONARY),
+            rv: STATIONARY,
             r2: Ray::new(CENTER_ORIGIN, STATIONARY),
             s,
             xs: vec![],
@@ -495,6 +497,26 @@ mod example_steps {
             world.s.transform = world.m.as_ref().clone();
         };
 
+        given regex r"^n ← vector\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let x: f32 = match matches[1].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[1].parse().unwrap(),
+            };
+            let y: f32 = match matches[2].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[2].parse().unwrap(),
+            };
+            let z: f32 = match matches[3].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[3].parse().unwrap(),
+            };
+
+            world.n = Vector::new(x, y, z);
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -592,6 +614,10 @@ mod example_steps {
             };
 
             world.n = world.s.normal_at(Point::new(x, y, z));
+        };
+
+        when "r ← reflect(v, n)" |world, _step| {
+            world.rv = world.v.reflect(&world.n);
         };
 
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -1131,6 +1157,30 @@ mod example_steps {
             let expected = world.n;
 
             let actual = world.n.norm();
+
+            assert_eq!(expected.rounded(), actual.rounded());
+        };
+
+        then regex r"^r = vector\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let x: f32 = match matches[1].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[1].parse().unwrap(),
+            };
+            let y: f32 = match matches[2].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[2].parse().unwrap(),
+            };
+            let z: f32 = match matches[3].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[3].parse().unwrap(),
+            };
+
+            let expected = Vector::new(x, y, z);
+
+            let actual = world.rv;
 
             assert_eq!(expected.rounded(), actual.rounded());
         };

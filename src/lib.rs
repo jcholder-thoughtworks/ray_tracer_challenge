@@ -249,6 +249,14 @@ impl Vector {
     pub fn rounded(&self) -> Self {
         Self::new(round(self.x), round(self.y), round(self.z))
     }
+
+    // TODO: Refactor away unnecessary cloning here
+    pub fn reflect(&self, normal: &Vector) -> Self {
+        let incoming: Vector = self.clone();
+        let normal = normal.clone();
+
+        incoming - normal * 2.0_f32 * incoming.dot(normal)
+    }
 }
 
 impl From<Vector> for Array<f32, Ix1> {
