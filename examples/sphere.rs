@@ -1,10 +1,10 @@
 use std::fs::File;
 use std::io::prelude::*;
 
-use ray_tracer_challenge::*;
-use ray_tracer_challenge::math::transforms::*;
-use ray_tracer_challenge::color::*;
 use ray_tracer_challenge::canvas::*;
+use ray_tracer_challenge::color::*;
+use ray_tracer_challenge::math::transforms::*;
+use ray_tracer_challenge::*;
 
 const CANVAS_WIDTH: u32 = 150;
 const CANVAS_HEIGHT: u32 = 150;

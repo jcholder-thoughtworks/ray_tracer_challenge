@@ -80,14 +80,20 @@ fn tuples_and_identity_matrices() {
     let mut modified_identity_matrix = identity_matrix.clone();
     modified_identity_matrix[[0, 0]] = 4.0;
 
-    println!("But what if we change the matrix to {:?}?\n", modified_identity_matrix);
+    println!(
+        "But what if we change the matrix to {:?}?\n",
+        modified_identity_matrix
+    );
 
     println!("{:?}\n", modified_identity_matrix.dot(&tuple_matrix));
 
     let mut modified_identity_matrix = identity_matrix.clone();
     modified_identity_matrix[[0, 1]] = 4.0;
 
-    println!("But what if we change the matrix to {:?}?\n", modified_identity_matrix);
+    println!(
+        "But what if we change the matrix to {:?}?\n",
+        modified_identity_matrix
+    );
 
     println!("{:?}\n", modified_identity_matrix.dot(&tuple_matrix));
 }

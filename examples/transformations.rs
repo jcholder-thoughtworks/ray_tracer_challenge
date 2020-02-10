@@ -1,5 +1,5 @@
-use ray_tracer_challenge::*;
 use ray_tracer_challenge::math::transforms::*;
+use ray_tracer_challenge::*;
 
 fn main() {
     // Scenario: Scaling a ray

@@ -1,11 +1,11 @@
+use std::f32::consts::PI;
 use std::fs::File;
 use std::io::prelude::*;
-use std::f32::consts::PI;
 
-use ray_tracer_challenge::*;
-use ray_tracer_challenge::math::transforms::*;
-use ray_tracer_challenge::color::*;
 use ray_tracer_challenge::canvas::*;
+use ray_tracer_challenge::color::*;
+use ray_tracer_challenge::math::transforms::*;
+use ray_tracer_challenge::*;
 
 const CANVAS_WIDTH: u32 = 400;
 const CANVAS_HEIGHT: u32 = 400;
