@@ -45,6 +45,12 @@ impl RaytracerWorld {
     }
 }
 
+impl Default for RaytracerWorld {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub trait RaytracerObject {
     fn id(&self) -> usize;
 }

@@ -57,7 +57,7 @@ pub struct MyWorld {
 impl cucumber::World for MyWorld {}
 impl std::default::Default for MyWorld {
     fn default() -> MyWorld {
-        let mut rw = RaytracerWorld::new();
+        let mut rw = RaytracerWorld::default();
         let s = rw.new_sphere(CENTER_ORIGIN);
 
         // This function is called every time a new scenario is started

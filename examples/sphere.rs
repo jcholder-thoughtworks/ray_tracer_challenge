@@ -15,7 +15,7 @@ fn main() -> std::io::Result<()> {
 
     println!("Drawing the sphere ...");
 
-    let mut world = RaytracerWorld::new();
+    let mut world = RaytracerWorld::default();
 
     let mut sphere = world.new_sphere(CENTER_ORIGIN);
     sphere.material = Material::default();
