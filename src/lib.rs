@@ -253,10 +253,9 @@ impl Vector {
 
     // TODO: Refactor away unnecessary cloning here
     pub fn reflect(&self, normal: &Vector) -> Self {
-        let incoming: Vector = self.clone();
-        let normal = normal.clone();
+        let incoming: Vector = *self;
 
-        incoming - normal * 2.0_f32 * incoming.dot(normal)
+        incoming - *normal * 2.0_f32 * incoming.dot(*normal)
     }
 }
 
