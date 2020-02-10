@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct Projectile {
     pub position: Point,
     pub velocity: Vector,
@@ -15,7 +15,7 @@ impl Projectile {
     }
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct Environment {
     pub gravity: Vector,
     pub wind: Vector,

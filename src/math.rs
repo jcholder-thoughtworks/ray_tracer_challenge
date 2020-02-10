@@ -1,9 +1,9 @@
-use std::ops;
 use std::convert::From;
+use std::ops;
 
 use ndarray::*;
 
-use super::{Point, Vector, round};
+use super::{round, Point, Vector};
 
 pub mod transforms;
 
@@ -21,7 +21,8 @@ pub trait RaytracerMatrix: Clone {
     fn cofactor(&self, row: usize, col: usize) -> Self::Unit {
         let minor = self.minor(row, col);
 
-        if (row + col) % 2 == 0 { // if even
+        if (row + col) % 2 == 0 {
+            // if even
             minor
         } else {
             Self::negate(minor)
@@ -56,24 +57,20 @@ impl RaytracerMatrix for Array<i32, Ix2> {
         let mut sub = Self::default((orig_rows - 1, orig_cols - 1));
 
         for r in 0..orig_rows {
-            if r == row { continue }
+            if r == row {
+                continue;
+            }
 
             for c in 0..orig_cols {
-                if c == col { continue }
+                if c == col {
+                    continue;
+                }
 
-                let ri = if r > row {
-                    r - 1
-                } else {
-                    r
-                };
+                let ri = if r > row { r - 1 } else { r };
 
-                let ci = if c > col {
-                    c - 1
-                } else {
-                    c
-                };
+                let ci = if c > col { c - 1 } else { c };
 
-                sub[[ri,ci]] = self[[r,c]];
+                sub[[ri, ci]] = self[[r, c]];
             }
         }
 
@@ -91,7 +88,7 @@ impl RaytracerMatrix for Array<i32, Ix2> {
     fn inverse(&self) -> Self {
         // TODO: Put this safety check behind a debug flag so that we can disable it for
         // optimization
-        if ! self.invertible() {
+        if !self.invertible() {
             panic!("Cannot invert a matrix with a determinant of zero");
         }
 
@@ -145,24 +142,20 @@ impl RaytracerMatrix for Array<f32, Ix2> {
         let mut sub = Self::default((orig_rows - 1, orig_cols - 1));
 
         for r in 0..orig_rows {
-            if r == row { continue }
+            if r == row {
+                continue;
+            }
 
             for c in 0..orig_cols {
-                if c == col { continue }
+                if c == col {
+                    continue;
+                }
 
-                let ri = if r > row {
-                    r - 1
-                } else {
-                    r
-                };
+                let ri = if r > row { r - 1 } else { r };
 
-                let ci = if c > col {
-                    c - 1
-                } else {
-                    c
-                };
+                let ci = if c > col { c - 1 } else { c };
 
-                sub[[ri,ci]] = self[[r,c]];
+                sub[[ri, ci]] = self[[r, c]];
             }
         }
 
@@ -180,7 +173,7 @@ impl RaytracerMatrix for Array<f32, Ix2> {
     fn inverse(&self) -> Self {
         // TODO: Put this safety check behind a debug flag so that we can disable it for
         // optimization
-        if ! self.invertible() {
+        if !self.invertible() {
             panic!("Cannot invert a matrix with a determinant of zero");
         }
 
@@ -224,19 +217,19 @@ impl RaytracerMatrix for Array<f32, Ix2> {
 }
 
 fn determinant_i32_2x2(matrix: &Array<i32, Ix2>) -> i32 {
-        let a = matrix[[0,0]];
-        let b = matrix[[0,1]];
-        let c = matrix[[1,0]];
-        let d = matrix[[1,1]];
+    let a = matrix[[0, 0]];
+    let b = matrix[[0, 1]];
+    let c = matrix[[1, 0]];
+    let d = matrix[[1, 1]];
 
-        (a*d) - (b*c)
+    (a * d) - (b * c)
 }
 
 fn determinant_i32_n_x_n(matrix: &Array<i32, Ix2>) -> i32 {
     let mut determinant: i32 = 0;
 
     for c in 0..matrix.ncols() {
-        let element = matrix[[0,c]];
+        let element = matrix[[0, c]];
         let cofactor = matrix.cofactor(0, c);
 
         determinant += cofactor * element;
@@ -246,19 +239,19 @@ fn determinant_i32_n_x_n(matrix: &Array<i32, Ix2>) -> i32 {
 }
 
 fn determinant_f32_2x2(matrix: &Array<f32, Ix2>) -> f32 {
-        let a = matrix[[0,0]];
-        let b = matrix[[0,1]];
-        let c = matrix[[1,0]];
-        let d = matrix[[1,1]];
+    let a = matrix[[0, 0]];
+    let b = matrix[[0, 1]];
+    let c = matrix[[1, 0]];
+    let d = matrix[[1, 1]];
 
-        (a*d) - (b*c)
+    (a * d) - (b * c)
 }
 
 fn determinant_f32_n_x_n(matrix: &Array<f32, Ix2>) -> f32 {
     let mut determinant: f32 = 0.0;
 
     for c in 0..matrix.ncols() {
-        let element = matrix[[0,c]];
+        let element = matrix[[0, c]];
         let cofactor = matrix.cofactor(0, c);
 
         determinant += cofactor * element;

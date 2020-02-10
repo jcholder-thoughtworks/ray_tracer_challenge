@@ -1,11 +1,19 @@
 use std::ops;
 
-use super::{equalish,round};
+use super::{equalish, round};
 
-pub const BLACK: Color = Color { red: 0.0, green: 0.0, blue: 0.0, };
-pub const WHITE: Color = Color { red: 1.0, green: 1.0, blue: 1.0, };
+pub const BLACK: Color = Color {
+    red: 0.0,
+    green: 0.0,
+    blue: 0.0,
+};
+pub const WHITE: Color = Color {
+    red: 1.0,
+    green: 1.0,
+    blue: 1.0,
+};
 
-#[derive(Clone,Copy,Debug,PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Color {
     pub red: f32,
     pub green: f32,
@@ -18,9 +26,9 @@ impl Color {
     }
 
     pub fn equalish_to(&self, other: &Self) -> bool {
-        equalish(self.red, other.red) &&
-            equalish(self.green, other.green) &&
-            equalish(self.blue, other.blue)
+        equalish(self.red, other.red)
+            && equalish(self.green, other.green)
+            && equalish(self.blue, other.blue)
     }
 
     fn hadamard_schur_product(&self, other: &Self) -> Self {
@@ -92,7 +100,12 @@ mod tests {
         let expected = Color::new(1.6, 0.7, 1.0);
         let actual = c1 + c2;
 
-        assert!(actual.equalish_to(&expected), "Expected {:?} but got {:?}", expected, actual);
+        assert!(
+            actual.equalish_to(&expected),
+            "Expected {:?} but got {:?}",
+            expected,
+            actual
+        );
     }
 
     #[test]
@@ -103,7 +116,12 @@ mod tests {
         let expected = Color::new(0.2, 0.5, 0.5);
         let actual = c1 - c2;
 
-        assert!(actual.equalish_to(&expected), "Expected {:?} but got {:?}", expected, actual);
+        assert!(
+            actual.equalish_to(&expected),
+            "Expected {:?} but got {:?}",
+            expected,
+            actual
+        );
     }
 
     #[test]
@@ -113,7 +131,12 @@ mod tests {
         let expected = Color::new(0.4, 0.6, 0.8);
         let actual = c * 2.0;
 
-        assert!(actual.equalish_to(&expected), "Expected {:?} but got {:?}", expected, actual);
+        assert!(
+            actual.equalish_to(&expected),
+            "Expected {:?} but got {:?}",
+            expected,
+            actual
+        );
     }
 
     #[test]
@@ -124,6 +147,11 @@ mod tests {
         let expected = Color::new(0.9, 0.2, 0.04);
         let actual = c1 * c2;
 
-        assert!(actual.equalish_to(&expected), "Expected {:?} but got {:?}", expected, actual);
+        assert!(
+            actual.equalish_to(&expected),
+            "Expected {:?} but got {:?}",
+            expected,
+            actual
+        );
     }
 }

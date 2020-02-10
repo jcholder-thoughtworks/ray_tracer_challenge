@@ -6,7 +6,7 @@ const MAX_COLOR_VALUE: f32 = 1.0;
 const MIN_COLOR_VALUE: f32 = 0.0;
 const PPM_MAX_COLOR_VALUE: u32 = 255;
 
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct Canvas {
     pub width: u32,
     pub height: u32,
@@ -46,7 +46,10 @@ impl Canvas {
 
     pub fn to_ppm(&self) -> String {
         let mut ppm = String::new();
-        let headers = format!("{}\n{} {}\n{}\n", PPM_VERSION, self.width, self.height, PPM_MAX_COLOR_VALUE);
+        let headers = format!(
+            "{}\n{} {}\n{}\n",
+            PPM_VERSION, self.width, self.height, PPM_MAX_COLOR_VALUE
+        );
         ppm.push_str(&headers);
 
         let mut line = String::new();
@@ -82,13 +85,24 @@ impl Canvas {
     }
 
     fn verify_valid_coords(&self, x: u32, y: u32) {
-        assert!(x < self.width, "x ({}) must be less than canvas width ({}).", x, self.width);
-        assert!(y < self.height, "y ({}) must be less than canvas height ({}).", y, self.height);
+        assert!(
+            x < self.width,
+            "x ({}) must be less than canvas width ({}).",
+            x,
+            self.width
+        );
+        assert!(
+            y < self.height,
+            "y ({}) must be less than canvas height ({}).",
+            y,
+            self.height
+        );
     }
 }
 
 fn within_bounds(color_value: f32) -> u32 {
-    let bounded = color_value.max(MIN_COLOR_VALUE).min(MAX_COLOR_VALUE) * (PPM_MAX_COLOR_VALUE as f32);
+    let bounded =
+        color_value.max(MIN_COLOR_VALUE).min(MAX_COLOR_VALUE) * (PPM_MAX_COLOR_VALUE as f32);
     let bounded = bounded.round();
 
     bounded as u32
@@ -124,7 +138,11 @@ mod tests {
         let pixel = canvas.pixel_at(2, 3);
 
         assert!(pixel.equalish_to(&red));
-        assert!(canvas.pixels[32].equalish_to(&red), "Actual: {:?}", canvas.pixels[32]);
+        assert!(
+            canvas.pixels[32].equalish_to(&red),
+            "Actual: {:?}",
+            canvas.pixels[32]
+        );
     }
 
     #[test]
@@ -153,9 +171,21 @@ mod tests {
         let ppm = canvas.to_ppm();
         let lines: Vec<&str> = ppm.split("\n").collect();
 
-        assert!(lines[3].trim() == "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0", "Actual: {}", lines[3].trim());
-        assert!(lines[4].trim() == "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0", "Actual: {}", lines[4].trim());
-        assert!(lines[5].trim() == "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255", "Actual: {}", lines[5].trim());
+        assert!(
+            lines[3].trim() == "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+            "Actual: {}",
+            lines[3].trim()
+        );
+        assert!(
+            lines[4].trim() == "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0",
+            "Actual: {}",
+            lines[4].trim()
+        );
+        assert!(
+            lines[5].trim() == "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255",
+            "Actual: {}",
+            lines[5].trim()
+        );
     }
 
     #[test]
@@ -168,19 +198,39 @@ mod tests {
 
         let expected = "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204";
         let actual = lines[3].trim();
-        assert!(expected == actual, "\nExpected: {}\nActual:   {}\n", expected, actual);
+        assert!(
+            expected == actual,
+            "\nExpected: {}\nActual:   {}\n",
+            expected,
+            actual
+        );
 
         let expected = "153 255 204 153 255 204 153 255 204 153 255 204 153";
         let actual = lines[4].trim();
-        assert!(expected == actual, "\nExpected: {}\nActual:   {}\n", expected, actual);
+        assert!(
+            expected == actual,
+            "\nExpected: {}\nActual:   {}\n",
+            expected,
+            actual
+        );
 
         let expected = "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204";
         let actual = lines[5].trim();
-        assert!(expected == actual, "\nExpected: {}\nActual:   {}\n", expected, actual);
+        assert!(
+            expected == actual,
+            "\nExpected: {}\nActual:   {}\n",
+            expected,
+            actual
+        );
 
         let expected = "153 255 204 153 255 204 153 255 204 153 255 204 153";
         let actual = lines[6].trim();
-        assert!(expected == actual, "\nExpected: {}\nActual:   {}\n", expected, actual);
+        assert!(
+            expected == actual,
+            "\nExpected: {}\nActual:   {}\n",
+            expected,
+            actual
+        );
     }
 
     #[test]

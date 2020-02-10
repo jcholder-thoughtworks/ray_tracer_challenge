@@ -1,23 +1,31 @@
-use std::rc::Rc;
 use std::fmt;
 use std::ops;
+use std::rc::Rc;
 
 use ndarray::*;
 
 use self::color::{Color, BLACK};
-use self::math::{RaytracerMatrix};
-use self::math::transforms::{TransformationMatrix};
+use self::math::transforms::TransformationMatrix;
+use self::math::RaytracerMatrix;
 
+pub mod canvas;
+pub mod color;
 pub mod math;
 pub mod physics;
-pub mod color;
-pub mod canvas;
 
 pub const EPSILON: f32 = 0.00001;
 pub const EPSILON_DIGITS: i32 = 5;
 
-pub const CENTER_ORIGIN: Point = Point { x: 0.0, y: 0.0, z: 0.0 };
-pub const STATIONARY: Vector = Vector { x: 0.0, y: 0.0, z: 0.0 };
+pub const CENTER_ORIGIN: Point = Point {
+    x: 0.0,
+    y: 0.0,
+    z: 0.0,
+};
+pub const STATIONARY: Vector = Vector {
+    x: 0.0,
+    y: 0.0,
+    z: 0.0,
+};
 
 pub type Time = f32;
 pub type Intersections = Vec<Rc<Intersection>>;
@@ -55,7 +63,7 @@ pub trait RaytracerObject {
     fn id(&self) -> usize;
 }
 
-#[derive(Copy,Clone,Debug,PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Point {
     pub x: f32,
     pub y: f32,
@@ -68,9 +76,7 @@ impl Point {
     }
 
     pub fn equalish_to(&self, other: &Self) -> bool {
-        equalish(self.x, other.x) &&
-            equalish(self.y, other.y) &&
-            equalish(self.z, other.z)
+        equalish(self.x, other.x) && equalish(self.y, other.y) && equalish(self.z, other.z)
     }
 
     pub fn rounded(&self) -> Self {
@@ -78,9 +84,7 @@ impl Point {
     }
 
     pub fn dot(self, rhs: Self) -> f32 {
-        (self.x * rhs.x) +
-            (self.y * rhs.y) +
-            (self.z * rhs.z)
+        (self.x * rhs.x) + (self.y * rhs.y) + (self.z * rhs.z)
     }
 }
 
@@ -133,7 +137,7 @@ impl ops::Mul<f32> for Point {
     }
 }
 
-#[derive(Copy,Clone,Debug,PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Vector {
     pub x: f32,
     pub y: f32,
@@ -220,9 +224,7 @@ impl Vector {
     }
 
     pub fn equalish_to(&self, other: &Self) -> bool {
-        equalish(self.x, other.x) &&
-            equalish(self.y, other.y) &&
-            equalish(self.z, other.z)
+        equalish(self.x, other.x) && equalish(self.y, other.y) && equalish(self.z, other.z)
     }
 
     pub fn mag(&self) -> f32 {
@@ -240,9 +242,7 @@ impl Vector {
     }
 
     pub fn dot(self, rhs: Self) -> f32 {
-        (self.x * rhs.x) +
-            (self.y * rhs.y) +
-            (self.z * rhs.z)
+        (self.x * rhs.x) + (self.y * rhs.y) + (self.z * rhs.z)
     }
 
     pub fn cross(self, rhs: Self) -> Self {
@@ -277,7 +277,7 @@ impl From<Array<f32, Ix1>> for Vector {
     }
 }
 
-#[derive(Copy,Clone,Debug,PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Ray {
     pub origin: Point,
     pub direction: Vector,
@@ -298,10 +298,7 @@ impl Ray {
         let direction: Array<f32, Ix1> = self.direction.into();
         let direction = transformation_matrix.dot(&direction).into();
 
-        Self {
-            origin,
-            direction,
-        }
+        Self { origin, direction }
     }
 }
 
@@ -319,7 +316,7 @@ pub struct Intersection {
     pub object: Rc<dyn Interceptable>,
 }
 
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Sphere {
     id: usize,
     pub origin: Point,
@@ -332,11 +329,19 @@ impl Sphere {
         let transform = Array::eye(4);
         let material = Material::new();
 
-        Sphere { origin, id, transform, material }
+        Sphere {
+            origin,
+            id,
+            transform,
+            material,
+        }
     }
 
     pub fn hit_on_intersect(&self, ray: &Ray) -> Option<Rc<Intersection>> {
-        let mut potential_hit = Intersection { time: 0.0, object: Rc::new(self.clone()) };
+        let mut potential_hit = Intersection {
+            time: 0.0,
+            object: Rc::new(self.clone()),
+        };
 
         let mut any: bool = false;
 
@@ -359,9 +364,17 @@ impl Sphere {
 pub fn intersect(interceptable: &Rc<dyn Interceptable>, ray: &Ray) -> Intersections {
     let times = interceptable.intersect(ray);
 
-    times.iter().map({ |t|
-        Rc::new(Intersection { time: *t, object: Rc::clone(&interceptable) })
-    }).collect()
+    times
+        .iter()
+        .map({
+            |t| {
+                Rc::new(Intersection {
+                    time: *t,
+                    object: Rc::clone(&interceptable),
+                })
+            }
+        })
+        .collect()
 }
 
 impl RaytracerObject for Sphere {
@@ -434,7 +447,7 @@ impl Hittable for Intersections {
     }
 }
 
-#[derive(Copy,Clone,Debug,PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Light {
     pub position: Point,
     pub intensity: Color,
@@ -442,11 +455,14 @@ pub struct Light {
 
 impl Light {
     pub fn new(position: Point, intensity: Color) -> Self {
-        Self { position, intensity }
+        Self {
+            position,
+            intensity,
+        }
     }
 }
 
-#[derive(Copy,Clone,Debug,PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Material {
     pub color: Color,
     pub ambient: f32,
@@ -520,7 +536,7 @@ mod tests {
 
     #[test]
     fn equalish_is_false_for_diff_above_epsilon() {
-        assert!(! equalish(1.0, 1.00002));
+        assert!(!equalish(1.0, 1.00002));
     }
 
     mod point_tests {
@@ -528,46 +544,98 @@ mod tests {
 
         #[test]
         fn equalish_is_true_for_diff_below_epsilon() {
-            let point_a = Point { x: 1.0, y: 1.0, z: 1.0, };
-            let point_b = Point { x: 1.000001, y: 1.000001, z: 1.000001, };
+            let point_a = Point {
+                x: 1.0,
+                y: 1.0,
+                z: 1.0,
+            };
+            let point_b = Point {
+                x: 1.000001,
+                y: 1.000001,
+                z: 1.000001,
+            };
 
             assert!(point_a.equalish_to(&point_b));
         }
 
         #[test]
         fn equalish_is_false_for_diff_above_epsilon() {
-            let point_a = Point { x: 1.0, y: 1.0, z: 1.0, };
-            let point_b = Point { x: 1.00002, y: 1.00002, z: 1.00002, };
+            let point_a = Point {
+                x: 1.0,
+                y: 1.0,
+                z: 1.0,
+            };
+            let point_b = Point {
+                x: 1.00002,
+                y: 1.00002,
+                z: 1.00002,
+            };
 
-            assert!(! point_a.equalish_to(&point_b));
+            assert!(!point_a.equalish_to(&point_b));
         }
 
         #[test]
         fn add_vector_sums_each_pair_of_values() {
-            let a = Point { x: 1.0, y: 2.0, z: 3.0, };
-            let b = Vector { x: 2.0, y: 3.0, z: 4.0, };
+            let a = Point {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
+            let b = Vector {
+                x: 2.0,
+                y: 3.0,
+                z: 4.0,
+            };
 
-            let expected = Point { x: 3.0, y: 5.0, z: 7.0, };
+            let expected = Point {
+                x: 3.0,
+                y: 5.0,
+                z: 7.0,
+            };
 
             assert!((a + b).equalish_to(&expected));
         }
 
         #[test]
         fn subtract_vector_subtracts_latter_from_former_for_each_pair_of_values() {
-            let a = Point { x: 1.0, y: 2.0, z: 3.0, };
-            let b = Vector { x: 1.0, y: 1.0, z: 4.0, };
+            let a = Point {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
+            let b = Vector {
+                x: 1.0,
+                y: 1.0,
+                z: 4.0,
+            };
 
-            let expected = Point { x: 0.0, y: 1.0, z: -1.0, };
+            let expected = Point {
+                x: 0.0,
+                y: 1.0,
+                z: -1.0,
+            };
 
             assert!((a - b).equalish_to(&expected));
         }
 
         #[test]
         fn subtract_point_subtracts_latter_from_former_for_each_pair_of_values() {
-            let a = Point { x: 1.0, y: 2.0, z: 3.0, };
-            let b = Point { x: 1.0, y: 1.0, z: 4.0, };
+            let a = Point {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
+            let b = Point {
+                x: 1.0,
+                y: 1.0,
+                z: 4.0,
+            };
 
-            let expected = Vector { x: 0.0, y: 1.0, z: -1.0, };
+            let expected = Vector {
+                x: 0.0,
+                y: 1.0,
+                z: -1.0,
+            };
 
             assert!((a - b).equalish_to(&expected));
         }
@@ -578,66 +646,133 @@ mod tests {
 
         #[test]
         fn equalish_is_true_for_diff_below_epsilon() {
-            let vector_a = Vector { x: 1.0, y: 1.0, z: 1.0, };
-            let vector_b = Vector { x: 1.000001, y: 1.000001, z: 1.000001, };
+            let vector_a = Vector {
+                x: 1.0,
+                y: 1.0,
+                z: 1.0,
+            };
+            let vector_b = Vector {
+                x: 1.000001,
+                y: 1.000001,
+                z: 1.000001,
+            };
 
             assert!(vector_a.equalish_to(&vector_b));
         }
 
         #[test]
         fn equalish_is_false_for_diff_above_epsilon() {
-            let vector_a = Vector { x: 1.0, y: 1.0, z: 1.0, };
+            let vector_a = Vector {
+                x: 1.0,
+                y: 1.0,
+                z: 1.0,
+            };
 
-            let vector_b = Vector { x: 1.00002, y: 1.00002, z: 1.00002, };
+            let vector_b = Vector {
+                x: 1.00002,
+                y: 1.00002,
+                z: 1.00002,
+            };
 
-            assert!(! vector_a.equalish_to(&vector_b));
+            assert!(!vector_a.equalish_to(&vector_b));
         }
 
         #[test]
         fn add_vector_sums_each_pair_of_values() {
-            let a = Vector { x: 1.0, y: 2.0, z: 3.0, };
-            let b = Vector { x: 2.0, y: 3.0, z: 4.0, };
+            let a = Vector {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
+            let b = Vector {
+                x: 2.0,
+                y: 3.0,
+                z: 4.0,
+            };
 
-            let expected = Vector { x: 3.0, y: 5.0, z: 7.0, };
+            let expected = Vector {
+                x: 3.0,
+                y: 5.0,
+                z: 7.0,
+            };
 
             assert!((a + b).equalish_to(&expected));
         }
 
         #[test]
         fn add_point_sums_each_pair_of_values() {
-            let a = Vector { x: 1.0, y: 2.0, z: 3.0, };
-            let b = Point { x: 2.0, y: 3.0, z: 4.0, };
+            let a = Vector {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
+            let b = Point {
+                x: 2.0,
+                y: 3.0,
+                z: 4.0,
+            };
 
-            let expected = Point { x: 3.0, y: 5.0, z: 7.0, };
+            let expected = Point {
+                x: 3.0,
+                y: 5.0,
+                z: 7.0,
+            };
 
             assert!((a + b).equalish_to(&expected));
         }
 
         #[test]
         fn subtract_vector_subtracts_second_value_from_for_for_each_pair() {
-            let a = Vector { x: 1.0, y: 2.0, z: 3.0, };
-            let b = Vector { x: 1.0, y: 3.0, z: 2.0, };
+            let a = Vector {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
+            let b = Vector {
+                x: 1.0,
+                y: 3.0,
+                z: 2.0,
+            };
 
-            let expected = Vector { x: 0.0, y: -1.0, z: 1.0, };
+            let expected = Vector {
+                x: 0.0,
+                y: -1.0,
+                z: 1.0,
+            };
 
             assert!((a - b).equalish_to(&expected));
         }
 
         #[test]
         fn negating_vector_inverts_each_value() {
-            let v = Vector { x: 1.0, y: -1.0, z: 0.0, };
+            let v = Vector {
+                x: 1.0,
+                y: -1.0,
+                z: 0.0,
+            };
 
-            let expected = Vector { x: -1.0, y: 1.0, z: 0.0, };
+            let expected = Vector {
+                x: -1.0,
+                y: 1.0,
+                z: 0.0,
+            };
 
             assert!((-v).equalish_to(&expected));
         }
 
         #[test]
         fn multiply_vector_multiplies_each_value() {
-            let a = Vector { x: 1.0, y: -1.0, z: 0.0, };
+            let a = Vector {
+                x: 1.0,
+                y: -1.0,
+                z: 0.0,
+            };
             let b = 5.0;
 
-            let expected = Vector { x: 5.0, y: -5.0, z: 0.0,
+            let expected = Vector {
+                x: 5.0,
+                y: -5.0,
+                z: 0.0,
             };
 
             assert!((a * b).equalish_to(&expected));
@@ -645,76 +780,186 @@ mod tests {
 
         #[test]
         fn divide_vector_divides_each_value() {
-            let a = Vector { x: 1.0, y: -1.0, z: 0.0, };
+            let a = Vector {
+                x: 1.0,
+                y: -1.0,
+                z: 0.0,
+            };
             let b = 2.0;
 
-            let expected = Vector { x: 0.5, y: -0.5, z: 0.0, };
+            let expected = Vector {
+                x: 0.5,
+                y: -0.5,
+                z: 0.0,
+            };
 
             let result = a / b;
 
-            assert!(result.equalish_to(&expected), "Expected {:?} but got {:?}", expected, result);
+            assert!(
+                result.equalish_to(&expected),
+                "Expected {:?} but got {:?}",
+                expected,
+                result
+            );
         }
 
         #[test]
         fn magnitudes_of_vectors() {
-            let v = Vector { x: 1.0, y: 0.0, z: 0.0 };
+            let v = Vector {
+                x: 1.0,
+                y: 0.0,
+                z: 0.0,
+            };
             let expected = 1.0;
             let result = v.mag();
-            assert!(equalish(expected, result), "Expected {} but got {}", expected, result);
+            assert!(
+                equalish(expected, result),
+                "Expected {} but got {}",
+                expected,
+                result
+            );
 
-            let v = Vector { x: 0.0, y: 1.0, z: 0.0 };
+            let v = Vector {
+                x: 0.0,
+                y: 1.0,
+                z: 0.0,
+            };
             let expected = 1.0;
             let result = v.mag();
-            assert!(equalish(expected, result), "Expected {} but got {}", expected, result);
+            assert!(
+                equalish(expected, result),
+                "Expected {} but got {}",
+                expected,
+                result
+            );
 
-            let v = Vector { x: 0.0, y: 0.0, z: 1.0 };
+            let v = Vector {
+                x: 0.0,
+                y: 0.0,
+                z: 1.0,
+            };
             let expected = 1.0;
             let result = v.mag();
-            assert!(equalish(expected, result), "Expected {} but got {}", expected, result);
+            assert!(
+                equalish(expected, result),
+                "Expected {} but got {}",
+                expected,
+                result
+            );
 
-            let v = Vector { x: 1.0, y: 2.0, z: 3.0 };
+            let v = Vector {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
             let expected = (14.0 as f32).sqrt();
             let result = v.mag();
-            assert!(equalish(expected, result), "Expected {} but got {}", expected, result);
+            assert!(
+                equalish(expected, result),
+                "Expected {} but got {}",
+                expected,
+                result
+            );
 
-            let v = Vector { x: -1.0, y: -2.0, z: -3.0 };
+            let v = Vector {
+                x: -1.0,
+                y: -2.0,
+                z: -3.0,
+            };
             let expected = (14.0 as f32).sqrt();
             let result = v.mag();
-            assert!(equalish(expected, result), "Expected {} but got {}", expected, result);
+            assert!(
+                equalish(expected, result),
+                "Expected {} but got {}",
+                expected,
+                result
+            );
         }
 
         #[test]
         fn normalizing_vectors() {
-            let v = Vector { x: 4.0, y: 0.0, z: 0.0 };
-            let expected = Vector { x: 1.0, y: 0.0, z: 0.0 };
+            let v = Vector {
+                x: 4.0,
+                y: 0.0,
+                z: 0.0,
+            };
+            let expected = Vector {
+                x: 1.0,
+                y: 0.0,
+                z: 0.0,
+            };
             let result = v.norm();
-            assert!(expected.equalish_to(&result), "Expected {:?} but got {:?}", expected, result);
+            assert!(
+                expected.equalish_to(&result),
+                "Expected {:?} but got {:?}",
+                expected,
+                result
+            );
 
-            let v = Vector { x: 1.0, y: 2.0, z: 3.0 };
+            let v = Vector {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
             let x = 1.0 / (14.0 as f32).sqrt();
             let y = 2.0 / (14.0 as f32).sqrt();
             let z = 3.0 / (14.0 as f32).sqrt();
             let expected = Vector { x, y, z };
             let result = v.norm();
-            assert!(expected.equalish_to(&result), "Expected {:?} but got {:?}", expected, result);
+            assert!(
+                expected.equalish_to(&result),
+                "Expected {:?} but got {:?}",
+                expected,
+                result
+            );
         }
 
         #[test]
         fn dot_products_of_vectors() {
-            let a = Vector { x: 1.0, y: 2.0, z: 3.0 };
-            let b = Vector { x: 2.0, y: 3.0, z: 4.0 };
+            let a = Vector {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
+            let b = Vector {
+                x: 2.0,
+                y: 3.0,
+                z: 4.0,
+            };
             let expected = 20.0;
             let result = a.dot(b);
-            assert!(equalish(expected, result), "Expected {:?} but got {:?}", expected, result);
+            assert!(
+                equalish(expected, result),
+                "Expected {:?} but got {:?}",
+                expected,
+                result
+            );
         }
 
         #[test]
         fn cross_products_of_vectors() {
-            let a = Vector { x: 1.0, y: 2.0, z: 3.0 };
-            let b = Vector { x: 2.0, y: 3.0, z: 4.0 };
-            let expected = Vector { x: -1.0, y: 2.0, z: -1.0 };
+            let a = Vector {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            };
+            let b = Vector {
+                x: 2.0,
+                y: 3.0,
+                z: 4.0,
+            };
+            let expected = Vector {
+                x: -1.0,
+                y: 2.0,
+                z: -1.0,
+            };
             let result = a.cross(b);
-            assert!(expected.equalish_to(&result), "Expected {:?} but got {:?}", expected, result);
+            assert!(
+                expected.equalish_to(&result),
+                "Expected {:?} but got {:?}",
+                expected,
+                result
+            );
         }
     }
 }
