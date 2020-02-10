@@ -409,7 +409,17 @@ pub struct Light {
 
 impl Light {
     pub fn new(position: Point, intensity: Color) -> Self {
-        Light { position, intensity }
+        Self { position, intensity }
+    }
+}
+
+#[derive(Copy,Clone,Debug,PartialEq)]
+pub struct Material {
+}
+
+impl Material {
+    pub fn new() -> Self {
+        Self {}
     }
 }
 
