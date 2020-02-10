@@ -1,15 +1,15 @@
 // Derived from example at https://github.com/bbqsrc/cucumber-rust/blob/master/README.md
 
-#![recursion_limit="256"]
+#![recursion_limit = "256"]
 
 use std::rc::Rc;
 
 use ndarray::*;
 
-use cucumber::{cucumber, before, after};
+use cucumber::{after, before, cucumber};
 
-use ray_tracer_challenge::*;
 use ray_tracer_challenge::color::*;
+use ray_tracer_challenge::*;
 
 pub struct MyWorld {
     // You can use this struct for mutable context in scenarios.
@@ -107,29 +107,29 @@ impl std::default::Default for MyWorld {
 }
 
 mod example_steps {
-    use std::rc::Rc;
     use std::f32::consts::PI;
+    use std::rc::Rc;
 
     use cucumber::steps;
 
-    use ndarray::*;
     use gherkin;
+    use ndarray::*;
 
-    use ray_tracer_challenge::*;
     use ray_tracer_challenge::color::*;
-    use ray_tracer_challenge::math::*;
     use ray_tracer_challenge::math::transforms::*;
+    use ray_tracer_challenge::math::*;
+    use ray_tracer_challenge::*;
 
     fn table_to_matrix(table: gherkin::Table, size: (Ix, Ix)) -> Array<f32, Ix2> {
         let mut matrix = Array::from_elem(size, 0.0);
 
         for (c, value) in table.header.iter().enumerate() {
-            matrix[[0,c]] = value.parse().unwrap();
+            matrix[[0, c]] = value.parse().unwrap();
         }
 
         for (r, row) in table.rows.iter().enumerate() {
             for (c, value) in row.iter().enumerate() {
-                matrix[[r + 1,c]] = value.parse().unwrap();
+                matrix[[r + 1, c]] = value.parse().unwrap();
             }
         }
 
@@ -1372,8 +1372,7 @@ after!(an_after_fn => |_scenario| {
 });
 
 // A setup function to be called before everything else
-fn setup() {
-}
+fn setup() {}
 
 cucumber! {
     features: "./features", // Path to our feature files
