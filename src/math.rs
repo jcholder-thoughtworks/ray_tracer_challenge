@@ -50,10 +50,34 @@ impl RaytracerMatrix for Array<i32, Ix2> {
     }
 
     fn submatrix(&self, row: usize, col: usize) -> Self {
-        let rows_to_keep: Vec<usize> = (0..(self.nrows())).filter(|n| *n != row).collect();
-        let cols_to_keep: Vec<usize> = (0..(self.ncols())).filter(|n| *n != col).collect();
+        let orig_rows = self.nrows();
+        let orig_cols = self.ncols();
 
-        self.select(Axis(0), &rows_to_keep).select(Axis(1), &cols_to_keep)
+        let mut sub = Self::default((orig_rows - 1, orig_cols - 1));
+
+        for r in 0..orig_rows {
+            if r == row { continue }
+
+            for c in 0..orig_cols {
+                if c == col { continue }
+
+                let ri = if r > row {
+                    r - 1
+                } else {
+                    r
+                };
+
+                let ci = if c > col {
+                    c - 1
+                } else {
+                    c
+                };
+
+                sub[[ri,ci]] = self[[r,c]];
+            }
+        }
+
+        sub
     }
 
     fn invertible(&self) -> bool {
@@ -115,10 +139,34 @@ impl RaytracerMatrix for Array<f32, Ix2> {
     }
 
     fn submatrix(&self, row: usize, col: usize) -> Self {
-        let rows_to_keep: Vec<usize> = (0..(self.nrows())).filter(|n| *n != row).collect();
-        let cols_to_keep: Vec<usize> = (0..(self.ncols())).filter(|n| *n != col).collect();
+        let orig_rows = self.nrows();
+        let orig_cols = self.ncols();
 
-        self.select(Axis(0), &rows_to_keep).select(Axis(1), &cols_to_keep)
+        let mut sub = Self::default((orig_rows - 1, orig_cols - 1));
+
+        for r in 0..orig_rows {
+            if r == row { continue }
+
+            for c in 0..orig_cols {
+                if c == col { continue }
+
+                let ri = if r > row {
+                    r - 1
+                } else {
+                    r
+                };
+
+                let ci = if c > col {
+                    c - 1
+                } else {
+                    c
+                };
+
+                sub[[ri,ci]] = self[[r,c]];
+            }
+        }
+
+        sub
     }
 
     fn invertible(&self) -> bool {

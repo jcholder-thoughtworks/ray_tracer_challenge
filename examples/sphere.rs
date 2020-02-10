@@ -6,8 +6,8 @@ use ray_tracer_challenge::math::transforms::*;
 use ray_tracer_challenge::color::*;
 use ray_tracer_challenge::canvas::*;
 
-const CANVAS_WIDTH: u32 = 50;
-const CANVAS_HEIGHT: u32 = 50;
+const CANVAS_WIDTH: u32 = 100;
+const CANVAS_HEIGHT: u32 = 100;
 const ZOOM: f32 = 0.01;
 
 fn main() -> std::io::Result<()> {
