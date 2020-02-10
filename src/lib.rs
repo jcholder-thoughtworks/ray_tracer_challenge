@@ -302,6 +302,10 @@ impl Ray {
 
 pub trait Interceptable: RaytracerObject + fmt::Debug {
     fn intersect(&self, ray: &Ray) -> Vec<Time>;
+
+    fn normal_at(&self, world_point: Point) -> Vector;
+
+    fn material(&self) -> Material;
 }
 
 #[derive(Debug)]
@@ -324,18 +328,6 @@ impl Sphere {
         let material = Material::new();
 
         Sphere { origin, id, transform, material }
-    }
-
-    pub fn normal_at(&self, world_point: Point) -> Vector {
-        let sphere_transform_inverse = self.transform.inverse();
-
-        let object_point = &sphere_transform_inverse * world_point;
-        let object_normal = object_point - CENTER_ORIGIN;
-        let world_normal = &sphere_transform_inverse.transposed() * object_normal;
-
-        let world_normal: Vector = world_normal.into();
-
-        world_normal.norm()
     }
 
     pub fn hit_on_intersect(&self, ray: &Ray) -> Option<Rc<Intersection>> {
@@ -400,6 +392,22 @@ impl Interceptable for Sphere {
         } else {
             vec![t2, t1]
         }
+    }
+
+    fn normal_at(&self, world_point: Point) -> Vector {
+        let sphere_transform_inverse = self.transform.inverse();
+
+        let object_point = &sphere_transform_inverse * world_point;
+        let object_normal = object_point - CENTER_ORIGIN;
+        let world_normal = &sphere_transform_inverse.transposed() * object_normal;
+
+        let world_normal: Vector = world_normal.into();
+
+        world_normal.norm()
+    }
+
+    fn material(&self) -> Material {
+        self.material
     }
 }
 

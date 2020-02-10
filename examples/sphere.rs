@@ -22,7 +22,7 @@ fn main() -> std::io::Result<()> {
     sphere.material.color = Color::new(1.0, 0.2, 1.0);
     sphere.transform = scaling(3.0, 3.0, 3.0);
 
-    let light_position = Point::new(-10.0, 20.0, -10.0);
+    let light_position = Point::new(-10.0, 10.0, -10.0);
     let light_color = Color::new(1.0, 1.0, 1.0);
     let light = Light::new(light_position, light_color);
 
@@ -49,12 +49,10 @@ fn main() -> std::io::Result<()> {
             let hit = sphere.hit_on_intersect(&pointed_ray);
 
             if let Some(h) = hit {
-                // TODO: Replace `sphere` here with h.object
-
                 let point = pointed_ray.position(h.time);
-                let normal = sphere.normal_at(point);
+                let normal = h.object.normal_at(point);
                 let eye = pointed_ray.direction;
-                let color = sphere.material.lighting(light, point, eye, normal);
+                let color = h.object.material().lighting(light, point, eye, normal);
 
                 canvas.write_pixel(x, y, color);
             }
