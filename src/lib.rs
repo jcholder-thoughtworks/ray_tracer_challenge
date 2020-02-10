@@ -438,24 +438,28 @@ impl Material {
     pub fn lighting(&self, light: Light, point: Point, eyev: Vector, normalv: Vector) -> Color {
         let material = self;
 
-        let effective_color = material.color * light.intensity;
+        let effective_color: Color = material.color * light.intensity;
 
-        let lightv = (light.position - point).norm();
+        let lightv: Vector = (light.position - point).norm();
 
-        let ambient = effective_color * material.ambient;
+        //panic!("lp {:?}\np {:?}\nlv {:?}", light.position, point, lightv);
 
-        let light_dot_normal = lightv.dot(normalv);
+        let ambient: Color = effective_color * material.ambient;
 
-        let mut diffuse = BLACK;
-        let mut specular = BLACK;
+        let light_dot_normal: f32 = lightv.dot(normalv);
+
+        //panic!("\nldn {:?}\nlv {:?}\n", light_dot_normal, lightv);
+
+        let mut diffuse: Color = BLACK;
+        let mut specular: Color = BLACK;
 
         if light_dot_normal >= 0.0 {
             diffuse = effective_color * material.diffuse * light_dot_normal;
-            let reflectv = (lightv * -1.0).reflect(&normalv);
-            let reflect_dot_eye = reflectv.dot(eyev);
+            let reflectv: Vector = (lightv * -1.0).reflect(&normalv);
+            let reflect_dot_eye: f32 = reflectv.dot(eyev);
 
             if reflect_dot_eye > 0.0 {
-                let factor = reflect_dot_eye.powf(material.shininess);
+                let factor: f32 = reflect_dot_eye.powf(material.shininess);
                 specular = light.intensity * material.specular * factor;
             }
         }
