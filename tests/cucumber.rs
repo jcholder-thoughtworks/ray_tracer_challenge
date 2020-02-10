@@ -575,19 +575,19 @@ mod example_steps {
             let x: f32 = match matches[1].as_str() {
                 "√3/3" => 3.0_f32.sqrt() / 3.0,
                 "√2/2" => 2.0_f32.sqrt() / 2.0,
-                "-√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
                 _ => matches[1].parse().unwrap(),
             };
             let y: f32 = match matches[2].as_str() {
                 "√3/3" => 3.0_f32.sqrt() / 3.0,
                 "√2/2" => 2.0_f32.sqrt() / 2.0,
-                "-√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
                 _ => matches[2].parse().unwrap(),
             };
             let z: f32 = match matches[3].as_str() {
                 "√3/3" => 3.0_f32.sqrt() / 3.0,
                 "√2/2" => 2.0_f32.sqrt() / 2.0,
-                "-√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
                 _ => matches[3].parse().unwrap(),
             };
 

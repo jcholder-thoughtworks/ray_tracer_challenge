@@ -192,3 +192,9 @@ And some primitive shading!!
 And now, time to calculate some normals! Smooth sailing so far.
 
 Woohoo! The issue I filed for `cargo-instruments` has been addressed! I can profile my code again! That makes _two_ crates improved or fixed because of my work here!
+
+# 10Feb2020
+
+Another day, another feature! I've had my coffee so let's get started.
+
+Ooph, yeah. My use of different types for points vs. vectors vs. other matrices is coming back to bite me. Might have to refactor that whole distinction away. Actually, wasn't _that_ bad once I remembered to use operators properly but this still involves more context-switching and variable type conversion than necessary. (Core problem here turned out to be an error in the Cucumber step definition anyway.)

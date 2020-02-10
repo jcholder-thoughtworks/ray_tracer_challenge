@@ -315,9 +315,16 @@ impl Sphere {
         Sphere { origin, id, transform }
     }
 
-    pub fn normal_at(&self, point: Point) -> Vector {
-        let np = (point - self.origin).norm();
-        Vector::new(np.x, np.y, np.z)
+    pub fn normal_at(&self, world_point: Point) -> Vector {
+        let sphere_transform_inverse = self.transform.inverse();
+
+        let object_point = &sphere_transform_inverse * world_point;
+        let object_normal = object_point - CENTER_ORIGIN;
+        let world_normal = &sphere_transform_inverse.transposed() * object_normal;
+
+        let world_normal: Vector = world_normal.into();
+
+        world_normal.norm()
     }
 }
 
