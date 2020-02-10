@@ -415,11 +415,22 @@ impl Light {
 
 #[derive(Copy,Clone,Debug,PartialEq)]
 pub struct Material {
+    pub color: Color,
+    pub ambient: f32,
+    pub diffuse: f32,
+    pub specular: f32,
+    pub shininess: f32,
 }
 
 impl Material {
     pub fn new() -> Self {
-        Self {}
+        Self {
+            color: Color::new(0.0, 0.0, 0.0),
+            ambient: 0.0,
+            diffuse: 0.0,
+            specular: 0.0,
+            shininess: 0.0,
+        }
     }
 }
 
