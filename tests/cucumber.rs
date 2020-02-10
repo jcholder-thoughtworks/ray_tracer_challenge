@@ -46,6 +46,7 @@ pub struct MyWorld {
     intensity: Color,
     position: Point,
     light: Light,
+    mt: Material,
 }
 
 impl cucumber::World for MyWorld {}
@@ -92,6 +93,7 @@ impl std::default::Default for MyWorld {
             intensity: BLACK,
             position: CENTER_ORIGIN,
             light: Light::new(CENTER_ORIGIN, BLACK),
+            mt: Material::new(),
         }
     }
 }
@@ -529,6 +531,10 @@ mod example_steps {
 
         given "position ← point(0, 0, 0)" |world, _step| {
             world.position = Point::new(0.0, 0.0, 0.0);
+        };
+
+        given "m ← material()" |world, _step| {
+            world.mt = Material::new();
         };
 
         when "p2 ← A * p" |world, _step| {
@@ -1209,6 +1215,50 @@ mod example_steps {
 
         then "light.intensity = intensity" |world, _step| {
             assert_eq!(world.intensity, world.light.intensity);
+        };
+
+        then regex r"^m.color = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let r: f32 = matches[1].parse().unwrap();
+            let g: f32 = matches[2].parse().unwrap();
+            let b: f32 = matches[3].parse().unwrap();
+
+            let expected = Color::new(r, g, b);
+
+            let actual = world.mt.color;
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"^m.ambient = (.*)$" |world, matches, _step| {
+            let expected : f32 = matches[1].parse().unwrap();
+
+            let actual = world.mt.ambient;
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"^m.diffuse = (.*)$" |world, matches, _step| {
+            let expected : f32 = matches[1].parse().unwrap();
+
+            let actual = world.mt.diffuse;
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"^m.specular = (.*)$" |world, matches, _step| {
+            let expected : f32 = matches[1].parse().unwrap();
+
+            let actual = world.mt.specular;
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"^m.shininess = (.*)$" |world, matches, _step| {
+            let expected : f32 = matches[1].parse().unwrap();
+
+            let actual = world.mt.shininess;
+
+            assert_eq!(expected, actual);
         };
     });
 }
