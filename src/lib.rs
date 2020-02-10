@@ -400,8 +400,6 @@ impl Interceptable for Sphere {
         let object_normal = object_point - CENTER_ORIGIN;
         let world_normal = &sphere_transform_inverse.transposed() * object_normal;
 
-        let world_normal: Vector = world_normal.into();
-
         world_normal.norm()
     }
 
