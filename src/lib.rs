@@ -449,17 +449,12 @@ impl Material {
         let mut diffuse = BLACK;
         let mut specular = BLACK;
 
-        if light_dot_normal < 0.0 {
-            diffuse = BLACK;
-            specular = BLACK;
-        } else {
+        if light_dot_normal >= 0.0 {
             diffuse = effective_color * material.diffuse * light_dot_normal;
             let reflectv = (lightv * -1.0).reflect(&normalv);
             let reflect_dot_eye = reflectv.dot(eyev);
 
-            if reflect_dot_eye <= 0.0 {
-                specular = BLACK;
-            } else {
+            if reflect_dot_eye > 0.0 {
                 let factor = reflect_dot_eye.powf(material.shininess);
                 specular = light.intensity * material.specular * factor;
             }
