@@ -4,6 +4,7 @@ use std::ops;
 
 use ndarray::*;
 
+use self::color::{Color};
 use self::math::{RaytracerMatrix};
 use self::math::transforms::{TransformationMatrix};
 
@@ -397,6 +398,18 @@ impl Hittable for Intersections {
         }
 
         h
+    }
+}
+
+#[derive(Copy,Clone,Debug,PartialEq)]
+pub struct Light {
+    pub position: Point,
+    pub intensity: Color,
+}
+
+impl Light {
+    pub fn new(position: Point, intensity: Color) -> Self {
+        Light { position, intensity }
     }
 }
 
