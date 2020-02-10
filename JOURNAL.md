@@ -212,3 +212,5 @@ Taking a quick stab at refactoring `sphere.rs` and the code it uses in order to 
 Back to our original task!
 
 _Holy cow!_ Look at that sphere! Amaaaaazing!
+
+That's a great stopping point for now. Let's see about cleaning up the code, especially in regard to `rustfmt`.
