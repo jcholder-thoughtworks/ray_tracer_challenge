@@ -208,3 +208,7 @@ Oops, I've exceeded the recursion limit on my Cucumber tests! It's probably time
 Oh no, something about my `Material#lightning` function is off math-wise. I predict that I'm using `*` where I mean to use `#dot`. At least all the types are playing nicely together on my first take! Surprise! It was actually an issue with my spec code grabbing the wrong values! (Array index issues, specifically.) Phew!
 
 Taking a quick stab at refactoring `sphere.rs` and the code it uses in order to make the example more efficient. Also! Finally remembered that I can use the `--release` flag to dramatically increase its speed when I don't need debugging support. That'll save me a lot of time. Seems to come down to a lot of `ArrayBase` function calls. `ArrayBase` is overbuilt for my 1-4D matrix work so writing my own matrix code might actually be worth it? My primary suspect is my implementation of `submatrix`, which seems to be making a lot of different calls to functions for `ArrayBase`. Let's see if a more manual approach speeds things up. Success! Refactored `submatrix` to be a simple values copy operation into a new matrix and the speed improvements were dramatic! Go me! Don't know how I can avoid that super-slow allocation of a new matrix, though, (not without bringing static memory into the mix) so I think I've done what I can for now.
+
+Back to our original task!
+
+_Holy cow!_ Look at that sphere! Amaaaaazing!

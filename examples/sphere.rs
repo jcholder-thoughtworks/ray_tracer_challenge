@@ -6,13 +6,11 @@ use ray_tracer_challenge::math::transforms::*;
 use ray_tracer_challenge::color::*;
 use ray_tracer_challenge::canvas::*;
 
-const CANVAS_WIDTH: u32 = 100;
-const CANVAS_HEIGHT: u32 = 100;
+const CANVAS_WIDTH: u32 = 150;
+const CANVAS_HEIGHT: u32 = 150;
 const ZOOM: f32 = 0.01;
 
 fn main() -> std::io::Result<()> {
-    let red: Color = Color::new(1.0, 0.0, 0.0);
-
     let mut canvas = Canvas::of_color(CANVAS_WIDTH, CANVAS_HEIGHT, BLACK);
 
     println!("Drawing the sphere ...");
@@ -20,7 +18,13 @@ fn main() -> std::io::Result<()> {
     let mut world = RaytracerWorld::new();
 
     let mut sphere = world.new_sphere(CENTER_ORIGIN);
-    sphere.transform = scaling(2.0, 2.0, 5.0).dot(&translation(1.0, 1.0, 1.0));
+    sphere.material = Material::new();
+    sphere.material.color = Color::new(1.0, 0.2, 1.0);
+    sphere.transform = scaling(3.0, 3.0, 3.0);
+
+    let light_position = Point::new(-10.0, 20.0, -10.0);
+    let light_color = Color::new(1.0, 1.0, 1.0);
+    let light = Light::new(light_position, light_color);
 
     let origin = Point::new(0.0, 0.0, -5.0);
     let direction = Vector::new(0.0, 0.0, 0.1);
@@ -38,14 +42,20 @@ fn main() -> std::io::Result<()> {
             let rx = rotation_x(rot_x);
             let ry = rotation_y(rot_y);
 
-            let new_direction = ray.direction * rx.dot(&ry);
+            let new_direction = (ray.direction * rx.dot(&ry)).norm();
 
             let pointed_ray = Ray::new(ray.origin, new_direction);
 
             let hit = sphere.hit_on_intersect(&pointed_ray);
 
             if let Some(h) = hit {
-                let color = red * (h.time / 140.0);
+                // TODO: Replace `sphere` here with h.object
+
+                let point = pointed_ray.position(h.time);
+                let normal = sphere.normal_at(point);
+                let eye = pointed_ray.direction;
+                let color = sphere.material.lighting(light, point, eye, normal);
+
                 canvas.write_pixel(x, y, color);
             }
         }
