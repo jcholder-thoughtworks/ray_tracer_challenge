@@ -1,5 +1,7 @@
 // Derived from example at https://github.com/bbqsrc/cucumber-rust/blob/master/README.md
 
+#![recursion_limit="256"]
+
 use std::rc::Rc;
 
 use ndarray::*;
@@ -47,6 +49,9 @@ pub struct MyWorld {
     position: Point,
     light: Light,
     mt: Material,
+    eyev: Vector,
+    normalv: Vector,
+    result: Color,
 }
 
 impl cucumber::World for MyWorld {}
@@ -94,6 +99,9 @@ impl std::default::Default for MyWorld {
             position: CENTER_ORIGIN,
             light: Light::new(CENTER_ORIGIN, BLACK),
             mt: Material::new(),
+            eyev: STATIONARY,
+            normalv: STATIONARY,
+            result: BLACK,
         }
     }
 }
@@ -543,6 +551,50 @@ mod example_steps {
             world.mt.ambient = new_value;
         };
 
+        given regex r"^eyev ← vector\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = match matches[1].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[1].parse().unwrap(),
+            };
+            let y: f32 = match matches[2].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[2].parse().unwrap(),
+            };
+            let z: f32 = match matches[3].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[3].parse().unwrap(),
+            };
+
+            world.eyev = Vector::new(x, y, z);
+        };
+
+        given regex r"^normalv ← vector\((.*), (.*), (.*)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.normalv = Vector::new(x, y, z);
+        };
+
+        given regex r"light ← point_light\(point\((.*), (.*), (.*)\), color\((.*), (.*), (.*)\)\)" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let position = Point::new(x, y, z);
+
+            let red: f32 = matches[4].parse().unwrap();
+            let green: f32 = matches[5].parse().unwrap();
+            let blue: f32 = matches[6].parse().unwrap();
+
+            let intensity = Color::new(red, green, blue);
+
+            world.light = Light::new(position, intensity);
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -656,6 +708,10 @@ mod example_steps {
 
         when "s.material ← m" |world, _step| {
             world.s.material = world.mt;
+        };
+
+        when "result ← lighting(m, light, position, eyev, normalv)" |world, _step| {
+            world.result = world.mt.lighting(world.light, world.position, world.eyev, world.normalv);
         };
 
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -1289,6 +1345,18 @@ mod example_steps {
             let actual = world.mt;
 
             assert_eq!(expected, actual);
+        };
+
+        then regex r"^result = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let r: f32 = matches[1].parse().unwrap();
+            let g: f32 = matches[2].parse().unwrap();
+            let b: f32 = matches[3].parse().unwrap();
+
+            let expected = Color::new(r, g, b);
+
+            let actual = world.result;
+
+            assert_eq!(expected.rounded(), actual.rounded());
         };
     });
 }

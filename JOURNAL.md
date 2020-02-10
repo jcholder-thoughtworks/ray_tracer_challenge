@@ -205,4 +205,4 @@ And finally, lighting and material! Excited!
 
 Oops, I've exceeded the recursion limit on my Cucumber tests! It's probably time to start separating those out into multiple files but I'll just increase the recursion limit for now.
 
-Oh no, something about my `Material#lightning` function is off math-wise. I predict that I'm using `*` where I mean to use `#dot`. At least all the types are playing nicely together on my first take!
+Oh no, something about my `Material#lightning` function is off math-wise. I predict that I'm using `*` where I mean to use `#dot`. At least all the types are playing nicely together on my first take! Surprise! It was actually an issue with my spec code grabbing the wrong values! (Array index issues, specifically.) Phew!
