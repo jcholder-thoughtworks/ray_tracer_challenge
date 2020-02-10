@@ -4,7 +4,7 @@ use std::ops;
 
 use ndarray::*;
 
-use self::color::{Color};
+use self::color::{Color, BLACK};
 use self::math::{RaytracerMatrix};
 use self::math::transforms::{TransformationMatrix};
 
@@ -433,6 +433,39 @@ impl Material {
             specular: 0.9,
             shininess: 200.0,
         }
+    }
+
+    pub fn lighting(&self, light: Light, point: Point, eyev: Vector, normalv: Vector) -> Color {
+        let material = self;
+
+        let effective_color = material.color * light.intensity;
+
+        let lightv = (light.position - point).norm();
+
+        let ambient = effective_color * material.ambient;
+
+        let light_dot_normal = lightv.dot(normalv);
+
+        let mut diffuse = BLACK;
+        let mut specular = BLACK;
+
+        if light_dot_normal < 0.0 {
+            diffuse = BLACK;
+            specular = BLACK;
+        } else {
+            diffuse = effective_color * material.diffuse * light_dot_normal;
+            let reflectv = (lightv * -1.0).reflect(&normalv);
+            let reflect_dot_eye = reflectv.dot(eyev);
+
+            if reflect_dot_eye <= 0.0 {
+                specular = BLACK;
+            } else {
+                let factor = reflect_dot_eye.powf(material.shininess);
+                specular = light.intensity * material.specular * factor;
+            }
+        }
+
+        ambient + diffuse + specular
     }
 }
 
