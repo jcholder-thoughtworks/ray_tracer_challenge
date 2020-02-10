@@ -493,6 +493,12 @@ impl Material {
     }
 }
 
+impl Default for Material {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub fn equalish(a: f32, b: f32) -> bool {
     (a - b).abs() < EPSILON
 }

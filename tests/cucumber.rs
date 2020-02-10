@@ -98,7 +98,7 @@ impl std::default::Default for MyWorld {
             intensity: BLACK,
             position: CENTER_ORIGIN,
             light: Light::new(CENTER_ORIGIN, BLACK),
-            mt: Material::new(),
+            mt: Material::default(),
             eyev: STATIONARY,
             normalv: STATIONARY,
             result: BLACK,
@@ -542,7 +542,7 @@ mod example_steps {
         };
 
         given "m ← material()" |world, _step| {
-            world.mt = Material::new();
+            world.mt = Material::default();
         };
 
         given regex r"^m.ambient ← (.*)$" |world, matches, _step| {
@@ -1332,7 +1332,7 @@ mod example_steps {
         };
 
         then "m = material()" |world, _step| {
-            let expected = Material::new();
+            let expected = Material::default();
 
             let actual = world.s.material;
 

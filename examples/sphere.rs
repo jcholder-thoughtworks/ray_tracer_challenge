@@ -18,7 +18,7 @@ fn main() -> std::io::Result<()> {
     let mut world = RaytracerWorld::new();
 
     let mut sphere = world.new_sphere(CENTER_ORIGIN);
-    sphere.material = Material::new();
+    sphere.material = Material::default();
     sphere.material.color = Color::new(1.0, 0.2, 1.0);
     sphere.transform = scaling(3.0, 3.0, 3.0);
 
