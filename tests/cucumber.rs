@@ -43,6 +43,9 @@ pub struct MyWorld {
     i2: Option<Rc<Intersection>>,
     i3: Option<Rc<Intersection>>,
     i4: Option<Rc<Intersection>>,
+    intensity: Color,
+    position: Point,
+    light: Light,
 }
 
 impl cucumber::World for MyWorld {}
@@ -86,6 +89,9 @@ impl std::default::Default for MyWorld {
             i2: None,
             i3: None,
             i4: None,
+            intensity: BLACK,
+            position: CENTER_ORIGIN,
+            light: Light::new(CENTER_ORIGIN, BLACK),
         }
     }
 }
@@ -517,6 +523,14 @@ mod example_steps {
             world.n = Vector::new(x, y, z);
         };
 
+        given "intensity ← color(1, 1, 1)" |world, _step| {
+            world.intensity = Color::new(1.0, 1.0, 1.0);
+        };
+
+        given "position ← point(0, 0, 0)" |world, _step| {
+            world.position = Point::new(0.0, 0.0, 0.0);
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -618,6 +632,10 @@ mod example_steps {
 
         when "r ← reflect(v, n)" |world, _step| {
             world.rv = world.v.reflect(&world.n);
+        };
+
+        when "light ← point_light(position, intensity)" |world, _step| {
+            world.light = Light::new(world.position, world.intensity);
         };
 
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -1183,6 +1201,14 @@ mod example_steps {
             let actual = world.rv;
 
             assert_eq!(expected.rounded(), actual.rounded());
+        };
+
+        then "light.position = position" |world, _step| {
+            assert_eq!(world.position, world.light.position);
+        };
+
+        then "light.intensity = intensity" |world, _step| {
+            assert_eq!(world.intensity, world.light.intensity);
         };
     });
 }
