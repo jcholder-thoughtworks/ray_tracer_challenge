@@ -537,6 +537,12 @@ mod example_steps {
             world.mt = Material::new();
         };
 
+        given regex r"^m.ambient ← (.*)$" |world, matches, _step| {
+            let new_value : f32 = matches[1].parse().unwrap();
+
+            world.mt.ambient = new_value;
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -646,6 +652,10 @@ mod example_steps {
 
         when "m ← s.material" |world, _step| {
             world.mt = world.s.material;
+        };
+
+        when "s.material ← m" |world, _step| {
+            world.s.material = world.mt;
         };
 
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -1269,6 +1279,14 @@ mod example_steps {
             let expected = Material::new();
 
             let actual = world.s.material;
+
+            assert_eq!(expected, actual);
+        };
+
+        then "s.material = m" |world, _step| {
+            let expected = world.s.material;
+
+            let actual = world.mt;
 
             assert_eq!(expected, actual);
         };
