@@ -337,6 +337,26 @@ impl Sphere {
 
         world_normal.norm()
     }
+
+    pub fn hit_on_intersect(&self, ray: &Ray) -> Option<Rc<Intersection>> {
+        let mut potential_hit = Intersection { time: 0.0, object: Rc::new(self.clone()) };
+
+        let mut any: bool = false;
+
+        for t in self.intersect(ray).iter() {
+            any = true;
+            let time = *t;
+            if time >= potential_hit.time && time >= 0.0 {
+                potential_hit.time = time;
+            }
+        }
+
+        if any {
+            Some(Rc::new(potential_hit))
+        } else {
+            None
+        }
+    }
 }
 
 pub fn intersect(interceptable: &Rc<dyn Interceptable>, ray: &Ray) -> Intersections {
