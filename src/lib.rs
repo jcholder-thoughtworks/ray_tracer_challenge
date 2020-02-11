@@ -4,6 +4,7 @@ use std::rc::Rc;
 use ndarray::*;
 
 use self::color::Color;
+use self::light::{Light};
 use self::math::transforms::TransformationMatrix;
 use self::objects::{RaytracerObject};
 
@@ -52,6 +53,14 @@ impl RaytracerWorld {
         self.next_id += 1;
 
         RaytracerObject::new_sphere(id, origin)
+    }
+
+    pub fn objects(&self) -> Vec<Rc<RaytracerObject>> {
+        vec![]
+    }
+
+    pub fn lights(&self) -> Vec<Rc<Light>> {
+        vec![]
     }
 }
 

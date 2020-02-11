@@ -601,6 +601,10 @@ mod example_steps {
             world.light = Light::new(position, intensity);
         };
 
+        given "w ← world()" |world, _step| {
+            world.rw = RaytracerWorld::default();
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -1363,6 +1367,20 @@ mod example_steps {
             let actual = world.result;
 
             assert_eq!(expected.rounded(), actual.rounded());
+        };
+
+        then "w contains no objects" |world, _step| {
+            let expected: Vec<Rc<RaytracerObject>> = vec![];
+            let actual = world.rw.objects();
+
+            assert_eq!(expected, actual);
+        };
+
+        then "w has no light source" |world, _step| {
+            let expected: Vec<Rc<Light>> = vec![];
+            let actual = world.rw.lights();
+
+            assert_eq!(expected, actual);
         };
     });
 }
