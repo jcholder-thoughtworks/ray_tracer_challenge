@@ -6,9 +6,13 @@ use super::material::Material;
 use super::math::RaytracerMatrix;
 use super::*;
 
+pub trait RaytracerObject {
+    fn id(&self) -> usize;
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct Sphere {
-    id: usize,
+    pub id: usize,
     pub origin: Point,
     pub transform: TransformationMatrix,
     pub material: Material,

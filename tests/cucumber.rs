@@ -1135,7 +1135,7 @@ mod example_steps {
         then regex r"^xs\[(.*)\].object = s$" |world, matches, _step| {
             let index: usize = matches[1].parse().unwrap();
 
-            let expected = world.s.id();
+            let expected = world.s.id;
 
             let actual = world.xs[index].object.id();
 
@@ -1156,7 +1156,7 @@ mod example_steps {
         };
 
         then "i.object = s" |world, _step| {
-            let expected = world.s.id();
+            let expected = world.s.id;
 
             let actual = match world.i.as_ref() {
                 Some(interception) => interception.object.id(),

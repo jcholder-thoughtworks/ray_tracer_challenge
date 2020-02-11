@@ -7,7 +7,7 @@ use ndarray::*;
 use self::color::Color;
 use self::material::Material;
 use self::math::transforms::TransformationMatrix;
-use self::objects::Sphere;
+use self::objects::{RaytracerObject, Sphere};
 
 pub mod canvas;
 pub mod color;
@@ -61,10 +61,6 @@ impl Default for RaytracerWorld {
     fn default() -> Self {
         Self::new()
     }
-}
-
-pub trait RaytracerObject {
-    fn id(&self) -> usize;
 }
 
 #[derive(Copy, Clone, Debug, PartialEq)]
