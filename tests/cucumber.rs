@@ -602,7 +602,7 @@ mod example_steps {
         };
 
         given "w ← world()" |world, _step| {
-            world.rw = RaytracerWorld::default();
+            world.rw = RaytracerWorld::new();
         };
 
         when "p2 ← A * p" |world, _step| {
