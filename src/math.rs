@@ -115,8 +115,6 @@ impl RaytracerMatrix for Array<f32, Ix2> {
         rounded_matrix
     }
 
-    // TODO: Figure out how to avoid this manual copying.
-    // Might need to change these implementations to target ArrayBase instead of Array
     fn transposed(&self) -> Self {
         let transposed_view = self.t();
         let mut transposed_matrix = Array2::zeros(self.dim());
