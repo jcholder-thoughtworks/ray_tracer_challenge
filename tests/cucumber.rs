@@ -11,6 +11,7 @@ use cucumber::{after, before, cucumber};
 use ray_tracer_challenge::color::*;
 use ray_tracer_challenge::light::*;
 use ray_tracer_challenge::material::*;
+use ray_tracer_challenge::models::*;
 use ray_tracer_challenge::*;
 
 pub struct MyWorld {
