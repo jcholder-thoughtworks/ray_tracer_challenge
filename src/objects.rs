@@ -6,63 +6,83 @@ use super::material::Material;
 use super::math::RaytracerMatrix;
 use super::*;
 
-pub trait RaytracerObject {
-    fn id(&self) -> usize;
+#[derive(Clone, Debug, PartialEq)]
+pub enum RaytracerObjectType {
+    Sphere,
 }
 
+type ROT = RaytracerObjectType;
+
 #[derive(Clone, Debug, PartialEq)]
-pub struct Sphere {
-    pub id: usize,
+pub struct RaytracerObject {
+    obj_id: usize,
+    obj_type: ROT,
     pub origin: Point,
     pub transform: TransformationMatrix,
     pub material: Material,
 }
 
-impl Sphere {
-    pub fn new(id: usize, origin: Point) -> Self {
+impl RaytracerObject {
+    fn new(obj_id: usize, obj_type: ROT, origin: Point) -> Self {
         let transform = Array::eye(4);
         let material = Material::new();
 
-        Sphere {
+        Self {
+            obj_id,
+            obj_type,
             origin,
-            id,
             transform,
             material,
         }
     }
 
+    pub fn new_sphere(obj_id: usize, origin: Point) -> Self {
+        Self::new(obj_id, ROT::Sphere, origin)
+    }
+
+    pub fn id(&self) -> usize {
+        self.obj_id
+    }
+
     pub fn hit_on_intersect(&self, ray: &Ray) -> Option<Rc<Intersection>> {
-        let mut potential_hit = Intersection {
-            time: 0.0,
-            object: Rc::new(self.clone()),
-        };
-
-        let mut any: bool = false;
-
-        for t in self.intersect(ray).iter() {
-            any = true;
-            let time = *t;
-            if time >= potential_hit.time && time >= 0.0 {
-                potential_hit.time = time;
-            }
-        }
-
-        if any {
-            Some(Rc::new(potential_hit))
-        } else {
-            None
+        match &self.obj_type {
+            ROT::Sphere => hit_on_intersect_sphere(self, ray),
+            //_ => unimplemented!("WIP")
         }
     }
 }
 
-impl RaytracerObject for Sphere {
+fn hit_on_intersect_sphere(sphere: &RaytracerObject, ray: &Ray) -> Option<Rc<Intersection>> {
+    let mut potential_hit = Intersection {
+        time: 0.0,
+        object: Rc::new(sphere.clone()),
+    };
+
+    let mut any: bool = false;
+
+    for t in sphere.intersect(ray).iter() {
+        any = true;
+        let time = *t;
+        if time >= potential_hit.time && time >= 0.0 {
+            potential_hit.time = time;
+        }
+    }
+
+    if any {
+        Some(Rc::new(potential_hit))
+    } else {
+        None
+    }
+}
+
+// TODO: Fold Interceptable into RaytracerObject
+impl Interceptable for RaytracerObject {
     fn id(&self) -> usize {
-        self.id
+        self.obj_id
     }
-}
 
-impl Interceptable for Sphere {
     fn intersect(&self, original_ray: &Ray) -> Vec<Time> {
+        // TODO: match on obj_type. Current sphere specific
         let inverse = self.transform.inverse();
 
         let ray = original_ray.transform(&inverse);
@@ -91,6 +111,7 @@ impl Interceptable for Sphere {
     }
 
     fn normal_at(&self, world_point: Point) -> Vector {
+        // TODO: match on obj_type. Current sphere specific
         let sphere_transform_inverse = self.transform.inverse();
 
         let object_point = &sphere_transform_inverse * world_point;

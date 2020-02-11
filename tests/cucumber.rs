@@ -41,7 +41,7 @@ pub struct MyWorld {
     r: Ray,
     rv: Vector,
     r2: Ray,
-    s: Sphere,
+    s: RaytracerObject,
     xs: Intersections,
     i: Option<Rc<Intersection>>,
     i1: Option<Rc<Intersection>>,
@@ -123,6 +123,7 @@ mod example_steps {
     use ray_tracer_challenge::material::*;
     use ray_tracer_challenge::math::transforms::*;
     use ray_tracer_challenge::math::*;
+    use ray_tracer_challenge::objects::*;
     use ray_tracer_challenge::*;
 
     fn table_to_matrix(table: gherkin::Table, size: (Ix, Ix)) -> Array<f32, Ix2> {
@@ -1135,7 +1136,7 @@ mod example_steps {
         then regex r"^xs\[(.*)\].object = s$" |world, matches, _step| {
             let index: usize = matches[1].parse().unwrap();
 
-            let expected = world.s.id;
+            let expected = world.s.id();
 
             let actual = world.xs[index].object.id();
 
@@ -1156,7 +1157,7 @@ mod example_steps {
         };
 
         then "i.object = s" |world, _step| {
-            let expected = world.s.id;
+            let expected = world.s.id();
 
             let actual = match world.i.as_ref() {
                 Some(interception) => interception.object.id(),

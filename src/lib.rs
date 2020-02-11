@@ -7,7 +7,7 @@ use ndarray::*;
 use self::color::Color;
 use self::material::Material;
 use self::math::transforms::TransformationMatrix;
-use self::objects::{RaytracerObject, Sphere};
+use self::objects::{RaytracerObject};
 
 pub mod canvas;
 pub mod color;
@@ -49,11 +49,11 @@ impl RaytracerWorld {
     }
 
     // TODO: Should probably return an Rc<Sphere>
-    pub fn new_sphere(&mut self, origin: Point) -> Sphere {
+    pub fn new_sphere(&mut self, origin: Point) -> RaytracerObject {
         let id = self.next_id;
         self.next_id += 1;
 
-        Sphere::new(id, origin)
+        RaytracerObject::new_sphere(id, origin)
     }
 }
 
@@ -302,12 +302,14 @@ impl Ray {
     }
 }
 
-pub trait Interceptable: RaytracerObject + fmt::Debug {
+pub trait Interceptable: fmt::Debug {
     fn intersect(&self, ray: &Ray) -> Vec<Time>;
 
     fn normal_at(&self, world_point: Point) -> Vector;
 
     fn material(&self) -> Material;
+
+    fn id(&self) -> usize;
 }
 
 #[derive(Debug)]
