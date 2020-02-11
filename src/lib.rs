@@ -7,14 +7,14 @@ use ndarray::*;
 use self::color::Color;
 use self::material::Material;
 use self::math::transforms::TransformationMatrix;
-use self::models::Sphere;
+use self::objects::Sphere;
 
 pub mod canvas;
 pub mod color;
 pub mod light;
 pub mod material;
 pub mod math;
-pub mod models;
+pub mod objects;
 pub mod physics;
 
 pub const EPSILON: f32 = 0.00001;
