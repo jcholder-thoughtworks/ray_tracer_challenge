@@ -622,9 +622,9 @@ mod example_steps {
         };
 
         when "xs ← intersect(s, r)" |world, _step| {
-            let sphere_rc: Rc<dyn Interceptable> = Rc::new(world.s.clone());
+            let sphere_rc: Rc<RaytracerObject> = Rc::new(world.s.clone());
 
-            world.xs = intersect(&sphere_rc, &world.r);
+            world.xs = intersect(sphere_rc, &world.r);
         };
 
         when "xs ← intersections(i1, i2)" |world, _step| {

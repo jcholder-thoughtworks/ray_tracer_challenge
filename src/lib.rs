@@ -1,11 +1,9 @@
-use std::fmt;
 use std::ops;
 use std::rc::Rc;
 
 use ndarray::*;
 
 use self::color::Color;
-use self::material::Material;
 use self::math::transforms::TransformationMatrix;
 use self::objects::{RaytracerObject};
 
@@ -302,24 +300,14 @@ impl Ray {
     }
 }
 
-pub trait Interceptable: fmt::Debug {
-    fn intersect(&self, ray: &Ray) -> Vec<Time>;
-
-    fn normal_at(&self, world_point: Point) -> Vector;
-
-    fn material(&self) -> Material;
-
-    fn id(&self) -> usize;
-}
-
 #[derive(Debug)]
 pub struct Intersection {
     pub time: Time,
-    pub object: Rc<dyn Interceptable>,
+    pub object: Rc<RaytracerObject>,
 }
 
-pub fn intersect(interceptable: &Rc<dyn Interceptable>, ray: &Ray) -> Intersections {
-    let times = interceptable.intersect(ray);
+pub fn intersect(object: Rc<RaytracerObject>, ray: &Ray) -> Intersections {
+    let times = object.intersect(ray);
 
     times
         .iter()
@@ -327,7 +315,7 @@ pub fn intersect(interceptable: &Rc<dyn Interceptable>, ray: &Ray) -> Intersecti
             |t| {
                 Rc::new(Intersection {
                     time: *t,
-                    object: Rc::clone(&interceptable),
+                    object: Rc::clone(&object),
                 })
             }
         })
