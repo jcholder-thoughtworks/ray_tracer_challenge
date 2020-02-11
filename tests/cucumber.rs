@@ -9,6 +9,7 @@ use ndarray::*;
 use cucumber::{after, before, cucumber};
 
 use ray_tracer_challenge::color::*;
+use ray_tracer_challenge::material::*;
 use ray_tracer_challenge::*;
 
 pub struct MyWorld {
@@ -116,6 +117,7 @@ mod example_steps {
     use ndarray::*;
 
     use ray_tracer_challenge::color::*;
+    use ray_tracer_challenge::material::*;
     use ray_tracer_challenge::math::transforms::*;
     use ray_tracer_challenge::math::*;
     use ray_tracer_challenge::*;

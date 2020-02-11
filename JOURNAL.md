@@ -214,3 +214,11 @@ Back to our original task!
 _Holy cow!_ Look at that sphere! Amaaaaazing!
 
 That's a great stopping point for now. Let's see about cleaning up the code, especially in regard to `rustfmt`. `clippy` has some complaints, too!
+
+# 11Feb2020
+
+It's a new day! Time for new code!
+
+Had a little fun playing around with transforms on the sphere but now it's time for the next step!
+
+But even before that, refactoring time! Well, mostly moving things into their own modules so that the files are not so large.

@@ -3,6 +3,7 @@ use std::io::prelude::*;
 
 use ray_tracer_challenge::canvas::*;
 use ray_tracer_challenge::color::*;
+use ray_tracer_challenge::material::*;
 use ray_tracer_challenge::math::transforms::*;
 use ray_tracer_challenge::*;
 
