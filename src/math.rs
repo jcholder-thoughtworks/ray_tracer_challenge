@@ -40,91 +40,6 @@ pub trait RaytracerMatrix: Clone {
     fn transposed(&self) -> Self;
 }
 
-impl RaytracerMatrix for Array<i32, Ix2> {
-    type Unit = i32;
-
-    fn determinant(&self) -> Self::Unit {
-        match self.dim() {
-            (2, 2) => determinant_i32_2x2(self),
-            _ => determinant_i32_n_x_n(self),
-        }
-    }
-
-    fn submatrix(&self, row: usize, col: usize) -> Self {
-        let orig_rows = self.nrows();
-        let orig_cols = self.ncols();
-
-        let mut sub = Self::default((orig_rows - 1, orig_cols - 1));
-
-        for r in 0..orig_rows {
-            if r == row {
-                continue;
-            }
-
-            for c in 0..orig_cols {
-                if c == col {
-                    continue;
-                }
-
-                let ri = if r > row { r - 1 } else { r };
-
-                let ci = if c > col { c - 1 } else { c };
-
-                sub[[ri, ci]] = self[[r, c]];
-            }
-        }
-
-        sub
-    }
-
-    fn invertible(&self) -> bool {
-        self.determinant() != 0
-    }
-
-    fn negate(number: Self::Unit) -> Self::Unit {
-        -number
-    }
-
-    fn inverse(&self) -> Self {
-        // TODO: Put this safety check behind a debug flag so that we can disable it for
-        // optimization
-        if !self.invertible() {
-            panic!("Cannot invert a matrix with a determinant of zero");
-        }
-
-        let mut inverted = Array2::zeros(self.dim());
-
-        for row_i in 0..self.nrows() {
-            for col_i in 0..self.ncols() {
-                let cofactor = self.cofactor(row_i, col_i);
-
-                inverted[[col_i, row_i]] = cofactor / self.determinant();
-            }
-        }
-
-        inverted
-    }
-
-    fn rounded(&self) -> Self {
-        self.clone()
-    }
-
-    // TODO: Figure out how to avoid this manual copying.
-    // Might need to change these implementations to target ArrayBase instead of Array
-    fn transposed(&self) -> Self {
-        let transposed_view = self.t();
-        let mut transposed_matrix = Array2::zeros(self.dim());
-
-        for r in 0..(self.nrows()) {
-            for c in 0..(self.ncols()) {
-                transposed_matrix[[r, c]] = transposed_view[[r, c]];
-            }
-        }
-
-        transposed_matrix
-    }
-}
-
 impl RaytracerMatrix for Array<f32, Ix2> {
     type Unit = f32;
 
@@ -214,28 +129,6 @@ impl RaytracerMatrix for Array<f32, Ix2> {
 
         transposed_matrix
     }
-}
-
-fn determinant_i32_2x2(matrix: &Array<i32, Ix2>) -> i32 {
-    let a = matrix[[0, 0]];
-    let b = matrix[[0, 1]];
-    let c = matrix[[1, 0]];
-    let d = matrix[[1, 1]];
-
-    (a * d) - (b * c)
-}
-
-fn determinant_i32_n_x_n(matrix: &Array<i32, Ix2>) -> i32 {
-    let mut determinant: i32 = 0;
-
-    for c in 0..matrix.ncols() {
-        let element = matrix[[0, c]];
-        let cofactor = matrix.cofactor(0, c);
-
-        determinant += cofactor * element;
-    }
-
-    determinant
 }
 
 fn determinant_f32_2x2(matrix: &Array<f32, Ix2>) -> f32 {
