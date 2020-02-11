@@ -226,3 +226,7 @@ But even before that, refactoring time! Well, mostly moving things into their ow
 Oh no! `The trait "RaytracerObject" cannot be made into an object`. Here's hoping that I can fix this with enough uses of `Box` and `Rc`. (I can always simplify the implemenntation later.) No luck yet. There's a very real possibility that I'm overusing trait objects annd dynamic dispatch where I should be using enums. Yeah, let's try refactoring `RaytracerObject` into an enum and go from there. While that _would_ make it harder for others to add their own objects, that's not _actually_ a concern for this project? Priorities! Heck yeah that refactoring was easy! Much easier than I expected. No complaints here.
 
 Interesting to see how the performance profile changed with the refactoring. It look likes matrix math has come to dominate the processing time, particularly calls to `ndarray` functions. I may well benefit from implementing my own matrix types. In the meantime, I'll eliminate some unnecessary dynamic dispatch, or at least some unnecessary code.
+
+Hmm. `#submatrix` is expensive because it allocates a new, default `Array`. Since it's only called (so far) by `#determinant`, I wonder if I can get away with having `#submatrix` work with simpler memory models, like returning a simple `Vec` that only gets converted into an `Array` as needed. Something to think about when the rendering times get onerous again. Maybe I can use [Saruss's Rule](https://github.com/apanasara/Saruss_3x3_Determinant)?
+
+Anyway, that's enough for today. I have work-related tasks to tackle!
