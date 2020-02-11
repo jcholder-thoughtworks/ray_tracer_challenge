@@ -221,4 +221,4 @@ It's a new day! Time for new code!
 
 Had a little fun playing around with transforms on the sphere but now it's time for the next step!
 
-But even before that, refactoring time! Well, mostly moving things into their own modules so that the files are not so large.
+But even before that, refactoring time! Well, mostly moving things into their own modules so that the files are not so large. There! Extracted a few modules. I expect that to make things less confusing.
