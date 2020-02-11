@@ -1,5 +1,6 @@
 use super::color::{Color, BLACK};
-use super::{Light, Point, Vector};
+use super::light::Light;
+use super::{Point, Vector};
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Material {

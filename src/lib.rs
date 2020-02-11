@@ -11,6 +11,7 @@ use self::math::RaytracerMatrix;
 
 pub mod canvas;
 pub mod color;
+pub mod light;
 pub mod material;
 pub mod math;
 pub mod physics;
@@ -446,21 +447,6 @@ impl Hittable for Intersections {
         }
 
         h
-    }
-}
-
-#[derive(Copy, Clone, Debug, PartialEq)]
-pub struct Light {
-    pub position: Point,
-    pub intensity: Color,
-}
-
-impl Light {
-    pub fn new(position: Point, intensity: Color) -> Self {
-        Self {
-            position,
-            intensity,
-        }
     }
 }
 
