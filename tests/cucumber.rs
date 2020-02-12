@@ -646,6 +646,10 @@ mod example_steps {
             world.s2.transform = transform;
         };
 
+        given "w ← default_world()" |world, _step| {
+            world.rw = RaytracerWorld::default();
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -767,6 +771,10 @@ mod example_steps {
 
         when "w ← default_world()" |world, _step| {
             world.rw = RaytracerWorld::default();
+        };
+
+        when "xs ← intersect_world(w, r)" |world, _step| {
+            world.xs = world.rw.intersect(&world.r);
         };
 
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
