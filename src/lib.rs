@@ -38,6 +38,7 @@ pub fn round(v: f32) -> f32 {
     (v * factor).round() / factor
 }
 
+#[derive(Debug)]
 pub struct RaytracerWorld {
     next_id: usize,
     pub light: Option<Light>,
