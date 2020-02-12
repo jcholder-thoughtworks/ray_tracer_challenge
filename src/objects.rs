@@ -16,7 +16,7 @@ type ROT = RaytracerObjectType;
 #[derive(Clone, Debug, PartialEq)]
 pub struct RaytracerObject {
     obj_id: usize,
-    obj_type: ROT,
+    pub obj_type: ROT,
     pub origin: Point,
     pub transform: TransformationMatrix,
     pub material: Material,
