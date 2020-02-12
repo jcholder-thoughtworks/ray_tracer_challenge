@@ -360,7 +360,9 @@ impl Intersection {
         let object = Rc::clone(&self.object);
         let eyev = -(ray.direction);
         let normalv = self.object.normal_at(point);
-        let inside = false;
+        let inside =  normalv.dot(eyev) < 0.0;
+
+        let normalv = if inside { -normalv } else { normalv };
 
         PrecomputedHit {
             time,
