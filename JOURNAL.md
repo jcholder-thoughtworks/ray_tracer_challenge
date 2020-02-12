@@ -242,3 +242,5 @@ Oops! Good thing I was paying enough attention. Looks like I won't actually need
 And now, time for some _prepared computations_! Wish me luck!
 
 I'm not sure if `PrecomputedHit` will be the right name for the struct but it seems correct after an initial review. We'll see how that bears out in practice.
+
+Phew! Brain feels drained after that "precomputation" work. It's probably less a matter of the programming work and more a matter of having not had my afternoon coffee yet while deferred job tasks pull at my attention.
