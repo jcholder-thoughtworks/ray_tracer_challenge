@@ -59,6 +59,7 @@ pub struct MyWorld {
     result: Color,
     shape: Rc<RaytracerObject>,
     comps: Option<PrecomputedHit>,
+    c: Color,
 }
 
 impl cucumber::World for MyWorld {}
@@ -116,6 +117,7 @@ impl std::default::Default for MyWorld {
             result: BLACK,
             shape,
             comps: None,
+            c: BLACK,
         }
     }
 }
@@ -667,6 +669,10 @@ mod example_steps {
             world.i = Some(Rc::new(Intersection { time, object }));
         };
 
+        given "shape ← the first object in w" |world, _step| {
+            world.shape = Rc::clone(&world.rw.objects().first().unwrap());
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -796,6 +802,10 @@ mod example_steps {
 
         when "comps ← prepare_computations(i, r)" |world, _step| {
             world.comps = Some(world.i.as_ref().unwrap().prepare_computations(&world.r));
+        };
+
+        when "c ← shade_hit(w, comps)" |world, _step| {
+            world.c = world.rw.shade_hit(world.comps.as_ref().unwrap());
         };
 
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -1576,6 +1586,18 @@ mod example_steps {
             let actual = world.comps.as_ref().unwrap().inside;
 
             assert_eq!(expected, actual);
+        };
+
+        then regex r"^c = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let r: f32 = matches[1].parse().unwrap();
+            let g: f32 = matches[2].parse().unwrap();
+            let b: f32 = matches[3].parse().unwrap();
+
+            let expected = Color::new(r, g, b);
+
+            let actual = world.c;
+
+            assert_eq!(expected.rounded(), actual.rounded());
         };
     });
 }
