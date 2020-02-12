@@ -518,6 +518,7 @@ dependencies = [
  "cucumber_rust",
  "gherkin_rust",
  "ndarray",
+ "regex",
 ]
 
 [[package]]
