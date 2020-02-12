@@ -1569,6 +1569,14 @@ mod example_steps {
 
             assert_eq!(expected, actual);
         };
+
+        then regex r"^comps.inside = (.*)$" |world, matches, _step| {
+            let expected: bool = matches[1].parse().unwrap();
+
+            let actual = world.comps.as_ref().unwrap().inside;
+
+            assert_eq!(expected, actual);
+        };
     });
 }
 
