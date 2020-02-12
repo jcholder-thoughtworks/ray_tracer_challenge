@@ -73,6 +73,20 @@ impl RaytracerWorld {
             })
             .collect()
     }
+
+    pub fn intersect(&self, ray: &Ray) -> Intersections {
+        // TODO: Eliminate this cloning. More references
+        let mut intersections = self
+            .objs
+            .iter()
+            .map(|o| intersect(Rc::new(o.clone()), &ray))
+            .flatten()
+            .collect::<Intersections>();
+
+        intersections.sort_by(|a, b| a.time.partial_cmp(&b.time).unwrap());
+
+        intersections
+    }
 }
 
 impl Default for RaytracerWorld {
