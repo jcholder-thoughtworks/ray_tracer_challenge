@@ -360,6 +360,7 @@ impl Intersection {
         let object = Rc::clone(&self.object);
         let eyev = -(ray.direction);
         let normalv = self.object.normal_at(point);
+        let inside = false;
 
         PrecomputedHit {
             time,
@@ -367,6 +368,7 @@ impl Intersection {
             point,
             eyev,
             normalv,
+            inside,
         }
     }
 }
@@ -414,6 +416,7 @@ pub struct PrecomputedHit {
     pub point: Point,
     pub eyev: Vector,
     pub normalv: Vector,
+    pub inside: bool,
 }
 
 
