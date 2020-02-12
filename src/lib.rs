@@ -79,6 +79,10 @@ impl RaytracerWorld {
 
         intersections
     }
+
+    pub fn shade_hit(&self, comp: &PrecomputedHit) -> Color {
+        comp.object.material.lighting(self.light.unwrap(), comp.point, comp.eyev, comp.normalv)
+    }
 }
 
 impl Default for RaytracerWorld {
