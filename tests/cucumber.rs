@@ -58,7 +58,7 @@ pub struct MyWorld {
     normalv: Vector,
     result: Color,
     shape: Rc<RaytracerObject>,
-    comps: Option<PrecomputedHit>
+    comps: Option<PrecomputedHit>,
 }
 
 impl cucumber::World for MyWorld {}

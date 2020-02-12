@@ -4,9 +4,9 @@ use std::rc::Rc;
 use ndarray::*;
 
 use self::color::{Color, WHITE};
-use self::light::{Light};
+use self::light::Light;
 use self::math::transforms::{scaling, TransformationMatrix};
-use self::objects::{RaytracerObject};
+use self::objects::RaytracerObject;
 
 pub mod canvas;
 pub mod color;
@@ -63,15 +63,7 @@ impl RaytracerWorld {
 
     pub fn objects(&self) -> Vec<Rc<RaytracerObject>> {
         // TODO: Return an iterator of objects, instead. No Vec/Rc necessary
-        self
-            .objs
-            .iter()
-            .map({
-                |o| {
-                    Rc::new(o.clone())
-                }
-            })
-            .collect()
+        self.objs.iter().map({ |o| Rc::new(o.clone()) }).collect()
     }
 
     pub fn intersect(&self, ray: &Ray) -> Intersections {
@@ -360,7 +352,7 @@ impl Intersection {
         let object = Rc::clone(&self.object);
         let eyev = -(ray.direction);
         let normalv = self.object.normal_at(point);
-        let inside =  normalv.dot(eyev) < 0.0;
+        let inside = normalv.dot(eyev) < 0.0;
 
         let normalv = if inside { -normalv } else { normalv };
 
@@ -420,7 +412,6 @@ pub struct PrecomputedHit {
     pub normalv: Vector,
     pub inside: bool,
 }
-
 
 pub fn equalish(a: f32, b: f32) -> bool {
     (a - b).abs() < EPSILON
