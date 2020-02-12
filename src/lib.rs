@@ -353,6 +353,24 @@ pub struct Intersection {
     pub object: Rc<RaytracerObject>,
 }
 
+impl Intersection {
+    pub fn prepare_computations(&self, ray: &Ray) -> PrecomputedHit {
+        let time = self.time;
+        let point = ray.position(self.time);
+        let object = Rc::clone(&self.object);
+        let eyev = -(ray.direction);
+        let normalv = self.object.normal_at(point);
+
+        PrecomputedHit {
+            time,
+            object,
+            point,
+            eyev,
+            normalv,
+        }
+    }
+}
+
 pub fn intersect(object: Rc<RaytracerObject>, ray: &Ray) -> Intersections {
     let times = object.intersect(ray);
 
@@ -388,6 +406,16 @@ impl Hittable for Intersections {
         h
     }
 }
+
+#[derive(Debug)]
+pub struct PrecomputedHit {
+    pub time: Time,
+    pub object: Rc<RaytracerObject>,
+    pub point: Point,
+    pub eyev: Vector,
+    pub normalv: Vector,
+}
+
 
 pub fn equalish(a: f32, b: f32) -> bool {
     (a - b).abs() < EPSILON

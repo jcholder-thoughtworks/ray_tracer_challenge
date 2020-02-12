@@ -237,4 +237,8 @@ Got a lot done! Going to treat myself to a bit more Rust work before I leave for
 
 New day, new Cucumber scenarios! Let's get to work.
 
-Oops! Good thing I was paying enough attention. Looks like I won't actually need to support multiple lights, at least not within the scope of this book. Goodbye, `Vec`! Hello, smaller scope!
+Oops! Good thing I was paying enough attention. Looks like I won't actually need to support multiple lights, at least not within the scope of this book. Goodbye, `Vec`! Hello, smaller scope! And all that was pretty straightforward! Plenty of refactoring opportunities, though. Wonder if I could eliminate `Rc` entirely with some effort.
+
+And now, time for some _prepared computations_! Wish me luck!
+
+I'm not sure if `PrecomputedHit` will be the right name for the struct but it seems correct after an initial review. We'll see how that bears out in practice.

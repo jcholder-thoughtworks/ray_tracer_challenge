@@ -57,6 +57,8 @@ pub struct MyWorld {
     eyev: Vector,
     normalv: Vector,
     result: Color,
+    shape: Rc<RaytracerObject>,
+    comps: Option<PrecomputedHit>
 }
 
 impl cucumber::World for MyWorld {}
@@ -66,6 +68,7 @@ impl std::default::Default for MyWorld {
         let s = rw.new_sphere(CENTER_ORIGIN);
         let s1 = rw.new_sphere(CENTER_ORIGIN);
         let s2 = rw.new_sphere(CENTER_ORIGIN);
+        let shape = Rc::new(rw.new_sphere(CENTER_ORIGIN));
 
         // This function is called every time a new scenario is started
         MyWorld {
@@ -111,6 +114,8 @@ impl std::default::Default for MyWorld {
             eyev: STATIONARY,
             normalv: STATIONARY,
             result: BLACK,
+            shape,
+            comps: None,
         }
     }
 }
@@ -650,6 +655,18 @@ mod example_steps {
             world.rw = RaytracerWorld::default();
         };
 
+        given "shape ← sphere()" |world, _step| {
+            world.shape = Rc::new(world.rw.new_sphere(CENTER_ORIGIN));
+        };
+
+        given regex r"^i ← intersection\((.*), shape\)$" |world, matches, _step| {
+            let time: Time = matches[1].parse().unwrap();
+
+            let object = Rc::clone(&world.shape);
+
+            world.i = Some(Rc::new(Intersection { time, object }));
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -775,6 +792,10 @@ mod example_steps {
 
         when "xs ← intersect_world(w, r)" |world, _step| {
             world.xs = world.rw.intersect(&world.r);
+        };
+
+        when "comps ← prepare_computations(i, r)" |world, _step| {
+            world.comps = Some(world.i.as_ref().unwrap().prepare_computations(&world.r));
         };
 
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -1464,6 +1485,89 @@ mod example_steps {
             let found_match = world.rw.objects().iter().find(equivalent_obj).is_some();
 
             assert!(found_match, "Expected to find {:?} in {:?} but didn't", expected, world.rw.objects());
+        };
+
+        then "comps.t = i.t" |world, _step| {
+            let expected = world.comps.as_ref().unwrap().time;
+            let actual = world.i.as_ref().unwrap().time;
+
+            assert_eq!(expected, actual);
+        };
+
+        then "comps.object = i.object" |world, _step| {
+            let expected = world.i.as_ref().unwrap().object.as_ref().clone();
+            let actual = world.comps.as_ref().unwrap().object.as_ref().clone();
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"^comps.point = point\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let x: f32 = match matches[1].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[1].parse().unwrap(),
+            };
+            let y: f32 = match matches[2].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[2].parse().unwrap(),
+            };
+            let z: f32 = match matches[3].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[3].parse().unwrap(),
+            };
+
+            let expected = Point::new(x, y, z);
+            let actual = world.comps.as_ref().unwrap().point;
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"^comps.eyev = vector\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let x: f32 = match matches[1].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[1].parse().unwrap(),
+            };
+            let y: f32 = match matches[2].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[2].parse().unwrap(),
+            };
+            let z: f32 = match matches[3].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[3].parse().unwrap(),
+            };
+
+            let expected = Vector::new(x, y, z);
+            let actual = world.comps.as_ref().unwrap().eyev;
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"^comps.normalv = vector\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let x: f32 = match matches[1].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[1].parse().unwrap(),
+            };
+            let y: f32 = match matches[2].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[2].parse().unwrap(),
+            };
+            let z: f32 = match matches[3].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[3].parse().unwrap(),
+            };
+
+            let expected = Vector::new(x, y, z);
+            let actual = world.comps.as_ref().unwrap().normalv;
+
+            assert_eq!(expected, actual);
         };
     });
 }
