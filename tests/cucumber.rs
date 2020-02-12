@@ -42,6 +42,8 @@ pub struct MyWorld {
     rv: Vector,
     r2: Ray,
     s: RaytracerObject,
+    s1: RaytracerObject,
+    s2: RaytracerObject,
     xs: Intersections,
     i: Option<Rc<Intersection>>,
     i1: Option<Rc<Intersection>>,
@@ -62,6 +64,8 @@ impl std::default::Default for MyWorld {
     fn default() -> MyWorld {
         let mut rw = RaytracerWorld::default();
         let s = rw.new_sphere(CENTER_ORIGIN);
+        let s1 = rw.new_sphere(CENTER_ORIGIN);
+        let s2 = rw.new_sphere(CENTER_ORIGIN);
 
         // This function is called every time a new scenario is started
         MyWorld {
@@ -92,6 +96,8 @@ impl std::default::Default for MyWorld {
             rv: STATIONARY,
             r2: Ray::new(CENTER_ORIGIN, STATIONARY),
             s,
+            s1,
+            s2,
             xs: vec![],
             i: None,
             i1: None,
@@ -112,6 +118,8 @@ impl std::default::Default for MyWorld {
 mod example_steps {
     use std::f32::consts::PI;
     use std::rc::Rc;
+
+    use regex::Regex;
 
     use cucumber::steps;
 
@@ -605,6 +613,39 @@ mod example_steps {
             world.rw = RaytracerWorld::new();
         };
 
+        given "s1 ← sphere() with:" |world, step| {
+            let table = step.table().unwrap().clone();
+
+            let color_regex = Regex::new(r"^\((.*), (.*), (.*)\)$").unwrap();
+            let color_captures = color_regex.captures(&table.header[1]).unwrap();
+            let r = color_captures.get(1).unwrap().as_str().parse().unwrap();
+            let g = color_captures.get(2).unwrap().as_str().parse().unwrap();
+            let b = color_captures.get(3).unwrap().as_str().parse().unwrap();
+
+            let color = Color::new(r, g, b);
+
+            let diffuse: f32 = table.rows[0][1].parse().unwrap();
+            let specular: f32 = table.rows[1][1].parse().unwrap();
+
+            world.s1.material.color = color;
+            world.s1.material.diffuse = diffuse;
+            world.s1.material.specular = specular;
+        };
+
+        given "s2 ← sphere() with:" |world, step| {
+            let table = step.table().unwrap().clone();
+
+            let regex = Regex::new(r"^scaling\((.*), (.*), (.*)\)$").unwrap();
+            let captures = regex.captures(&table.rows[0][1]).unwrap();
+            let x: f32 = captures.get(1).unwrap().as_str().parse().unwrap();
+            let y: f32 = captures.get(2).unwrap().as_str().parse().unwrap();
+            let z: f32 = captures.get(3).unwrap().as_str().parse().unwrap();
+
+            let transform = scaling(x, y, z);
+
+            world.s2.transform = transform;
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -722,6 +763,10 @@ mod example_steps {
 
         when "result ← lighting(m, light, position, eyev, normalv)" |world, _step| {
             world.result = world.mt.lighting(world.light, world.position, world.eyev, world.normalv);
+        };
+
+        when "w ← default_world()" |world, _step| {
+            world.rw = RaytracerWorld::default();
         };
 
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -1377,10 +1422,40 @@ mod example_steps {
         };
 
         then "w has no light source" |world, _step| {
-            let expected: Vec<Rc<Light>> = vec![];
-            let actual = world.rw.lights();
+            let expected: Option<Light> = None;
+            let actual = world.rw.light;
 
             assert_eq!(expected, actual);
+        };
+
+        then "w.light = light" |world, _step| {
+            let expected = Some(world.light);
+            let actual = world.rw.light;
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"^w contains (.*)$" |world, matches, _step| {
+            let expected_obj_name = matches[1].as_str();
+
+            let expected = match expected_obj_name {
+                "s1" => world.s1.clone(),
+                "s2" => world.s2.clone(),
+                _ => panic!("Unrecognized object name: {}", expected_obj_name),
+            };
+
+            let equivalent_obj = |o: &&Rc<RaytracerObject>| -> bool {
+                let obj: RaytracerObject = o.as_ref().clone();
+
+                obj.obj_type == expected.obj_type
+                    && obj.origin == expected.origin
+                    && obj.transform == expected.transform
+                    && obj.material == expected.material
+            };
+
+            let found_match = world.rw.objects().iter().find(equivalent_obj).is_some();
+
+            assert!(found_match, "Expected to find {:?} in {:?} but didn't", expected, world.rw.objects());
         };
     });
 }

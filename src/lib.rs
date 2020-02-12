@@ -3,9 +3,9 @@ use std::rc::Rc;
 
 use ndarray::*;
 
-use self::color::Color;
+use self::color::{Color, WHITE};
 use self::light::{Light};
-use self::math::transforms::TransformationMatrix;
+use self::math::transforms::{scaling, TransformationMatrix};
 use self::objects::{RaytracerObject};
 
 pub mod canvas;
@@ -40,11 +40,17 @@ pub fn round(v: f32) -> f32 {
 
 pub struct RaytracerWorld {
     next_id: usize,
+    pub light: Option<Light>,
+    objs: Vec<RaytracerObject>,
 }
 
 impl RaytracerWorld {
     pub fn new() -> Self {
-        RaytracerWorld { next_id: 0 }
+        RaytracerWorld {
+            next_id: 0,
+            light: None,
+            objs: vec![],
+        }
     }
 
     // TODO: Should probably return an Rc<Sphere>
@@ -56,17 +62,35 @@ impl RaytracerWorld {
     }
 
     pub fn objects(&self) -> Vec<Rc<RaytracerObject>> {
-        vec![]
-    }
-
-    pub fn lights(&self) -> Vec<Rc<Light>> {
-        vec![]
+        // TODO: Return an iterator of objects, instead. No Vec/Rc necessary
+        self
+            .objs
+            .iter()
+            .map({
+                |o| {
+                    Rc::new(o.clone())
+                }
+            })
+            .collect()
     }
 }
 
 impl Default for RaytracerWorld {
     fn default() -> Self {
-        Self::new()
+        let mut world = Self::new();
+
+        let mut s1 = world.new_sphere(CENTER_ORIGIN);
+        s1.material.color = Color::new(0.8, 1.0, 0.6);
+        s1.material.diffuse = 0.7;
+        s1.material.specular = 0.2;
+
+        let mut s2 = world.new_sphere(CENTER_ORIGIN);
+        s2.transform = scaling(0.5, 0.5, 0.5);
+
+        world.light = Some(Light::new(Point::new(-10.0, 10.0, -10.0), WHITE));
+        world.objs = vec![s1, s2];
+
+        world
     }
 }
 

@@ -230,3 +230,11 @@ Interesting to see how the performance profile changed with the refactoring. It 
 Hmm. `#submatrix` is expensive because it allocates a new, default `Array`. Since it's only called (so far) by `#determinant`, I wonder if I can get away with having `#submatrix` work with simpler memory models, like returning a simple `Vec` that only gets converted into an `Array` as needed. Something to think about when the rendering times get onerous again. Maybe I can use [Saruss's Rule](https://github.com/apanasara/Saruss_3x3_Determinant)?
 
 Anyway, that's enough for today. I have work-related tasks to tackle!
+
+Got a lot done! Going to treat myself to a bit more Rust work before I leave for the day.
+
+# 12Feb2020
+
+New day, new Cucumber scenarios! Let's get to work.
+
+Oops! Good thing I was paying enough attention. Looks like I won't actually need to support multiple lights, at least not within the scope of this book. Goodbye, `Vec`! Hello, smaller scope!
