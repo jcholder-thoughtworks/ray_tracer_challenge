@@ -246,3 +246,9 @@ I'm not sure if `PrecomputedHit` will be the right name for the struct but it se
 Phew! Brain feels drained after that "precomputation" work. It's probably less a matter of the programming work and more a matter of having not had my afternoon coffee yet while deferred job tasks pull at my attention.
 
 Everything was going swimmingly until the `Shading an intersection` scenario. At quite a loss for what could have caused the color values to converge. Something to sleep on and leave for tomorrow. More than enough other work tasks to focus on!
+
+# 14Feb2020
+
+Took a day off to focus on other work and only spending half an hour to debug today but let's see if I have any luck.
+
+Wow, I'm totally stuck on this "Shading an intersection from the inside." How confounding. Might have to review the fundamental matrix math before I can diagnose this.
