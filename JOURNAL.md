@@ -254,3 +254,7 @@ Took a day off to focus on other work and only spending half an hour to debug to
 Wow, I'm totally stuck on this "Shading an intersection from the inside." How confounding. Might have to review the fundamental matrix math before I can diagnose this.
 
 Oh my good grief. It was a faulty regex again! I _finally_ noticed that the world light looked odd. And fixed! Bleeping finally.
+
+Still at the office, later than expected, so onto the next feature!
+
+Hrm. Something seems to be wrong with my inside/outside calculations in regards to precomputed calculations. That doesn't seem to explain everything, though, since I still get incorrect color values when I try to correct for that. The `inside` part may be a symptom. As I thought! I wasn't selecting the earliest hit from among the intersections but rather the last hit. Yep! My first-hit detection math _was_ off! But my fix also broke something else ... And fixed! Just had to explicitly account for negative time values when calculating the first time. (No time travel allowed!) Progress!

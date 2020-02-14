@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use ndarray::*;
 
-use self::color::{Color, WHITE};
+use self::color::{BLACK, Color, WHITE};
 use self::light::Light;
 use self::math::transforms::{scaling, TransformationMatrix};
 use self::objects::RaytracerObject;
@@ -83,6 +83,20 @@ impl RaytracerWorld {
 
     pub fn shade_hit(&self, comp: &PrecomputedHit) -> Color {
         comp.object.material.lighting(self.light.unwrap(), comp.point, comp.eyev, comp.normalv)
+    }
+
+    pub fn color_at(&self, ray: &Ray) -> Color {
+        let intersections = self.intersect(ray);
+
+        let hit = intersections.hit();
+
+        if hit.is_none() {
+            return BLACK;
+        }
+
+        let comps = hit.unwrap().prepare_computations(ray);
+
+        self.shade_hit(&comps)
     }
 }
 
@@ -398,7 +412,16 @@ impl Hittable for Intersections {
         let mut min_t: Time = 0.0;
 
         for i in self.iter() {
-            if i.time >= min_t && i.time >= 0.0 {
+            if i.time < 0.0 {
+                continue;
+            }
+
+            if h.is_none() {
+                min_t = i.time;
+                h = Some(i.clone());
+            }
+
+            if min_t > i.time {
                 min_t = i.time;
                 h = Some(i.clone());
             }
