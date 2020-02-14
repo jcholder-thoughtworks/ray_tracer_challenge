@@ -828,6 +828,10 @@ mod example_steps {
             world.c = world.rw.shade_hit(world.comps.as_ref().unwrap());
         };
 
+        when "c ← color_at(w, r)" |world, _step| {
+            world.c = world.rw.color_at(&world.r);
+        };
+
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
             let color_i1: usize = matches[1].parse().unwrap();
             let color1 = world.colors[color_i1];
