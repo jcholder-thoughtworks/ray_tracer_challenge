@@ -600,7 +600,7 @@ mod example_steps {
             world.normalv = Vector::new(x, y, z);
         };
 
-        given regex r"light ← point_light\(point\((.*), (.*), (.*)\), color\((.*), (.*), (.*)\)\)" |world, matches, _step| {
+        given regex r"^light ← point_light\(point\((.*), (.*), (.*)\), color\((.*), (.*), (.*)\)\)$" |world, matches, _step| {
             let x: f32 = matches[1].parse().unwrap();
             let y: f32 = matches[2].parse().unwrap();
             let z: f32 = matches[3].parse().unwrap();
@@ -614,6 +614,22 @@ mod example_steps {
             let intensity = Color::new(red, green, blue);
 
             world.light = Light::new(position, intensity);
+        };
+
+        given regex r"^w\.light ← point_light\(point\((.*), (.*), (.*)\), color\((.*), (.*), (.*)\)\)$" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let position = Point::new(x, y, z);
+
+            let red: f32 = matches[4].parse().unwrap();
+            let green: f32 = matches[5].parse().unwrap();
+            let blue: f32 = matches[6].parse().unwrap();
+
+            let intensity = Color::new(red, green, blue);
+
+            world.rw.light = Some(Light::new(position, intensity));
         };
 
         given "w ← world()" |world, _step| {
@@ -671,6 +687,10 @@ mod example_steps {
 
         given "shape ← the first object in w" |world, _step| {
             world.shape = Rc::clone(&world.rw.objects().first().unwrap());
+        };
+
+        given "shape ← the second object in w" |world, _step| {
+            world.shape = Rc::clone(&world.rw.objects().get(1).unwrap());
         };
 
         when "p2 ← A * p" |world, _step| {

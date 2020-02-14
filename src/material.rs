@@ -29,13 +29,9 @@ impl Material {
 
         let lightv: Vector = (light.position - point).norm();
 
-        //panic!("lp {:?}\np {:?}\nlv {:?}", light.position, point, lightv);
-
         let ambient: Color = effective_color * material.ambient;
 
         let light_dot_normal: f32 = lightv.dot(normalv);
-
-        //panic!("\nldn {:?}\nlv {:?}\n", light_dot_normal, lightv);
 
         let mut diffuse: Color = BLACK;
         let mut specular: Color = BLACK;

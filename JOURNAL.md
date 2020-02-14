@@ -252,3 +252,5 @@ Everything was going swimmingly until the `Shading an intersection` scenario. At
 Took a day off to focus on other work and only spending half an hour to debug today but let's see if I have any luck.
 
 Wow, I'm totally stuck on this "Shading an intersection from the inside." How confounding. Might have to review the fundamental matrix math before I can diagnose this.
+
+Oh my good grief. It was a faulty regex again! I _finally_ noticed that the world light looked odd. And fixed! Bleeping finally.
