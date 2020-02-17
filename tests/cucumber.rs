@@ -1690,6 +1690,44 @@ mod example_steps {
 
             assert_eq!(expected, actual);
         };
+
+        then "t = scaling(-1, 1, -1)" |world, _step| {
+            let expected = &scaling(-1.0, 1.0, -1.0);
+
+            let actual = world.t.as_ref();
+
+            assert_eq!(expected, actual);
+        };
+
+        then "t = translation(0, 0, -8)" |world, _step| {
+            let expected = &translation(0.0, 0.0, -8.0);
+
+            let actual = world.t.as_ref();
+
+            assert_eq!(expected, actual);
+        };
+
+        then "t is the following 4x4 matrix:" |world, step| {
+            let table = step.table().unwrap().clone();
+
+            let mut expected: Array<f32, Ix2> = Array::from_elem((4, 4), 0.0);
+
+            for (c, value) in table.header.iter().enumerate() {
+                expected[[0,c]] = value.parse().unwrap();
+            }
+
+            for (r, row) in table.rows.iter().enumerate() {
+                for (c, value) in row.iter().enumerate() {
+                    expected[[r + 1,c]] = value.parse().unwrap();
+                }
+            }
+
+            let expected = &expected;
+
+            let actual = world.t.as_ref();
+
+            assert_eq!(expected.rounded(), actual.rounded());
+        };
     });
 }
 
