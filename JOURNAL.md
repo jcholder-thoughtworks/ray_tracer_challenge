@@ -258,3 +258,9 @@ Oh my good grief. It was a faulty regex again! I _finally_ noticed that the worl
 Still at the office, later than expected, so onto the next feature!
 
 Hrm. Something seems to be wrong with my inside/outside calculations in regards to precomputed calculations. That doesn't seem to explain everything, though, since I still get incorrect color values when I try to correct for that. The `inside` part may be a symptom. As I thought! I wasn't selecting the earliest hit from among the intersections but rather the last hit. Yep! My first-hit detection math _was_ off! But my fix also broke something else ... And fixed! Just had to explicitly account for negative time values when calculating the first time. (No time travel allowed!) Progress!
+
+# 17Feb2020
+
+Back to work! A short dive into the code now since there's still research to do. Wanted a mental break to refresh myself.
+
+Still feels like I'm overusing `Rc` and one scenario, `The color with an intersection behind the ray`, reinforced that notion. I probably just need to make better use of borrowing mutable references instead.

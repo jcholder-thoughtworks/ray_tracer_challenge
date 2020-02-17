@@ -693,6 +693,24 @@ mod example_steps {
             world.shape = Rc::clone(&world.rw.objects().get(1).unwrap());
         };
 
+        given "outer ← the first object in w" |_world, _step| {
+            // Seemed like too much effort to make this assignment approach 
+            // work with Rust's ownership system so skipping it
+        };
+
+        given "inner ← the second object in w" |_world, _step| {
+            // Seemed like too much effort to make this assignment approach 
+            // work with Rust's ownership system so skipping it
+        };
+
+        given "outer.material.ambient ← 1" |world, _step| {
+            world.rw.get_object_mut(0).material.ambient = 1.0;
+        };
+
+        given "inner.material.ambient ← 1" |world, _step| {
+            world.rw.get_object_mut(1).material.ambient = 1.0;
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -1622,6 +1640,13 @@ mod example_steps {
             let actual = world.c;
 
             assert_eq!(expected.rounded(), actual.rounded());
+        };
+
+        then "c = inner.material.color" |world, _step| {
+            let expected = world.rw.objects().get(1).unwrap().material.color;
+            let actual = world.c;
+
+            assert_eq!(expected, actual);
         };
     });
 }
