@@ -117,13 +117,13 @@ Scenario: Chained transformations must be applied in reverse order
   When T ← C * B * A
   Then T * p = point(15, 0, 7)
 
-#Scenario: The transformation matrix for the default orientation
-#  Given from ← point(0, 0, 0)
-#    And to ← point(0, 0, -1)
-#    And up ← vector(0, 1, 0)
-#  When t ← view_transform(from, to, up)
-#  Then t = identity_matrix
-#
+Scenario: The transformation matrix for the default orientation
+  Given from ← point(0, 0, 0)
+    And to ← point(0, 0, -1)
+    And up ← vector(0, 1, 0)
+  When t ← view_transform(from, to, up)
+  Then t = identity_matrix
+
 #Scenario: A view transformation matrix looking in positive z direction
 #  Given from ← point(0, 0, 0)
 #    And to ← point(0, 0, 1)

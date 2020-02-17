@@ -60,6 +60,9 @@ pub struct MyWorld {
     shape: Rc<RaytracerObject>,
     comps: Option<PrecomputedHit>,
     c: Color,
+    from: Point,
+    to: Point,
+    up: Vector,
 }
 
 impl cucumber::World for MyWorld {}
@@ -118,6 +121,9 @@ impl std::default::Default for MyWorld {
             shape,
             comps: None,
             c: BLACK,
+            from: CENTER_ORIGIN,
+            to: CENTER_ORIGIN,
+            up: STATIONARY,
         }
     }
 }
@@ -711,6 +717,30 @@ mod example_steps {
             world.rw.get_object_mut(1).material.ambient = 1.0;
         };
 
+        given regex r"^from ← point\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.from = Point::new(x, y, z);
+        };
+
+        given regex r"^to ← point\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.to = Point::new(x, y, z);
+        };
+
+        given regex r"^up ← vector\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            world.up = Vector::new(x, y, z);
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -848,6 +878,10 @@ mod example_steps {
 
         when "c ← color_at(w, r)" |world, _step| {
             world.c = world.rw.color_at(&world.r);
+        };
+
+        when "t ← view_transform(from, to, up)" |world, _step| {
+            world.t = Rc::new(view_transform(&world.from, &world.to, &world.up));
         };
 
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -1645,6 +1679,14 @@ mod example_steps {
         then "c = inner.material.color" |world, _step| {
             let expected = world.rw.objects().get(1).unwrap().material.color;
             let actual = world.c;
+
+            assert_eq!(expected, actual);
+        };
+
+        then "t = identity_matrix" |world, _step| {
+            let expected: &Array<f32, Ix2> = &Array::eye(4);
+
+            let actual = world.t.as_ref();
 
             assert_eq!(expected, actual);
         };
