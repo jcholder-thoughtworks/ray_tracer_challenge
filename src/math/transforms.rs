@@ -1,5 +1,7 @@
 use ndarray::*;
 
+use super::{Point, Vector};
+
 pub type TransformationMatrix = Array<f32, Ix2>;
 
 pub fn translation(x: f32, y: f32, z: f32) -> TransformationMatrix {
@@ -63,4 +65,15 @@ pub fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Transfo
     let r4: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
 
     arr2(&[r1, r2, r3, r4])
+}
+
+pub fn view_transform(from: &Point, to: &Point, up: &Vector) -> TransformationMatrix {
+    let from: Array<f32, Ix1> = from.clone().into();
+    let to: Array<f32, Ix1> = to.clone().into();
+    let up: Array<f32, Ix1> = up.clone().into();
+
+    let arr: TransformationMatrix = Array::eye(4);
+    //let arr = arr * from;
+
+    arr
 }
