@@ -264,3 +264,5 @@ Hrm. Something seems to be wrong with my inside/outside calculations in regards 
 Back to work! A short dive into the code now since there's still research to do. Wanted a mental break to refresh myself.
 
 Still feels like I'm overusing `Rc` and one scenario, `The color with an intersection behind the ray`, reinforced that notion. I probably just need to make better use of borrowing mutable references instead.
+
+`view_transform` wasn't too bad, at least once I remembered to continue reading instead of trying to guess the solution on my own prematurely!

@@ -68,12 +68,20 @@ pub fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Transfo
 }
 
 pub fn view_transform(from: &Point, to: &Point, up: &Vector) -> TransformationMatrix {
-    let from: Array<f32, Ix1> = from.clone().into();
-    let to: Array<f32, Ix1> = to.clone().into();
-    let up: Array<f32, Ix1> = up.clone().into();
+    // TODO: Implement #norm for Array<f32, Ix1> so that we don't have to convert types
+    let forward: Vector = (to.clone() - from.clone()).into();
+    let forward = forward.norm();
 
-    let arr: TransformationMatrix = Array::eye(4);
-    //let arr = arr * from;
+    let left = forward.cross(up.norm());
 
-    arr
+    let true_up = left.cross(forward.clone());
+
+    let r1: [f32; 4] = [left.x, left.y, left.z, 0.0];
+    let r2: [f32; 4] = [true_up.x, true_up.y, true_up.z, 0.0];
+    let r3: [f32; 4] = [-forward.x, -forward.y, -forward.z, 0.0];
+    let r4: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
+
+    let orientation = arr2(&[r1, r2, r3, r4]);
+
+    orientation.dot(&translation(-from.x, -from.y, -from.z))
 }
