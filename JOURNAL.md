@@ -272,3 +272,7 @@ And next time: cameras!
 # 18Feb2020
 
 Time for a Rust/ray tracer break! Let's see how far I can get.
+
+Yay! Initial `Camera` scenario was simple enough.
+
+Huh. That seems like too few `pixel_size` scenarios.

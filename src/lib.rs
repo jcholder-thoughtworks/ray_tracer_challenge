@@ -454,13 +454,35 @@ pub struct Camera {
     pub vsize: f32,
     pub field_of_view: f32,
     pub transform: TransformationMatrix,
+    pub pixel_size: f32, // Pixel Size
+    pub half_width: f32,
+    pub half_height: f32,
 }
 
 impl Camera {
     pub fn new(hsize: f32, vsize: f32, field_of_view: f32) -> Self {
         let transform = Array::eye(4);
 
-        Camera { hsize, vsize, field_of_view, transform }
+        let half_view = (field_of_view / 2.0).tan();
+        let aspect = hsize / vsize;
+
+        let (half_width, half_height) = if aspect >= 1.0 {
+            (half_view, half_view / aspect)
+        } else {
+            (half_view * aspect, half_view)
+        };
+
+        let pixel_size = (half_width * 2.0) / hsize;
+
+        Camera {
+            hsize,
+            vsize,
+            field_of_view,
+            transform,
+            pixel_size,
+            half_width,
+            half_height,
+        }
     }
 }
 
