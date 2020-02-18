@@ -923,6 +923,10 @@ mod example_steps {
             world.r = world.camera.ray_for_pixel(x, y);
         };
 
+        when "c.transform ← rotation_y(π/4) * translation(0, -2, 5)" |world, _step| {
+            world.camera.transform = rotation_y(PI/4.0).dot(&translation(0.0, -2.0, 5.0));
+        };
+
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
             let color_i1: usize = matches[1].parse().unwrap();
             let color1 = world.colors[color_i1];
@@ -1285,9 +1289,21 @@ mod example_steps {
         };
 
         then regex r"^r.direction = vector\((.*), (.*), (.*)\)$" |world, matches, _step| {
-            let x: f32 = matches[1].parse().unwrap();
-            let y: f32 = matches[2].parse().unwrap();
-            let z: f32 = matches[3].parse().unwrap();
+            let x: f32 = match matches[1].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[1].parse().unwrap(),
+            };
+            let y: f32 = match matches[2].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[2].parse().unwrap(),
+            };
+            let z: f32 = match matches[3].as_str() {
+                "√2/2" => 2.0_f32.sqrt() / 2.0,
+                "-√2/2" => -(2.0_f32.sqrt() / 2.0),
+                _ => matches[3].parse().unwrap(),
+            };
 
             let expected = Vector::new(x, y, z);
 
