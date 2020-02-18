@@ -916,6 +916,13 @@ mod example_steps {
             world.camera = Camera::new(world.hsize, world.vsize, world.field_of_view);
         };
 
+        when regex r"^r ← ray_for_pixel\(c, (.*), (.*)\)$" |world, matches, _step| {
+            let x: usize = matches[1].parse().unwrap();
+            let y: usize = matches[2].parse().unwrap();
+
+            world.r = world.camera.ray_for_pixel(x, y);
+        };
+
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
             let color_i1: usize = matches[1].parse().unwrap();
             let color1 = world.colors[color_i1];
@@ -1265,6 +1272,26 @@ mod example_steps {
 
         then "r.origin = origin" |world, _step| {
             assert_eq!(world.origin, world.r.origin);
+        };
+
+        then regex r"^r.origin = point\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Point::new(x, y, z);
+
+            assert_eq!(expected.rounded(), world.r.origin.rounded());
+        };
+
+        then regex r"^r.direction = vector\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = Vector::new(x, y, z);
+
+            assert_eq!(expected.rounded(), world.r.direction.rounded());
         };
 
         then regex r"^r2.origin = point\((.*), (.*), (.*)\)$" |world, matches, _step| {

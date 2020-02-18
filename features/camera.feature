@@ -18,12 +18,12 @@ Scenario: The pixel size for a vertical canvas
   Given c ← camera(125, 200, π/2)
   Then c.pixel_size = 0.01
 
-#Scenario: Constructing a ray through the center of the canvas
-#  Given c ← camera(201, 101, π/2)
-#  When r ← ray_for_pixel(c, 100, 50)
-#  Then r.origin = point(0, 0, 0)
-#    And r.direction = vector(0, 0, -1)
-#
+Scenario: Constructing a ray through the center of the canvas
+  Given c ← camera(201, 101, π/2)
+  When r ← ray_for_pixel(c, 100, 50)
+  Then r.origin = point(0, 0, 0)
+    And r.direction = vector(0, 0, -1)
+
 #Scenario: Constructing a ray through a corner of the canvas
 #  Given c ← camera(201, 101, π/2)
 #  When r ← ray_for_pixel(c, 0, 0)
