@@ -3,6 +3,7 @@ use std::rc::Rc;
 
 use ndarray::*;
 
+use self::canvas::Canvas;
 use self::color::{BLACK, Color, WHITE};
 use self::light::Light;
 use self::math::RaytracerMatrix;
@@ -513,49 +514,18 @@ impl Camera {
         Ray::new(origin, direction)
     }
 
-    pub fn render(&self, world: &RaytracerWorld) -> Image {
-        let hsize = self.hsize as usize;
-        let vsize = self.vsize as usize;
+    pub fn render(&self, world: &RaytracerWorld) -> Canvas {
+        let mut image = Canvas::new(self.hsize as u32, self.vsize as u32);
 
-        let mut image = Image::new(hsize as usize, vsize as usize);
-
-        for y in 0..vsize {
-            for x in 0..hsize {
+        for y in 0..(self.vsize as usize) {
+            for x in 0..(self.hsize as usize) {
                 let ray = self.ray_for_pixel(x, y);
                 let color = world.color_at(&ray);
-                image.write_pixel(x, y, color);
+                image.write_pixel(x as u32, y as u32, color);
             }
         }
 
         image
-    }
-}
-
-pub struct Image {
-    pixels: Vec<Color>,
-    width: usize,
-    height: usize,
-}
-
-impl Image {
-    pub fn new(width: usize, height: usize) -> Self {
-        let pixels = vec![BLACK; width * height];
-
-        Image { pixels, width, height }
-    }
-
-    pub fn pixel_at(&self, x: usize, y: usize) -> Color {
-        assert!(x < self.width, "x({}) exceeds width({}) of Image", x, self.width);
-        assert!(y < self.height, "y({}) exceeds height({}) of Image", y, self.height);
-
-        self.pixels.get((y * self.width) + x).unwrap().clone()
-    }
-
-    pub fn write_pixel(&mut self, x: usize, y: usize, color: Color) {
-        assert!(x < self.width, "x({}) exceeds width({}) of Image", x, self.width);
-        assert!(y < self.height, "y({}) exceeds height({}) of Image", y, self.height);
-
-        self.pixels[(y * self.width) + x] = color;
     }
 }
 

@@ -8,6 +8,7 @@ use ndarray::*;
 
 use cucumber::{after, before, cucumber};
 
+use ray_tracer_challenge::canvas::*;
 use ray_tracer_challenge::color::*;
 use ray_tracer_challenge::light::*;
 use ray_tracer_challenge::material::*;
@@ -67,7 +68,7 @@ pub struct MyWorld {
     vsize: f32,
     field_of_view: f32,
     camera: Camera,
-    image: Image,
+    image: Canvas,
 }
 
 impl cucumber::World for MyWorld {}
@@ -133,7 +134,7 @@ impl std::default::Default for MyWorld {
             vsize: 0.0,
             field_of_view: 0.0,
             camera: Camera::new(0.0, 0.0, 0.0),
-            image: Image::new(0, 0),
+            image: Canvas::new(0, 0),
         }
     }
 }
