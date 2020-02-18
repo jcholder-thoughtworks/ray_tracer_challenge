@@ -276,3 +276,5 @@ Time for a Rust/ray tracer break! Let's see how far I can get.
 Yay! Initial `Camera` scenario was simple enough.
 
 Huh. That seems like too few `pixel_size` scenarios. Well, done anyway. That wasn't too bad. Break time!
+
+Almost camera time!! Normally I'd stop here to focus on more work stuff but (1) I'm staying a bit late tonight and (2) I'm really eager to see visible results of my work again!

@@ -67,6 +67,7 @@ pub struct MyWorld {
     vsize: f32,
     field_of_view: f32,
     camera: Camera,
+    image: Image,
 }
 
 impl cucumber::World for MyWorld {}
@@ -132,6 +133,7 @@ impl std::default::Default for MyWorld {
             vsize: 0.0,
             field_of_view: 0.0,
             camera: Camera::new(0.0, 0.0, 0.0),
+            image: Image::new(0, 0),
         }
     }
 }
@@ -769,6 +771,10 @@ mod example_steps {
             world.camera = Camera::new(hsize, vsize, field_of_view);
         };
 
+        given "c.transform ← view_transform(from, to, up)" |world, _step| {
+            world.camera.transform = view_transform(&world.from, &world.to, &world.up);
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -925,6 +931,10 @@ mod example_steps {
 
         when "c.transform ← rotation_y(π/4) * translation(0, -2, 5)" |world, _step| {
             world.camera.transform = rotation_y(PI/4.0).dot(&translation(0.0, -2.0, 5.0));
+        };
+
+        when "image ← render(c, w)" |world, _step| {
+            world.image = world.camera.render(&world.rw);
         };
 
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -1827,6 +1837,14 @@ mod example_steps {
 
         then "c.pixel_size = 0.01" |world, _step| {
             assert_eq!(0.01_f32, world.camera.pixel_size);
+        };
+
+        then "pixel_at(image, 5, 5) = color(0.38066, 0.47583, 0.2855)" |world, _step| {
+            let expected = Color::new(0.38066, 0.47583, 0.2855);
+
+            let actual = world.image.pixel_at(5, 5);
+
+            assert_eq!(expected.rounded(), actual.rounded());
         };
     });
 }
