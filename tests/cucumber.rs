@@ -63,6 +63,10 @@ pub struct MyWorld {
     from: Point,
     to: Point,
     up: Vector,
+    hsize: f32,
+    vsize: f32,
+    field_of_view: f32,
+    camera: Camera,
 }
 
 impl cucumber::World for MyWorld {}
@@ -124,6 +128,10 @@ impl std::default::Default for MyWorld {
             from: CENTER_ORIGIN,
             to: CENTER_ORIGIN,
             up: STATIONARY,
+            hsize: 0.0,
+            vsize: 0.0,
+            field_of_view: 0.0,
+            camera: Camera::new(0.0, 0.0, 0.0),
         }
     }
 }
@@ -741,6 +749,18 @@ mod example_steps {
             world.up = Vector::new(x, y, z);
         };
 
+        given "hsize ← 160" |world, _step| {
+            world.hsize = 160.0;
+        };
+
+        given "vsize ← 120" |world, _step| {
+            world.vsize = 120.0;
+        };
+
+        given "field_of_view ← π/2" |world, _step| {
+            world.field_of_view = PI / 2.0;
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -882,6 +902,10 @@ mod example_steps {
 
         when "t ← view_transform(from, to, up)" |world, _step| {
             world.t = Rc::new(view_transform(&world.from, &world.to, &world.up));
+        };
+
+        when "c ← camera(hsize, vsize, field_of_view)" |world, _step| {
+            world.camera = Camera::new(world.hsize, world.vsize, world.field_of_view);
         };
 
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -1727,6 +1751,27 @@ mod example_steps {
             let actual = world.t.as_ref();
 
             assert_eq!(expected.rounded(), actual.rounded());
+        };
+
+        then "c.hsize = 160" |world, _step| {
+            assert_eq!(160.0, world.camera.hsize);
+        };
+
+        then "c.vsize = 120" |world, _step| {
+            assert_eq!(120.0, world.camera.vsize);
+        };
+
+        then "c.field_of_view = π/2" |world, _step| {
+            assert_eq!(PI / 2.0, world.camera.field_of_view);
+        };
+
+        then "c.transform = identity_matrix" |world, _step| {
+            let expected: Array<f32, Ix2> = Array::eye(4); 
+            let expected = &expected;
+
+            let actual = &world.camera.transform;
+
+            assert_eq!(expected, actual);
         };
     });
 }
