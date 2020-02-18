@@ -761,6 +761,14 @@ mod example_steps {
             world.field_of_view = PI / 2.0;
         };
 
+        given regex r"^c ← camera\((.*), (.*), π/2\)$" |world, matches, _step| {
+            let hsize: f32 = matches[1].parse().unwrap();
+            let vsize: f32 = matches[2].parse().unwrap();
+            let field_of_view: f32 = PI / 2.0;
+
+            world.camera = Camera::new(hsize, vsize, field_of_view);
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = world.matrix_a.as_ref() * world.p;
         };
@@ -1772,6 +1780,10 @@ mod example_steps {
             let actual = &world.camera.transform;
 
             assert_eq!(expected, actual);
+        };
+
+        then "c.pixel_size = 0.01" |world, _step| {
+            assert_eq!(0.01_f32, world.camera.pixel_size);
         };
     });
 }
