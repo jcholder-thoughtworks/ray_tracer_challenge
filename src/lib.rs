@@ -449,6 +449,21 @@ pub fn equalish(a: f32, b: f32) -> bool {
     (a - b).abs() < EPSILON
 }
 
+pub struct Camera {
+    pub hsize: f32,
+    pub vsize: f32,
+    pub field_of_view: f32,
+    pub transform: TransformationMatrix,
+}
+
+impl Camera {
+    pub fn new(hsize: f32, vsize: f32, field_of_view: f32) -> Self {
+        let transform = Array::eye(4);
+
+        Camera { hsize, vsize, field_of_view, transform }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

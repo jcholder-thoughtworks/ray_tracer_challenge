@@ -268,3 +268,7 @@ Still feels like I'm overusing `Rc` and one scenario, `The color with an interse
 `view_transform` wasn't too bad, at least once I remembered to continue reading instead of trying to guess the solution on my own prematurely!
 
 And next time: cameras!
+
+# 18Feb2020
+
+Time for a Rust/ray tracer break! Let's see how far I can get.
