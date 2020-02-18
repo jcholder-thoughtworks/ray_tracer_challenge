@@ -280,3 +280,5 @@ Huh. That seems like too few `pixel_size` scenarios. Well, done anyway. That was
 Almost camera time!! Normally I'd stop here to focus on more work stuff but (1) I'm staying a bit late tonight and (2) I'm really eager to see visible results of my work again!
 
 Silly me! I already had a `Canvas` struct and didn't need `Image`! Oops. Amazing how I can forget about my own structs in my own small project. Bigger projects don't stand a chance.
+
+HECK YEAH! It renders!! Go me!
