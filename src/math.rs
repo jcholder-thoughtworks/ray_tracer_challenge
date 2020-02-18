@@ -160,12 +160,6 @@ impl From<Point> for Array<f32, Ix1> {
     }
 }
 
-impl From<Array<f32, Ix1>> for Point {
-    fn from(item: Array<f32, Ix1>) -> Self {
-        Point::new(item[[0]], item[[1]], item[[2]])
-    }
-}
-
 // TODO: Feels like we should be able to use a `where` clause here
 impl ops::Mul<Array<f32, Ix2>> for Point {
     type Output = Self;

@@ -5,6 +5,7 @@ use ndarray::*;
 
 use self::color::{BLACK, Color, WHITE};
 use self::light::Light;
+use self::math::RaytracerMatrix;
 use self::math::transforms::{scaling, TransformationMatrix};
 use self::objects::RaytracerObject;
 
@@ -337,6 +338,12 @@ impl From<Array<f32, Ix1>> for Vector {
     }
 }
 
+impl From<Array<f32, Ix1>> for Point {
+    fn from(item: Array<f32, Ix1>) -> Self {
+        Point::new(item[[0]], item[[1]], item[[2]])
+    }
+}
+
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Ray {
     pub origin: Point,
@@ -483,6 +490,27 @@ impl Camera {
             half_width,
             half_height,
         }
+    }
+
+    pub fn ray_for_pixel(&self, px: usize, py: usize) -> Ray {
+        let xoffset = (px as f32 + 0.5) * self.pixel_size;
+        let yoffset = (py as f32 + 0.5) * self.pixel_size;
+
+        let world_x = self.half_width - xoffset;
+        let world_y = self.half_height - yoffset;
+
+        let world_point_array: Array<f32, Ix1> = Point::new(world_x, world_y, -1.0).into();
+        let center_origin: Array<f32, Ix1> = CENTER_ORIGIN.into();
+
+        let transform_inverse = self.transform.inverse();
+
+        let pixel: Point = transform_inverse.dot(&world_point_array).into();
+
+        let origin: Point = transform_inverse.dot(&center_origin).into();
+
+        let direction = (pixel - origin).norm();
+
+        Ray::new(origin, direction)
     }
 }
 
