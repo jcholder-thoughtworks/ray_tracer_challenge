@@ -282,3 +282,11 @@ Almost camera time!! Normally I'd stop here to focus on more work stuff but (1) 
 Silly me! I already had a `Canvas` struct and didn't need `Image`! Oops. Amazing how I can forget about my own structs in my own small project. Bigger projects don't stand a chance.
 
 HECK YEAH! It renders!! Go me!
+
+# 19Feb2020
+
+Alright! Let's set the sphere scene to match the book.
+
+And success! It looks amazing.
+
+But it's time to take a break. I have other priorities at work so I'll shelve this for now and save it for occasional breaks.
