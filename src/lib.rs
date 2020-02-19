@@ -69,6 +69,10 @@ impl RaytracerWorld {
         self.objs.iter().map({ |o| Rc::new(o.clone()) }).collect()
     }
 
+    pub fn add_object(&mut self, obj: RaytracerObject) {
+        self.objs.push(obj);
+    }
+
     pub fn get_object_mut(&mut self, index: usize) -> &mut RaytracerObject {
         &mut self.objs[index]
     }
