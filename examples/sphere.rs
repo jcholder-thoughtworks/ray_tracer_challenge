@@ -8,8 +8,8 @@ use ray_tracer_challenge::material::*;
 use ray_tracer_challenge::math::transforms::*;
 use ray_tracer_challenge::*;
 
-const CANVAS_WIDTH: f32 = 150.0;
-const CANVAS_HEIGHT: f32 = 150.0;
+const CANVAS_WIDTH: f32 = 350.0;
+const CANVAS_HEIGHT: f32 = 350.0;
 const FIELD_OF_VIEW: f32 = PI / 2.0;
 
 fn main() -> std::io::Result<()> {
@@ -17,10 +17,16 @@ fn main() -> std::io::Result<()> {
 
     let mut world = RaytracerWorld::default();
 
+    let mut light = world.light.unwrap();
+    light.position.z = 2.0;
+    world.light = Some(light);
+
     let mut sphere = world.new_sphere(CENTER_ORIGIN);
     sphere.material = Material::default();
-    sphere.material.color = Color::new(1.0, 0.2, 1.0);
-    sphere.transform = scaling(3.0, 3.0, 3.0);
+    sphere.material.color = Color::new(1.0, 0.0, 0.8);
+    sphere.transform = scaling(4.0, 4.0, 4.0);
+
+    world.add_object(sphere);
 
     let mut camera = Camera::new(CANVAS_WIDTH, CANVAS_HEIGHT, FIELD_OF_VIEW);
     camera.transform = translation(0.0, 0.0, -3.0);
