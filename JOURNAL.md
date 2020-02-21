@@ -290,3 +290,37 @@ Alright! Let's set the sphere scene to match the book.
 And success! It looks amazing.
 
 But it's time to take a break. I have other priorities at work so I'll shelve this for now and save it for occasional breaks.
+
+# 21Feb2020
+
+I have a bit of downtime while waiting for a meeting (distracted by vague anxiety) so I'm going to take a quick stab at optimising the code.
+
+So `RaytracerWorld#intersect` gets called a _lot_. Let's dig deeper. Something about an `Iterator`. So `#determinant` also gets implicated. Curious. I don't know if there's much we can do to optimize things at that level, though, aside from reimplementing matrices from scratch to avoid the overhead of the `Array` from `ndarray`, but let's keep looking. That does look like our best bet, though, and would certainly make the code less confusing in the end. We can get away with that now that we know we'll only work with matrices up to 4x4 and with only `f32` values.
+
+But first, benchmarks! We can't optimize properly if we don't know where we're starting from:
+
+Results from `bench "cargo run --example sphere --release"`:
+
+With width(100) and height(50):
+
+```
+benchmarking cargo run --example sphere --release
+time                 1.428 s    (1.352 s .. 1.529 s)
+                     0.999 R²   (0.998 R² .. 1.000 R²)
+mean                 1.397 s    (1.374 s .. 1.414 s)
+std dev              23.62 ms   (11.09 ms .. 30.81 ms)
+variance introduced by outliers: 19% (moderately inflated)
+```
+
+With width(200) and height(100) (note that this takes significantly longer to run than 100x50):
+
+```
+benchmarking cargo run --example sphere --release
+time                 5.410 s    (5.201 s .. 5.788 s)
+                     0.999 R²   (0.999 R² .. 1.000 R²)
+mean                 5.368 s    (5.315 s .. 5.406 s)
+std dev              52.88 ms   (21.11 ms .. 70.15 ms)
+variance introduced by outliers: 19% (moderately inflated)
+```
+
+Oh! Time to parameterize `sphere.rs`. There's no reason to keep editing the image's dimensions in the code itself!

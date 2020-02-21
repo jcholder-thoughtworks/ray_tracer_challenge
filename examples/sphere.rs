@@ -9,8 +9,8 @@ use ray_tracer_challenge::material::*;
 use ray_tracer_challenge::math::transforms::*;
 use ray_tracer_challenge::*;
 
-const CANVAS_WIDTH: f32 = 400.0;
-const CANVAS_HEIGHT: f32 = 200.0;
+const CANVAS_WIDTH: f32 = 200.0;
+const CANVAS_HEIGHT: f32 = 100.0;
 const FIELD_OF_VIEW: f32 = PI / 3.0;
 
 fn main() -> std::io::Result<()> {
