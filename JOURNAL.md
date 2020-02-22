@@ -328,3 +328,5 @@ Oh! Time to parameterize `sphere.rs`. There's no reason to keep editing the imag
 # 22Feb2020
 
 Gasp! It's a Saturday and I'm still working on this! It's procrastination, I know, but fun. I just added command line argument support to `sphere.rs`!
+
+Hrm. Took a stab at refactoring towards arrays but it doesn't feel right. I think I'll reprioritize around removing unnecessary uses of `Rc` first. Probably fast to just copy or something.
