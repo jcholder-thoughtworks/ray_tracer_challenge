@@ -324,3 +324,7 @@ variance introduced by outliers: 19% (moderately inflated)
 ```
 
 Oh! Time to parameterize `sphere.rs`. There's no reason to keep editing the image's dimensions in the code itself!
+
+# 22Feb2020
+
+Gasp! It's a Saturday and I'm still working on this! It's procrastination, I know, but fun. I just added command line argument support to `sphere.rs`!

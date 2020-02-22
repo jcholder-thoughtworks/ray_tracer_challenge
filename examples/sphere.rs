@@ -1,5 +1,6 @@
 use core::f32::consts::PI;
 
+use std::env;
 use std::fs::File;
 use std::io::prelude::*;
 
@@ -9,11 +10,32 @@ use ray_tracer_challenge::material::*;
 use ray_tracer_challenge::math::transforms::*;
 use ray_tracer_challenge::*;
 
-const CANVAS_WIDTH: f32 = 200.0;
-const CANVAS_HEIGHT: f32 = 100.0;
-const FIELD_OF_VIEW: f32 = PI / 3.0;
+fn parse_arg(arg: &str) -> f32 {
+    match arg.parse() {
+        Ok(t) => t,
+        Err(_e) => panic!("Invalid argument: {}. Expected a float value (e.g. 100.0)", arg),
+    }
+}
 
 fn main() -> std::io::Result<()> {
+    let args: Vec<String> = env::args().collect();
+
+    let canvas_width: f32 = match args.get(1) {
+        Some(a) => parse_arg(a),
+        None => 200.0,
+    };
+
+    let canvas_height: f32 = match args.get(2) {
+        Some(a) => parse_arg(a),
+        None => 100.0,
+    };
+
+    let field_of_view: f32 = match args.get(3) {
+        Some(a) => parse_arg(a),
+        None => PI / 3.0,
+    };
+
+    println!("Settings: width({}), height({}), field of view({})", canvas_width, canvas_height, field_of_view);
     println!("Rendering the scene ...");
 
     let mut world = RaytracerWorld::new();
@@ -62,7 +84,7 @@ fn main() -> std::io::Result<()> {
     left.material.specular = 0.3;
     world.add_object(left);
 
-    let mut camera = Camera::new(CANVAS_WIDTH, CANVAS_HEIGHT, FIELD_OF_VIEW);
+    let mut camera = Camera::new(canvas_width, canvas_height, field_of_view);
     camera.transform = view_transform(&Point::new(0.0, 1.5, -5.0), &Point::new(0.0, 1.0, 0.0), &Vector::new(0.0, 1.0, 0.0));
 
     let canvas = camera.render(&world);
