@@ -7,6 +7,19 @@ use super::{round, Point, Vector};
 
 pub mod transforms;
 
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub struct Array1x4 {
+    matrix: [f32; 4],
+}
+
+impl Array1x4 {
+    pub fn new() -> Self {
+        Self {
+            matrix: [0.0; 4]
+        }
+    }
+}
+
 pub trait RaytracerMatrix: Clone {
     type Unit;
 
