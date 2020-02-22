@@ -20,6 +20,15 @@ fn parse_arg(arg: &str) -> f32 {
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
+    if let Some(a) = args.get(1) {
+        if a == "--help" {
+            let cmd_name = args.get(0).unwrap();
+            println!("Usage: {} [width:float] [height:float] [field-of-view:float]", cmd_name);
+            println!("e.g. {} 200.0, 100.0, 1.047", cmd_name);
+            return Ok(());
+        }
+    }
+
     let canvas_width: f32 = match args.get(1) {
         Some(a) => parse_arg(a),
         None => 200.0,
