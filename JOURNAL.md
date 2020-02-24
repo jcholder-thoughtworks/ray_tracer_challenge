@@ -334,3 +334,34 @@ Hrm. Took a stab at refactoring towards arrays but it doesn't feel right. I thin
 # 24Feb2020
 
 Subsuming some anxiety into another attempt at optimization. Let's see if we can allocate fewer `Array` structs.
+
+Okay, used some [manual math](https://www.mathsisfun.com/algebra/matrix-determinant.html) in order to avoid allocating an `Array`. I still allocate a lowercase A array of fixed size in order to handle the submatrix math. Something like that is probably unavoidable without dark magic code. Let's profile this code!
+
+`bench "cargo run --example sphere --release -- 100 50"`:
+
+```
+benchmarking cargo run --example sphere --release -- 100 50
+time                 241.8 ms   (233.7 ms .. 246.8 ms)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 254.0 ms   (248.3 ms .. 265.5 ms)
+std dev              12.14 ms   (349.1 μs .. 15.25 ms)
+variance introduced by outliers: 16% (moderately inflated)
+```
+
+Excuse my language but _daaaaaaaaaaaaaaaaaaa-yum_.
+
+_16.9%_ of the original runtime. Almost _6x_ faster. Dang!
+
+Let's try it with a larger image.
+
+`bench "cargo run --example sphere --release -- 200 100"`:
+
+```
+time                 765.9 ms   (756.8 ms .. 771.7 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 778.7 ms   (773.0 ms .. 788.5 ms)
+std dev              9.874 ms   (655.3 μs .. 12.19 ms)
+variance introduced by outliers: 19% (moderately inflated)
+```
+
+_14.2%_ Dang again! Not bad for maybe an hour's work!
