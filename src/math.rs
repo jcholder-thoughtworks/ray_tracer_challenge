@@ -14,9 +14,7 @@ pub trait RaytracerMatrix: Clone {
 
     fn submatrix(&self, row: usize, col: usize) -> Self;
 
-    fn minor(&self, row: usize, col: usize) -> Self::Unit {
-        self.submatrix(row, col).determinant()
-    }
+    fn minor(&self, row: usize, col: usize) -> Self::Unit;
 
     fn cofactor(&self, row: usize, col: usize) -> Self::Unit {
         let minor = self.minor(row, col);
@@ -48,6 +46,10 @@ impl RaytracerMatrix for Array<f32, Ix2> {
             (2, 2) => determinant_f32_2x2(self),
             _ => determinant_f32_n_x_n(self),
         }
+    }
+
+    fn minor(&self, row: usize, col: usize) -> Self::Unit {
+        self.submatrix(row, col).determinant()
     }
 
     fn submatrix(&self, row: usize, col: usize) -> Self {
