@@ -49,7 +49,11 @@ impl RaytracerMatrix for Array<f32, Ix2> {
     }
 
     fn minor(&self, row: usize, col: usize) -> Self::Unit {
-        self.submatrix(row, col).determinant()
+        match self.dim() {
+            (3, 3) => minor_3x3(self, row, col),
+            (4, 4) => self.submatrix(row, col).determinant(),
+            _ => panic!("Calculation of minors for matrix with dimensions of {:?} are not supported", self.dim()),
+        }
     }
 
     fn submatrix(&self, row: usize, col: usize) -> Self {
@@ -151,6 +155,28 @@ fn determinant_f32_n_x_n(matrix: &Array<f32, Ix2>) -> f32 {
     }
 
     determinant
+}
+
+fn minor_3x3(matrix: &Array<f32, Ix2>, row: usize, col: usize) -> f32 {
+    let mut i = 0;
+    let mut m: [f32; 4] = [0.0; 4];
+
+    for r in 0..=2 {
+        if r == row {
+            continue;
+        }
+
+        for c in 0..=2 {
+            if c == col {
+                continue;
+            }
+
+            m[i] = matrix[[r, c]];
+            i = i + 1;
+        }
+    }
+
+    (m[0] * m[3]) - (m[1] * m[2])
 }
 
 // TODO: Double-check all these magic numbers. Knowledge of p(1) vs v(1) belongs alongside
