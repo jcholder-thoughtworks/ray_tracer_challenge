@@ -51,7 +51,7 @@ impl RaytracerMatrix for Array<f32, Ix2> {
     fn minor(&self, row: usize, col: usize) -> Self::Unit {
         match self.dim() {
             (3, 3) => minor_3x3(self, row, col),
-            (4, 4) => self.submatrix(row, col).determinant(),
+            (4, 4) => minor_4x4(self, row, col),
             _ => panic!("Calculation of minors for matrix with dimensions of {:?} are not supported", self.dim()),
         }
     }
@@ -157,6 +157,7 @@ fn determinant_f32_n_x_n(matrix: &Array<f32, Ix2>) -> f32 {
     determinant
 }
 
+// Credit to https://www.mathsisfun.com/algebra/matrix-determinant.html for this optimization
 fn minor_3x3(matrix: &Array<f32, Ix2>, row: usize, col: usize) -> f32 {
     let mut i = 0;
     let mut m: [f32; 4] = [0.0; 4];
@@ -177,6 +178,31 @@ fn minor_3x3(matrix: &Array<f32, Ix2>, row: usize, col: usize) -> f32 {
     }
 
     (m[0] * m[3]) - (m[1] * m[2])
+}
+
+// Credit to https://www.mathsisfun.com/algebra/matrix-determinant.html for this optimization
+fn minor_4x4(matrix: &Array<f32, Ix2>, row: usize, col: usize) -> f32 {
+    let mut index = 0;
+    let mut m: [f32; 9] = [0.0; 9];
+
+    for r in 0..=3 {
+        if r == row {
+            continue;
+        }
+
+        for c in 0..=3 {
+            if c == col {
+                continue;
+            }
+
+            m[index] = matrix[[r, c]];
+            index = index + 1;
+        }
+    }
+
+    m[0] * (m[4] * m[8] - m[5] * m[7])
+        - m[1] * (m[3] * m[8] - m[5] * m[6])
+        + m[2] * (m[3] * m[7] - m[4] * m[6])
 }
 
 // TODO: Double-check all these magic numbers. Knowledge of p(1) vs v(1) belongs alongside
