@@ -11,11 +11,7 @@ const CANVAS_HEIGHT: u32 = 200;
 
 fn main() -> std::io::Result<()> {
     let mut projectile = Projectile {
-        position: Point {
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-        },
+        position: Point::new(1.0, 1.0, 1.0),
         velocity: Vector {
             x: 2.0,
             y: 5.0,
@@ -40,14 +36,14 @@ fn main() -> std::io::Result<()> {
     println!("It's a projectile! {:?}", projectile);
     println!("It's an environment! {:?}", environment);
 
-    while projectile.position.y > 0.0 {
+    while projectile.position.y() > 0.0 {
         projectile = projectile.tick(&environment);
 
         println!("Updated projectile! {:?}", projectile);
 
-        let x = projectile.position.x.round() as i32;
-        let y = CANVAS_HEIGHT as i32 - projectile.position.y.round() as i32;
-        let z = 100.0 / projectile.position.z.abs();
+        let x = projectile.position.x().round() as i32;
+        let y = CANVAS_HEIGHT as i32 - projectile.position.y().round() as i32;
+        let z = 100.0 / projectile.position.z().abs();
         let color = WHITE * z;
 
         println!("{} {:?}", z, color);

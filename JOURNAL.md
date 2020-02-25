@@ -365,3 +365,11 @@ variance introduced by outliers: 19% (moderately inflated)
 ```
 
 _14.2%_ Dang again! Not bad for maybe an hour's work!
+
+# 25Feb2020
+
+Retreating into ray tracer work for a bit, even though I'm working from home, because (positive but nonetheless rather anxiety-inducing) activities are killing my ability to focus on work tasks. Beats retreating into _Overwatch_, which is also a serious temptation.
+
+Still torn between adding shadows vs. optimizing away `ndarray`. Since I'm at home, I think I'll try for the latter for at least a bit.
+
+First things first: Pay for my tech debt "sins" by making some previously public fields private. Had I done that out of the gate then changing the underlying implementation would have proven much less painful. Well, it's time now!

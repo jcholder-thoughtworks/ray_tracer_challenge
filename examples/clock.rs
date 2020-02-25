@@ -25,8 +25,8 @@ fn main() -> std::io::Result<()> {
     for _hour in 0..HOURS {
         println!("{:?}", hand);
 
-        let x: i32 = ((CANVAS_WIDTH as f32 * 0.4) * hand.x) as i32;
-        let y: i32 = ((CANVAS_HEIGHT as f32 * 0.4) * hand.y) as i32;
+        let x: i32 = ((CANVAS_WIDTH as f32 * 0.4) * hand.x()) as i32;
+        let y: i32 = ((CANVAS_HEIGHT as f32 * 0.4) * hand.y()) as i32;
 
         println!("Starting here: {}, {}", x, y);
 
