@@ -68,6 +68,31 @@ impl Matrix4x4 {
         Self::new([0.0; 16])
     }
 
+    pub fn row(&self, r: usize) -> Matrix4x1 {
+        assert!(r < 4, "Invalid row index: {}", r);
+
+        let mut v = [0.0; 4];
+
+        for index in 0..4 {
+            v[index] = self.values[index + 4 * r];
+        }
+
+        Matrix4x1::new(v)
+    }
+
+    pub fn col(&self, c: usize) -> Matrix4x1 {
+        assert!(c < 4, "Invalid column index: {}", c);
+
+        let v = [
+            self.values[0 + c],
+            self.values[4 + c],
+            self.values[8 + c],
+            self.values[12 + c],
+        ];
+
+        Matrix4x1::new(v)
+    }
+
     pub fn identity() -> Self {
         Self::new([
                   1.0, 0.0, 0.0, 0.0,
