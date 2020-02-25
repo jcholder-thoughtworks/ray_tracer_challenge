@@ -22,6 +22,17 @@ impl Matrix4x1 {
     }
 }
 
+impl ops::Mul<Matrix4x1> for Matrix4x1 {
+    type Output = f32;
+
+    fn mul(self, rhs: Matrix4x1) -> Self::Output {
+        let v1 = self.values;
+        let v2 = rhs.values;
+
+        (v1[0] * v2[0]) + (v1[1] * v2[1]) + (v1[2] * v2[2]) + (v1[3] * v2[3])
+    }
+}
+
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Matrix4x4 {
     values: [f32; 16],
