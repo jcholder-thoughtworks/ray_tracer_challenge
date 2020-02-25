@@ -373,3 +373,7 @@ Retreating into ray tracer work for a bit, even though I'm working from home, be
 Still torn between adding shadows vs. optimizing away `ndarray`. Since I'm at home, I think I'll try for the latter for at least a bit.
 
 First things first: Pay for my tech debt "sins" by making some previously public fields private. Had I done that out of the gate then changing the underlying implementation would have proven much less painful. Well, it's time now!
+
+Realization that I don't need to start with refactoring `Point` or `Vector`! Converting to/from them is relatively cheap compared to dealing with `ndarray::Array`! Time to refocus on `RaytracerMatrix`! Actually, `TransformationMatrix` looks like an even better target since it's used much less.
+
+Struggled to make this compile for a while before I remembered `unimplemented!`. I don't need to make all the tests _pass_ on the first go, just _compile_.
