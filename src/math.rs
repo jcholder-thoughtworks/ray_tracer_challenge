@@ -110,6 +110,26 @@ impl Matrix4x4 {
         ])
     }
 
+    pub fn determinant(&self) -> f32 {
+        unimplemented!("no determinant yet")
+    }
+
+    pub fn invertible(&self) -> bool {
+        unimplemented!("no invertible yet")
+    }
+
+    pub fn cofactor(&self, row: usize, col: usize) -> f32 {
+        unimplemented!("no cofactor yet")
+    }
+
+    pub fn minor(&self, row: usize, col: usize) -> f32 {
+        unimplemented!("no minor yet")
+    }
+
+    pub fn submatrix(&self, row: usize, col: usize) -> Self {
+        unimplemented!("no submatrix yet")
+    }
+
     pub fn inverse(&self) -> Self {
         let arr: Array<f32, Ix2> = self.into();
         arr.inverse().into()
@@ -142,6 +162,26 @@ impl Matrix4x4 {
     }
 }
 
+impl ops::Index<[usize; 2]> for Matrix4x4 {
+    type Output = f32;
+
+    fn index(&self, index: [usize; 2]) -> &Self::Output {
+        let row = index[0];
+        let col = index[1];
+
+        &self.values[row * 4 + col]
+    }
+}
+
+impl ops::IndexMut<[usize; 2]> for Matrix4x4 {
+    fn index_mut(&mut self, index: [usize; 2]) -> &mut Self::Output {
+        let row = index[0];
+        let col = index[1];
+
+        &mut self.values[row * 4 + col]
+    }
+}
+
 impl ops::Mul<Point> for &Matrix4x4 {
     type Output = Point;
 
@@ -165,7 +205,23 @@ impl ops::Mul<Vector> for &Matrix4x4 {
 
     fn mul(self, rhs: Vector) -> Self::Output {
         let rhs: [f32; 4] = [rhs.x(), rhs.y(), rhs.z(), 0.0]; // TODO: replace with Into<Matrix4x1>
-        // TODO: These indices for Matrix4x4 may be wrong
+        let v = self.values;
+        let values: [f32; 4] = [
+            (v[0] * rhs[0]) + (v[1] * rhs[1]) + (v[2] * rhs[2]) + (v[3] * rhs[3]),
+            (v[4] * rhs[0]) + (v[5] * rhs[1]) + (v[6] * rhs[2]) + (v[7] * rhs[3]),
+            (v[8] * rhs[0]) + (v[9] * rhs[1]) + (v[10] * rhs[2]) + (v[11] * rhs[3]),
+            (v[12] * rhs[0]) + (v[13] * rhs[1]) + (v[14] * rhs[2]) + (v[15] * rhs[3]),
+        ];
+
+        Self::Output::new(values[0], values[1], values[2])
+    }
+}
+
+impl ops::Mul<Point> for Matrix4x4 {
+    type Output = Point;
+
+    fn mul(self, rhs: Point) -> Self::Output {
+        let rhs: [f32; 4] = [rhs.x(), rhs.y(), rhs.z(), 1.0]; // TODO: replace with Into<Matrix4x1>
         let v = self.values;
         let values: [f32; 4] = [
             (v[0] * rhs[0]) + (v[1] * rhs[1]) + (v[2] * rhs[2]) + (v[3] * rhs[3]),
@@ -183,7 +239,6 @@ impl ops::Mul<Array<f32, Ix1>> for &Matrix4x4 {
 
     fn mul(self, rhs: Array<f32, Ix1>) -> Self::Output {
         let rhs: [f32; 4] = [rhs[[0]], rhs[[1]], rhs[[2]], rhs[[3]]]; // TODO: replace with Into<Matrix4x1>
-        // TODO: These indices for Matrix4x4 may be wrong
         let v = self.values;
         let values: [f32; 4] = [
             (v[0] * rhs[0]) + (v[1] * rhs[1]) + (v[2] * rhs[2]) + (v[3] * rhs[3]),
@@ -193,6 +248,22 @@ impl ops::Mul<Array<f32, Ix1>> for &Matrix4x4 {
         ];
 
         arr1(&values)
+    }
+}
+
+impl ops::Mul<Matrix4x1> for Matrix4x4 {
+    type Output = Matrix4x1;
+
+    fn mul(self, rhs: Matrix4x1) -> Self::Output {
+        let v = self.values;
+        let values: [f32; 4] = [
+            (v[0] * rhs[0]) + (v[1] * rhs[1]) + (v[2] * rhs[2]) + (v[3] * rhs[3]),
+            (v[4] * rhs[0]) + (v[5] * rhs[1]) + (v[6] * rhs[2]) + (v[7] * rhs[3]),
+            (v[8] * rhs[0]) + (v[9] * rhs[1]) + (v[10] * rhs[2]) + (v[11] * rhs[3]),
+            (v[12] * rhs[0]) + (v[13] * rhs[1]) + (v[14] * rhs[2]) + (v[15] * rhs[3]),
+        ];
+
+        Self::Output::new(values)
     }
 }
 
@@ -254,37 +325,6 @@ impl From<Array<f32, Ix2>> for Matrix4x4 {
                   source[[3, 2]],
                   source[[3, 3]],
         ])
-    }
-}
-
-impl From<Matrix4x4> for Array<f32, Ix2> {
-    fn from(source: Matrix4x4) -> Self {
-        let r1 = [
-            source.values[0],
-            source.values[1],
-            source.values[2],
-            source.values[3],
-        ];
-        let r2 = [
-            source.values[4],
-            source.values[5],
-            source.values[6],
-            source.values[7],
-        ];
-        let r3 = [
-            source.values[8],
-            source.values[9],
-            source.values[10],
-            source.values[11],
-        ];
-        let r4 = [
-            source.values[12],
-            source.values[13],
-            source.values[14],
-            source.values[15],
-        ];
-
-        arr2(&[r1, r2, r3, r4])
     }
 }
 

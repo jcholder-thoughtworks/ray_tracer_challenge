@@ -381,3 +381,7 @@ Struggled to make this compile for a while before I remembered `unimplemented!`.
 Getting close! Amazed at how many of my tests _actually pass_! Just two sticky ones that probably indicate some faulty matrix math on my part.
 
 Success! Finally! Took forever (and a break) for me to realize that I was generating too many values. Oops!
+
+And all the tests pass again! Yay!
+
+Now to optimize some more! Let's see how many more references to `Array` we can remove.

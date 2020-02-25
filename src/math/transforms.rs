@@ -67,7 +67,7 @@ pub fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Transfo
 
 pub fn view_transform(from: &Point, to: &Point, up: &Vector) -> TransformationMatrix {
     // TODO: Implement #norm for Array<f32, Ix1> so that we don't have to convert types
-    let forward: Vector = (to.clone() - from.clone()).into();
+    let forward: Vector = to.clone() - from.clone();
     let forward = forward.norm();
 
     let left = forward.cross(up.norm());
@@ -81,5 +81,5 @@ pub fn view_transform(from: &Point, to: &Point, up: &Vector) -> TransformationMa
 
     let orientation = TransformationMatrix::from_2d_array([r1, r2, r3, r4]);
 
-    orientation.dot(&translation(-from.x, -from.y, -from.z).into())
+    orientation * translation(-from.x, -from.y, -from.z)
 }
