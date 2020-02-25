@@ -66,7 +66,13 @@ impl Matrix4x4 {
     }
 
     pub fn rounded(&self) -> Self {
-        unimplemented!("WIP")
+        let mut values = [0.0; 16];
+
+        for (index, value) in self.values.iter().enumerate() {
+            values[index] = round(*value);
+        }
+
+        Self::new(values)
     }
 }
 
