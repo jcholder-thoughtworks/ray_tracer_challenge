@@ -217,9 +217,9 @@ impl ops::Mul<f32> for Point {
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Vector {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
+    x: f32,
+    y: f32,
+    z: f32,
 }
 
 impl ops::Add<Vector> for Vector {
@@ -299,6 +299,18 @@ impl ops::Div<f32> for Vector {
 impl Vector {
     pub fn new(x: f32, y: f32, z: f32) -> Self {
         Vector { x, y, z }
+    }
+
+    pub fn x(&self) -> f32 {
+        self.x
+    }
+
+    pub fn y(&self) -> f32 {
+        self.y
+    }
+
+    pub fn z(&self) -> f32 {
+        self.z
     }
 
     pub fn equalish_to(&self, other: &Self) -> bool {
