@@ -8,6 +8,21 @@ use super::{round, Point, Vector};
 pub mod transforms;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
+pub struct Matrix4x1 {
+    values: [f32; 4],
+}
+
+impl Matrix4x1 {
+    pub fn new(values: [f32; 4]) -> Self {
+        Self { values }
+    }
+
+    pub fn default() -> Self {
+        Self { values: [0.0, 0.0, 0.0, 0.0] }
+    }
+}
+
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Matrix4x4 {
     values: [f32; 16],
 }
