@@ -7,6 +7,194 @@ use super::{round, Point, Vector};
 
 pub mod transforms;
 
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub struct Matrix4x4 {
+    values: [f32; 16],
+}
+
+impl Matrix4x4 {
+    pub fn new(values: [f32; 16]) -> Self {
+        Matrix4x4 { values }
+    }
+
+    pub fn from_2d_array(values: [[f32; 4]; 4]) -> Self {
+        Self::new([
+                  values[0][0],
+                  values[0][1],
+                  values[0][2],
+                  values[0][3],
+                  values[1][0],
+                  values[1][1],
+                  values[1][2],
+                  values[1][3],
+                  values[2][0],
+                  values[2][1],
+                  values[2][2],
+                  values[2][3],
+                  values[3][0],
+                  values[3][1],
+                  values[3][2],
+                  values[3][3],
+        ])
+    }
+
+    pub fn default() -> Self {
+        Self::new([0.0; 16])
+    }
+
+    pub fn identity() -> Self {
+        Self::new([
+                  1.0, 0.0, 0.0, 0.0,
+                  0.0, 1.0, 0.0, 0.0,
+                  0.0, 0.0, 1.0, 0.0,
+                  0.0, 0.0, 0.0, 1.0,
+        ])
+    }
+
+    pub fn inverse(&self) -> Self {
+        let arr: Array<f32, Ix2> = self.into();
+        arr.inverse().into()
+    }
+
+    pub fn dot(&self, rhs: &Array<f32, Ix2>) -> Self {
+        let arr: Array<f32, Ix2> = self.into();
+        arr.dot(rhs).into()
+    }
+
+    pub fn transposed(&self) -> Self {
+        unimplemented!("WIP")
+    }
+
+    pub fn rounded(&self) -> Self {
+        unimplemented!("WIP")
+    }
+}
+
+impl ops::Mul<Point> for &Matrix4x4 {
+    type Output = Point;
+
+    fn mul(self, rhs: Point) -> Self::Output {
+        unimplemented!("WIP")
+    }
+}
+
+impl ops::Mul<Vector> for &Matrix4x4 {
+    type Output = Vector;
+
+    fn mul(self, rhs: Vector) -> Self::Output {
+        unimplemented!("WIP")
+    }
+}
+
+impl ops::Mul<Array<f32, Ix1>> for &Matrix4x4 {
+    type Output = Array<f32, Ix1>;
+
+    fn mul(self, rhs: Array<f32, Ix1>) -> Self::Output {
+        unimplemented!("WIP")
+    }
+}
+
+impl ops::Mul<Array<f32, Ix1>> for Matrix4x4 {
+    type Output = Array<f32, Ix1>;
+
+    fn mul(self, rhs: Array<f32, Ix1>) -> Self::Output {
+        unimplemented!("WIP")
+    }
+}
+
+impl ops::Mul<Matrix4x4> for Matrix4x4 {
+    type Output = Self;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        unimplemented!("WIP")
+    }
+}
+
+impl From<Array<f32, Ix2>> for Matrix4x4 {
+    fn from(source: Array<f32, Ix2>) -> Self {
+        Self::new([
+                  source[[0, 0]],
+                  source[[0, 1]],
+                  source[[0, 2]],
+                  source[[0, 3]],
+                  source[[1, 0]],
+                  source[[1, 1]],
+                  source[[1, 2]],
+                  source[[1, 3]],
+                  source[[2, 0]],
+                  source[[2, 1]],
+                  source[[2, 2]],
+                  source[[2, 3]],
+                  source[[3, 0]],
+                  source[[3, 1]],
+                  source[[3, 2]],
+                  source[[3, 3]],
+        ])
+    }
+}
+
+impl From<Matrix4x4> for Array<f32, Ix2> {
+    fn from(source: Matrix4x4) -> Self {
+        let r1 = [
+            source.values[0],
+            source.values[1],
+            source.values[2],
+            source.values[3],
+        ];
+        let r2 = [
+            source.values[4],
+            source.values[5],
+            source.values[6],
+            source.values[7],
+        ];
+        let r3 = [
+            source.values[8],
+            source.values[9],
+            source.values[10],
+            source.values[11],
+        ];
+        let r4 = [
+            source.values[12],
+            source.values[13],
+            source.values[14],
+            source.values[15],
+        ];
+
+        arr2(&[r1, r2, r3, r4])
+    }
+}
+
+impl From<&Matrix4x4> for Array<f32, Ix2> {
+    fn from(source: &Matrix4x4) -> Self {
+        let r1 = [
+            source.values[0],
+            source.values[1],
+            source.values[2],
+            source.values[3],
+        ];
+        let r2 = [
+            source.values[4],
+            source.values[5],
+            source.values[6],
+            source.values[7],
+        ];
+        let r3 = [
+            source.values[8],
+            source.values[9],
+            source.values[10],
+            source.values[11],
+        ];
+        let r4 = [
+            source.values[12],
+            source.values[13],
+            source.values[14],
+            source.values[15],
+        ];
+
+        arr2(&[r1, r2, r3, r4])
+    }
+}
+
 pub trait RaytracerMatrix: Clone {
     type Unit;
 

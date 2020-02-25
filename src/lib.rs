@@ -6,7 +6,6 @@ use ndarray::*;
 use self::canvas::Canvas;
 use self::color::{BLACK, Color, WHITE};
 use self::light::Light;
-use self::math::RaytracerMatrix;
 use self::math::transforms::{scaling, TransformationMatrix};
 use self::objects::RaytracerObject;
 
@@ -392,7 +391,7 @@ impl Ray {
         let origin = transformation_matrix * self.origin;
 
         let direction: Array<f32, Ix1> = self.direction.into();
-        let direction = transformation_matrix.dot(&direction).into();
+        let direction = (transformation_matrix * direction).into();
 
         Self { origin, direction }
     }
@@ -497,7 +496,7 @@ pub struct Camera {
 
 impl Camera {
     pub fn new(hsize: f32, vsize: f32, field_of_view: f32) -> Self {
-        let transform = Array::eye(4);
+        let transform = TransformationMatrix::identity();
 
         let half_view = (field_of_view / 2.0).tan();
         let aspect = hsize / vsize;
@@ -533,9 +532,9 @@ impl Camera {
 
         let transform_inverse = self.transform.inverse();
 
-        let pixel: Point = transform_inverse.dot(&world_point_array).into();
+        let pixel: Point = (transform_inverse * world_point_array).into();
 
-        let origin: Point = transform_inverse.dot(&center_origin).into();
+        let origin: Point = (transform_inverse * center_origin).into();
 
         let direction = (pixel - origin).norm();
 

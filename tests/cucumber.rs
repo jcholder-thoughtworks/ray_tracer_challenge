@@ -12,6 +12,7 @@ use ray_tracer_challenge::canvas::*;
 use ray_tracer_challenge::color::*;
 use ray_tracer_challenge::light::*;
 use ray_tracer_challenge::material::*;
+use ray_tracer_challenge::math::transforms::*;
 use ray_tracer_challenge::objects::*;
 use ray_tracer_challenge::*;
 
@@ -24,11 +25,11 @@ pub struct MyWorld {
     matrix_b: Rc<Array<f32, Ix2>>,
     matrix_c: Rc<Array<f32, Ix2>>,
     matrix_t: Rc<Array<f32, Ix2>>,
-    half_quarter: Rc<Array<f32, Ix2>>,
-    full_quarter: Rc<Array<f32, Ix2>>,
-    transform: Rc<Array<f32, Ix2>>,
-    m: Rc<Array<f32, Ix2>>,
-    t: Rc<Array<f32, Ix2>>,
+    half_quarter: Rc<TransformationMatrix>,
+    full_quarter: Rc<TransformationMatrix>,
+    transform: Rc<TransformationMatrix>,
+    m: Rc<TransformationMatrix>,
+    t: Rc<TransformationMatrix>,
     p: Point,
     p2: Point,
     p3: Point,
@@ -90,11 +91,11 @@ impl std::default::Default for MyWorld {
             matrix_b: Rc::new(Array::from_elem((4, 4), 0.0)),
             matrix_c: Rc::new(Array::from_elem((4, 4), 0.0)),
             matrix_t: Rc::new(Array::from_elem((4, 4), 0.0)),
-            half_quarter: Rc::new(Array::from_elem((4, 4), 0.0)),
-            full_quarter: Rc::new(Array::from_elem((4, 4), 0.0)),
-            transform: Rc::new(Array::from_elem((4, 4), 0.0)),
-            m: Rc::new(Array::from_elem((4, 4), 0.0)),
-            t: Rc::new(Array::from_elem((4, 4), 0.0)),
+            half_quarter: Rc::new(TransformationMatrix::default()),
+            full_quarter: Rc::new(TransformationMatrix::default()),
+            transform: Rc::new(TransformationMatrix::default()),
+            m: Rc::new(TransformationMatrix::default()),
+            t: Rc::new(TransformationMatrix::default()),
             p: CENTER_ORIGIN,
             p2: CENTER_ORIGIN,
             p3: CENTER_ORIGIN,
@@ -306,7 +307,7 @@ mod example_steps {
             let t2: f32 = matches[2].parse().unwrap();
             let t3: f32 = matches[3].parse().unwrap();
 
-            world.m = Rc::new(translation(t1, t2, t3));
+            world.m = Rc::new(translation(t1, t2, t3).into());
         };
 
         given regex r"^m ← scaling\(([0-9.]*), ([0-9.]*), ([0-9.]*)\)$" |world, matches, _step| {
@@ -314,7 +315,7 @@ mod example_steps {
             let t2: f32 = matches[2].parse().unwrap();
             let t3: f32 = matches[3].parse().unwrap();
 
-            world.m = Rc::new(scaling(t1, t2, t3));
+            world.m = Rc::new(scaling(t1, t2, t3).into());
         };
 
         given regex r"^m ← scaling\(([0-9.]*), ([0-9.]*), ([0-9.]*)\) \* rotation_z\(π/5\)$" |world, matches, _step| {
@@ -325,7 +326,7 @@ mod example_steps {
             let st = scaling(t1, t2, t3);
             let rzt = rotation_z(PI / 5.0);
 
-            world.m = Rc::new(st.dot(&rzt));
+            world.m = Rc::new((st * rzt).into());
         };
 
         given regex r"^transform ← scaling\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -353,7 +354,7 @@ mod example_steps {
         };
 
         given "inv ← inverse(transform)" |world, _step| {
-            world.inv = world.transform.inverse();
+            world.inv = world.transform.inverse().into();
         };
 
         given regex r"^half_quarter ← rotation_x\(π / (.*)\)$" |world, matches, _step| {
@@ -393,7 +394,7 @@ mod example_steps {
         };
 
         given "inv ← inverse(half_quarter)" |world, _step| {
-            world.inv = world.half_quarter.inverse();
+            world.inv = world.half_quarter.inverse().into();
         };
 
         given regex r"^transform ← shearing\((.*), (.*), (.*), (.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -410,7 +411,7 @@ mod example_steps {
         given regex r"^A ← rotation_x\(π / (.*)\)$" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.matrix_a = Rc::new(rotation_x(PI / denominator));
+            world.matrix_a = Rc::new(rotation_x(PI / denominator).into());
         };
 
         given regex r"^B ← scaling\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -418,7 +419,7 @@ mod example_steps {
             let y: f32 = matches[2].parse().unwrap();
             let z: f32 = matches[3].parse().unwrap();
 
-            world.matrix_b = Rc::new(scaling(x, y, z));
+            world.matrix_b = Rc::new(scaling(x, y, z).into());
         };
 
         given regex r"^C ← translation\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -426,7 +427,7 @@ mod example_steps {
             let y: f32 = matches[2].parse().unwrap();
             let z: f32 = matches[3].parse().unwrap();
 
-            world.matrix_c = Rc::new(translation(x, y, z));
+            world.matrix_c = Rc::new(translation(x, y, z).into());
         };
 
         given regex r"^t ← translation\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -548,7 +549,7 @@ mod example_steps {
         };
 
         given "set_transform(s, m)" |world, _step| {
-            world.s.transform = world.m.as_ref().clone();
+            world.s.transform = *world.m;
         };
 
         given regex r"^n ← vector\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -829,7 +830,8 @@ mod example_steps {
         };
 
         when "r2 ← transform(r, m)" |world, _step| {
-            world.r2 = world.r.transform(&world.m);
+            let m: TransformationMatrix = (*world.m).into();
+            world.r2 = world.r.transform(&m);
         };
 
         when "set_transform(s, t)" |world, _step| {
@@ -931,7 +933,7 @@ mod example_steps {
         };
 
         when "c.transform ← rotation_y(π/4) * translation(0, -2, 5)" |world, _step| {
-            world.camera.transform = rotation_y(PI/4.0).dot(&translation(0.0, -2.0, 5.0));
+            world.camera.transform = rotation_y(PI/4.0) * translation(0.0, -2.0, 5.0);
         };
 
         when "image ← render(c, w)" |world, _step| {
@@ -1467,9 +1469,9 @@ mod example_steps {
         };
 
         then "s.transform = identity_matrix" |world, _step| {
-            let expected: &Array<f32, Ix2> = &Array::eye(4);
+            let expected = TransformationMatrix::identity();
 
-            let actual = &world.s.transform;
+            let actual = world.s.transform;
 
             assert_eq!(expected, actual);
         };
@@ -1770,25 +1772,25 @@ mod example_steps {
         };
 
         then "t = identity_matrix" |world, _step| {
-            let expected: &Array<f32, Ix2> = &Array::eye(4);
+            let expected = TransformationMatrix::identity();
 
-            let actual = world.t.as_ref();
+            let actual = *world.t;
 
             assert_eq!(expected, actual);
         };
 
         then "t = scaling(-1, 1, -1)" |world, _step| {
-            let expected = &scaling(-1.0, 1.0, -1.0);
+            let expected = scaling(-1.0, 1.0, -1.0);
 
-            let actual = world.t.as_ref();
+            let actual: TransformationMatrix = *world.t;
 
             assert_eq!(expected, actual);
         };
 
         then "t = translation(0, 0, -8)" |world, _step| {
-            let expected = &translation(0.0, 0.0, -8.0);
+            let expected = translation(0.0, 0.0, -8.0);
 
-            let actual = world.t.as_ref();
+            let actual: TransformationMatrix = *world.t;
 
             assert_eq!(expected, actual);
         };
@@ -1808,9 +1810,9 @@ mod example_steps {
                 }
             }
 
-            let expected = &expected;
+            let expected: TransformationMatrix = expected.into();
 
-            let actual = world.t.as_ref();
+            let actual = *world.t;
 
             assert_eq!(expected.rounded(), actual.rounded());
         };
@@ -1828,8 +1830,7 @@ mod example_steps {
         };
 
         then "c.transform = identity_matrix" |world, _step| {
-            let expected: Array<f32, Ix2> = Array::eye(4); 
-            let expected = &expected;
+            let expected = &TransformationMatrix::identity();
 
             let actual = &world.camera.transform;
 

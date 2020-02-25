@@ -1,9 +1,6 @@
 use std::rc::Rc;
 
-use ndarray::*;
-
 use super::material::Material;
-use super::math::RaytracerMatrix;
 use super::*;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -24,7 +21,7 @@ pub struct RaytracerObject {
 
 impl RaytracerObject {
     fn new(obj_id: usize, obj_type: ROT, origin: Point) -> Self {
-        let transform = Array::eye(4);
+        let transform = TransformationMatrix::identity();
         let material = Material::new();
 
         Self {

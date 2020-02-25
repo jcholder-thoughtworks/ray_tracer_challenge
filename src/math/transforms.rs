@@ -1,11 +1,9 @@
-use ndarray::*;
+use super::{Matrix4x4, Point, Vector};
 
-use super::{Point, Vector};
-
-pub type TransformationMatrix = Array<f32, Ix2>;
+pub type TransformationMatrix = Matrix4x4;
 
 pub fn translation(x: f32, y: f32, z: f32) -> TransformationMatrix {
-    arr2(&[
+    TransformationMatrix::from_2d_array([
         [1.0, 0.0, 0.0, x],
         [0.0, 1.0, 0.0, y],
         [0.0, 0.0, 1.0, z],
@@ -14,7 +12,7 @@ pub fn translation(x: f32, y: f32, z: f32) -> TransformationMatrix {
 }
 
 pub fn scaling(x: f32, y: f32, z: f32) -> TransformationMatrix {
-    arr2(&[
+    TransformationMatrix::from_2d_array([
         [x, 0.0, 0.0, 0.0],
         [0.0, y, 0.0, 0.0],
         [0.0, 0.0, z, 0.0],
@@ -31,7 +29,7 @@ pub fn rotation_x(radians: f32) -> TransformationMatrix {
     let r3: [f32; 4] = [0.0, sr, cr, 0.0];
     let r4: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
 
-    arr2(&[r1, r2, r3, r4])
+    TransformationMatrix::from_2d_array([r1, r2, r3, r4])
 }
 
 pub fn rotation_y(radians: f32) -> TransformationMatrix {
@@ -43,7 +41,7 @@ pub fn rotation_y(radians: f32) -> TransformationMatrix {
     let r3: [f32; 4] = [-sr, 0.0, cr, 0.0];
     let r4: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
 
-    arr2(&[r1, r2, r3, r4])
+    TransformationMatrix::from_2d_array([r1, r2, r3, r4])
 }
 
 pub fn rotation_z(radians: f32) -> TransformationMatrix {
@@ -55,7 +53,7 @@ pub fn rotation_z(radians: f32) -> TransformationMatrix {
     let r3: [f32; 4] = [0.0, 0.0, 1.0, 0.0];
     let r4: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
 
-    arr2(&[r1, r2, r3, r4])
+    TransformationMatrix::from_2d_array([r1, r2, r3, r4])
 }
 
 pub fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> TransformationMatrix {
@@ -64,7 +62,7 @@ pub fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Transfo
     let r3: [f32; 4] = [zx, zy, 1.0, 0.0];
     let r4: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
 
-    arr2(&[r1, r2, r3, r4])
+    TransformationMatrix::from_2d_array([r1, r2, r3, r4])
 }
 
 pub fn view_transform(from: &Point, to: &Point, up: &Vector) -> TransformationMatrix {
@@ -81,7 +79,7 @@ pub fn view_transform(from: &Point, to: &Point, up: &Vector) -> TransformationMa
     let r3: [f32; 4] = [-forward.x, -forward.y, -forward.z, 0.0];
     let r4: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
 
-    let orientation = arr2(&[r1, r2, r3, r4]);
+    let orientation = TransformationMatrix::from_2d_array([r1, r2, r3, r4]);
 
-    orientation.dot(&translation(-from.x, -from.y, -from.z))
+    orientation.dot(&translation(-from.x, -from.y, -from.z).into())
 }
