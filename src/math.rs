@@ -22,6 +22,14 @@ impl Matrix4x1 {
     }
 }
 
+impl ops::Index<usize> for Matrix4x1 {
+    type Output = f32;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.values[index]
+    }
+}
+
 impl ops::Mul<Matrix4x1> for Matrix4x1 {
     type Output = f32;
 
@@ -210,7 +218,19 @@ impl ops::Mul<Matrix4x4> for Matrix4x4 {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        unimplemented!("WIP")
+        let mut values: [f32; 16] = [0.0; 16];
+
+        for ri in 0..4 {
+            let r = self.row(ri);
+
+            for ci in 0..4 {
+                let c = rhs.col(ci);
+
+                values[ri * 4 + ci] = r * c;
+            }
+        }
+
+        Self::Output::new(values)
     }
 }
 
