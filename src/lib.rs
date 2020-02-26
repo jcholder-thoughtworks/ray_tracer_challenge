@@ -390,8 +390,7 @@ impl Ray {
     pub fn transform(&self, transformation_matrix: &TransformationMatrix) -> Self {
         let origin = transformation_matrix * self.origin;
 
-        let direction: Array<f32, Ix1> = self.direction.into();
-        let direction = (transformation_matrix * direction).into();
+        let direction = transformation_matrix * self.direction;
 
         Self { origin, direction }
     }
