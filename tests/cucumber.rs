@@ -160,6 +160,7 @@ mod example_steps {
     use ray_tracer_challenge::objects::*;
     use ray_tracer_challenge::*;
 
+    #[allow(dead_code)]
     fn m2x2(any: &Rc<AnyMatrix>) -> Matrix2x2 {
         match **any {
             AnyMatrix::M2x2(m) => m,
@@ -179,22 +180,6 @@ mod example_steps {
             AnyMatrix::M4x4(m) => m,
             _ => panic!("Expected matrix to be a Matrix4x4"),
         }.clone()
-    }
-
-    fn table_to_matrix(table: gherkin::Table, size: (Ix, Ix)) -> Array<f32, Ix2> {
-        let mut matrix = Array::from_elem(size, 0.0);
-
-        for (c, value) in table.header.iter().enumerate() {
-            matrix[[0, c]] = value.parse().unwrap();
-        }
-
-        for (r, row) in table.rows.iter().enumerate() {
-            for (c, value) in row.iter().enumerate() {
-                matrix[[r + 1, c]] = value.parse().unwrap();
-            }
-        }
-
-        matrix
     }
 
     fn table_to_matrix2x2(table: gherkin::Table) -> Matrix2x2 {
@@ -1128,7 +1113,7 @@ mod example_steps {
                 AnyMatrix::M2x2(m) => m.determinant(),
                 AnyMatrix::M3x3(m) => m.determinant(),
                 AnyMatrix::M4x4(m) => m.determinant(),
-                AnyMatrix::M4x1(m) => unimplemented!("need Matrix4x1#cofactor"),
+                AnyMatrix::M4x1(_m) => unimplemented!("need Matrix4x1#cofactor"),
             };
 
             assert_eq!(expected, actual);
@@ -1141,7 +1126,7 @@ mod example_steps {
                 AnyMatrix::M2x2(m) => m.determinant(),
                 AnyMatrix::M3x3(m) => m.determinant(),
                 AnyMatrix::M4x4(m) => m.determinant(),
-                AnyMatrix::M4x1(m) => unimplemented!("need Matrix4x1#cofactor"),
+                AnyMatrix::M4x1(_m) => unimplemented!("need Matrix4x1#cofactor"),
             };
 
             assert_eq!(expected, actual);
@@ -1154,10 +1139,10 @@ mod example_steps {
             let expected: f32 = matches[3].parse().unwrap();
 
             let actual = match *world.matrix_a {
-                AnyMatrix::M2x2(m) => unimplemented!("need Matrix2x2#cofactor"),
+                AnyMatrix::M2x2(_m) => unimplemented!("need Matrix2x2#cofactor"),
                 AnyMatrix::M3x3(m) => m.minor(row_i, col_i),
                 AnyMatrix::M4x4(m) => m.minor(row_i, col_i),
-                AnyMatrix::M4x1(m) => unimplemented!("need Matrix4x1#cofactor"),
+                AnyMatrix::M4x1(_m) => unimplemented!("need Matrix4x1#cofactor"),
             };
 
             assert_eq!(expected, actual);
@@ -1170,10 +1155,10 @@ mod example_steps {
             let expected: f32 = matches[3].parse().unwrap();
 
             let actual = match *world.matrix_a {
-                AnyMatrix::M2x2(m) => unimplemented!("need Matrix2x2#cofactor"),
+                AnyMatrix::M2x2(_m) => unimplemented!("need Matrix2x2#cofactor"),
                 AnyMatrix::M3x3(m) => m.cofactor(row_i, col_i),
                 AnyMatrix::M4x4(m) => m.cofactor(row_i, col_i),
-                AnyMatrix::M4x1(m) => unimplemented!("need Matrix4x1#cofactor"),
+                AnyMatrix::M4x1(_m) => unimplemented!("need Matrix4x1#cofactor"),
             };
 
             assert_eq!(expected, actual);
