@@ -536,37 +536,6 @@ impl ops::Mul<Matrix4x4> for Matrix4x4 {
     }
 }
 
-impl From<&Matrix4x4> for Array<f32, Ix2> {
-    fn from(source: &Matrix4x4) -> Self {
-        let r1 = [
-            source.values[0],
-            source.values[1],
-            source.values[2],
-            source.values[3],
-        ];
-        let r2 = [
-            source.values[4],
-            source.values[5],
-            source.values[6],
-            source.values[7],
-        ];
-        let r3 = [
-            source.values[8],
-            source.values[9],
-            source.values[10],
-            source.values[11],
-        ];
-        let r4 = [
-            source.values[12],
-            source.values[13],
-            source.values[14],
-            source.values[15],
-        ];
-
-        arr2(&[r1, r2, r3, r4])
-    }
-}
-
 pub trait RaytracerMatrix: Clone {
     type Unit;
 
