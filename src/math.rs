@@ -750,12 +750,3 @@ impl ops::Mul<Point> for &Array<f32, Ix2> {
         self.dot(&arr1(&[rhs.x, rhs.y, rhs.z, 1.0])).into()
     }
 }
-
-// TODO: Feels like we should be able to use a `where` clause here
-impl ops::Mul<Array<f32, Ix2>> for Vector {
-    type Output = Self;
-
-    fn mul(self, rhs: Array<f32, Ix2>) -> Self::Output {
-        rhs.dot(&arr1(&[self.x, self.y, self.z, 0.0])).into()
-    }
-}
