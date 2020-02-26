@@ -480,24 +480,6 @@ impl ops::Mul<Matrix4x1> for Matrix4x4 {
     }
 }
 
-impl ops::Mul<Array<f32, Ix1>> for Matrix4x4 {
-    type Output = Array<f32, Ix1>;
-
-    fn mul(self, rhs: Array<f32, Ix1>) -> Self::Output {
-        let rhs: [f32; 4] = [rhs[[0]], rhs[[1]], rhs[[2]], rhs[[3]]]; // TODO: replace with Into<Matrix4x1>
-        // TODO: These indices for Matrix4x4 may be wrong
-        let v = self.values;
-        let values: [f32; 4] = [
-            (v[0] * rhs[0]) + (v[1] * rhs[1]) + (v[2] * rhs[2]) + (v[3] * rhs[3]),
-            (v[4] * rhs[0]) + (v[5] * rhs[1]) + (v[6] * rhs[2]) + (v[7] * rhs[3]),
-            (v[8] * rhs[0]) + (v[9] * rhs[1]) + (v[10] * rhs[2]) + (v[11] * rhs[3]),
-            (v[12] * rhs[0]) + (v[13] * rhs[1]) + (v[14] * rhs[2]) + (v[15] * rhs[3]),
-        ];
-
-        arr1(&values)
-    }
-}
-
 impl ops::Mul<Matrix4x4> for Matrix4x4 {
     type Output = Self;
 

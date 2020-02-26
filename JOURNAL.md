@@ -395,3 +395,5 @@ It continues to be a slog but I seem soooo close to wrapping this stage of the r
 And done! Phew. The current code is still much slower than before but this is a necessary iterative step.
 
 Removed another `Array` reference. That wasn't too bad. Huh! And removing the next one didn't even require refactoring other code! No surprise; it was just the reference version of the earlier one.
+
+Whoa. Removal of all these other `Array` references almost feels too easy.
