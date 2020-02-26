@@ -284,13 +284,10 @@ mod example_steps {
             world.matrix_a = Rc::new(AnyMatrix::M4x4(table_to_matrix4x4(table)));
         };
 
-        given regex r"^the following (.*)x(.*) matrix B:$" |world, matches, step| {
-            let width = matches[1].parse().unwrap();
-            let height = matches[2].parse().unwrap();
-
+        given "the following 4x4 matrix B:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            let matrix = table_to_matrix(table, (width, height)).into();
+            let matrix = table_to_matrix4x4(table);
 
             world.matrix_b = Rc::new(AnyMatrix::M4x4(matrix));
         };
@@ -298,7 +295,7 @@ mod example_steps {
         given "the following matrix B:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            let mut array = Array::from_elem((4, 4), 0.0);
+            let mut array = Matrix4x4::default();
 
             for (c, value) in table.header.iter().enumerate() {
                 array[[0,c]] = value.parse().unwrap();
@@ -310,13 +307,13 @@ mod example_steps {
                 }
             }
 
-            world.matrix_b = Rc::new(AnyMatrix::M4x4(array.into()));
+            world.matrix_b = Rc::new(AnyMatrix::M4x4(array));
         };
 
         given "the following matrix A:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            let mut array = Array::from_elem((4, 4), 0.0);
+            let mut array = Matrix4x4::default();
 
             for (c, value) in table.header.iter().enumerate() {
                 array[[0,c]] = value.parse().unwrap();
@@ -328,7 +325,7 @@ mod example_steps {
                 }
             }
 
-            world.matrix_a = Rc::new(AnyMatrix::M4x4(array.into()));
+            world.matrix_a = Rc::new(AnyMatrix::M4x4(array));
         };
 
         given "C ← A * B" |world, _step| {
@@ -1106,9 +1103,7 @@ mod example_steps {
         };
 
         then "A * identity_matrix = A" |world, _step| {
-            let identity_matrix: Array<f32, Ix2> = Array::eye(4);
-
-            let expected = m4x4(&world.matrix_a).dot(&identity_matrix);
+            let expected = m4x4(&world.matrix_a) * Matrix4x4::identity();
 
             // TODO: Not an ideal cloning. How to make this more efficient?
             let actual = m4x4(&world.matrix_a);
@@ -1119,7 +1114,7 @@ mod example_steps {
         then "transpose(A) is the following matrix:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            let expected: Matrix4x4 = table_to_matrix(table, (4, 4)).into();
+            let expected: Matrix4x4 = table_to_matrix4x4(table);
 
             let actual = m4x4(&world.matrix_a).transposed();
 
@@ -1233,10 +1228,7 @@ mod example_steps {
             assert_eq!(expected, actual);
         };
 
-        then regex r"^B is the following (.*)x(.*) matrix:$" |world, matches, step| {
-            let width = matches[1].parse().unwrap();
-            let height = matches[2].parse().unwrap();
-
+        then "B is the following 4x4 matrix:" |world, step| {
             let table = step.table().unwrap().clone();
 
             let mb = match *world.matrix_b {
@@ -1244,15 +1236,12 @@ mod example_steps {
                 _ => panic!("Expected world.matrix_b to be a Matrix4x4"),
             };
 
-            let expected: Matrix4x4 = table_to_matrix(table, (width, height)).into();
+            let expected: Matrix4x4 = table_to_matrix4x4(table);
 
             assert_eq!(expected, mb.rounded());
         };
 
-        then regex r"^inverse\(A\) is the following (.*)x(.*) matrix:$" |world, matches, step| {
-            let width = matches[1].parse().unwrap();
-            let height = matches[2].parse().unwrap();
-
+        then "inverse(A) is the following 4x4 matrix:" |world, step| {
             let table = step.table().unwrap().clone();
 
             let ma = match *world.matrix_a {
@@ -1260,7 +1249,7 @@ mod example_steps {
                 _ => panic!("Expected world.matrix_a to be a Matrix4x4"),
             };
 
-            let expected: Matrix4x4 = table_to_matrix(table, (width, height)).into();
+            let expected: Matrix4x4 = table_to_matrix4x4(table);
 
             assert_eq!(expected, ma.inverse().rounded());
         };
@@ -1951,7 +1940,7 @@ mod example_steps {
         then "t is the following 4x4 matrix:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            let mut expected: Array<f32, Ix2> = Array::from_elem((4, 4), 0.0);
+            let mut expected = Matrix4x4::default();
 
             for (c, value) in table.header.iter().enumerate() {
                 expected[[0,c]] = value.parse().unwrap();
@@ -1962,8 +1951,6 @@ mod example_steps {
                     expected[[r + 1,c]] = value.parse().unwrap();
                 }
             }
-
-            let expected: TransformationMatrix = expected.into();
 
             let actual = *world.t;
 

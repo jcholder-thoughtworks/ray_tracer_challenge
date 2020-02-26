@@ -393,3 +393,5 @@ Going to complete this refactoring effort! It's a bit of a slog but I'm making p
 It continues to be a slog but I seem soooo close to wrapping this stage of the refactoring up! I'd had to lay a lot of groundwork for this so I have high hopes for having a much less painful time with the rest of the refactoring.
 
 And done! Phew. The current code is still much slower than before but this is a necessary iterative step.
+
+Removed another `Array` reference. That wasn't too bad.

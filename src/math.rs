@@ -354,13 +354,21 @@ impl Matrix4x4 {
     }
 
     pub fn inverse(&self) -> Self {
-        let arr: Array<f32, Ix2> = self.into();
-        arr.inverse().into()
-    }
+        if !self.invertible() {
+            panic!("Cannot invert a matrix with a determinant of zero");
+        }
 
-    pub fn dot(&self, rhs: &Array<f32, Ix2>) -> Self {
-        let arr: Array<f32, Ix2> = self.into();
-        arr.dot(rhs).into()
+        let mut inverted = Matrix4x4::default();
+
+        for row_i in 0..4 {
+            for col_i in 0..4 {
+                let cofactor = self.cofactor(row_i, col_i);
+
+                inverted[[col_i, row_i]] = cofactor / self.determinant();
+            }
+        }
+
+        inverted
     }
 
     pub fn transposed(&self) -> Self {
@@ -525,29 +533,6 @@ impl ops::Mul<Matrix4x4> for Matrix4x4 {
         }
 
         Self::Output::new(values)
-    }
-}
-
-impl From<Array<f32, Ix2>> for Matrix4x4 {
-    fn from(source: Array<f32, Ix2>) -> Self {
-        Self::new([
-                  source[[0, 0]],
-                  source[[0, 1]],
-                  source[[0, 2]],
-                  source[[0, 3]],
-                  source[[1, 0]],
-                  source[[1, 1]],
-                  source[[1, 2]],
-                  source[[1, 3]],
-                  source[[2, 0]],
-                  source[[2, 1]],
-                  source[[2, 2]],
-                  source[[2, 3]],
-                  source[[3, 0]],
-                  source[[3, 1]],
-                  source[[3, 2]],
-                  source[[3, 3]],
-        ])
     }
 }
 
