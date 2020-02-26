@@ -759,15 +759,3 @@ impl ops::Mul<Array<f32, Ix2>> for Vector {
         rhs.dot(&arr1(&[self.x, self.y, self.z, 0.0])).into()
     }
 }
-
-// TODO: I could probably consolidate some of these operations with default trait implementations.
-// Both structs can convert to 1D 4x arrays, after all
-
-// TODO: Feels like we should be able to use a `where` clause here
-impl ops::Mul<Vector> for &Array<f32, Ix2> {
-    type Output = Vector;
-
-    fn mul(self, rhs: Vector) -> Self::Output {
-        self.dot(&arr1(&[rhs.x, rhs.y, rhs.z, 0.0])).into()
-    }
-}
