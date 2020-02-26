@@ -734,15 +734,6 @@ fn minor_4x4(matrix: &Array<f32, Ix2>, row: usize, col: usize) -> f32 {
         + m[2] * (m[3] * m[7] - m[4] * m[6])
 }
 
-// TODO: Double-check all these magic numbers. Knowledge of p(1) vs v(1) belongs alongside
-// those structs rather than here
-
-impl From<Point> for Array<f32, Ix1> {
-    fn from(item: Point) -> Self {
-        arr1(&[item.x, item.y, item.z, 1.0])
-    }
-}
-
 // TODO: Feels like we should be able to use a `where` clause here
 impl ops::Mul<Array<f32, Ix2>> for Point {
     type Output = Self;

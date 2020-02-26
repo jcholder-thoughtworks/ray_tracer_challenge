@@ -527,14 +527,13 @@ impl Camera {
         let world_x = self.half_width - xoffset;
         let world_y = self.half_height - yoffset;
 
-        let world_point_array: Array<f32, Ix1> = Point::new(world_x, world_y, -1.0).into();
-        let center_origin: Array<f32, Ix1> = CENTER_ORIGIN.into();
+        let world_point = Point::new(world_x, world_y, -1.0);
 
         let transform_inverse = self.transform.inverse();
 
-        let pixel: Point = (transform_inverse * world_point_array).into();
+        let pixel: Point = (transform_inverse * world_point).into();
 
-        let origin: Point = (transform_inverse * center_origin).into();
+        let origin: Point = (transform_inverse * CENTER_ORIGIN).into();
 
         let direction = (pixel - origin).norm();
 
