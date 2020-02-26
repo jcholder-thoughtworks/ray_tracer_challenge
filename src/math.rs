@@ -732,21 +732,3 @@ fn minor_4x4(matrix: &Array<f32, Ix2>, row: usize, col: usize) -> f32 {
         - m[1] * (m[3] * m[8] - m[5] * m[6])
         + m[2] * (m[3] * m[7] - m[4] * m[6])
 }
-
-// TODO: Feels like we should be able to use a `where` clause here
-impl ops::Mul<Array<f32, Ix2>> for Point {
-    type Output = Self;
-
-    fn mul(self, rhs: Array<f32, Ix2>) -> Self::Output {
-        rhs.dot(&arr1(&[self.x, self.y, self.z, 1.0])).into()
-    }
-}
-
-// TODO: Feels like we should be able to use a `where` clause here
-impl ops::Mul<Point> for &Array<f32, Ix2> {
-    type Output = Point;
-
-    fn mul(self, rhs: Point) -> Self::Output {
-        self.dot(&arr1(&[rhs.x, rhs.y, rhs.z, 1.0])).into()
-    }
-}
