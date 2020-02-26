@@ -8,6 +8,172 @@ use super::{round, Point, Vector};
 pub mod transforms;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
+pub enum AnyMatrix {
+    M2x2(Matrix2x2),
+    M3x3(Matrix3x3),
+    M4x4(Matrix4x4),
+    M4x1(Matrix4x1),
+}
+
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub struct Matrix2x2 {
+    values: [f32; 4],
+}
+
+impl Matrix2x2 {
+    pub fn new(values: [f32; 4]) -> Self {
+        Self { values }
+    }
+
+    pub fn default() -> Self {
+        Self::new([0.0; 4])
+    }
+
+    pub fn determinant(&self) -> f32 {
+        let a = self[[0, 0]];
+        let b = self[[0, 1]];
+        let c = self[[1, 0]];
+        let d = self[[1, 1]];
+
+        (a * d) - (b * c)
+    }
+
+    pub fn minor(&self) -> f32 {
+        self.determinant()
+    }
+
+    pub fn cofactor(&self) -> f32 {
+        self.minor()
+    }
+}
+
+impl ops::Index<[usize; 2]> for Matrix2x2 {
+    type Output = f32;
+
+    fn index(&self, index: [usize; 2]) -> &Self::Output {
+        let row = index[0];
+        let col = index[1];
+
+        &self.values[row * 2 + col]
+    }
+}
+
+impl ops::IndexMut<[usize; 2]> for Matrix2x2 {
+    fn index_mut(&mut self, index: [usize; 2]) -> &mut Self::Output {
+        let row = index[0];
+        let col = index[1];
+
+        &mut self.values[row * 2 + col]
+    }
+}
+
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub struct Matrix3x3 {
+    values: [f32; 9],
+}
+
+impl Matrix3x3 {
+    pub fn new(values: [f32; 9]) -> Self {
+        Self { values }
+    }
+
+    pub fn default() -> Self {
+        Self::new([0.0; 9])
+    }
+
+    pub fn determinant(&self) -> f32 {
+        let mut determinant: f32 = 0.0;
+
+        for c in 0..3 {
+            let element = self[[0, c]];
+            let cofactor = self.cofactor(0, c);
+
+            determinant += cofactor * element;
+        }
+
+        determinant
+    }
+
+    pub fn submatrix(&self, row: usize, col: usize) -> Matrix2x2 {
+        let mut sub = Matrix2x2::default();
+
+        for r in 0..3 {
+            if r == row {
+                continue;
+            }
+
+            for c in 0..3 {
+                if c == col {
+                    continue;
+                }
+
+                let ri = if r > row { r - 1 } else { r };
+
+                let ci = if c > col { c - 1 } else { c };
+
+                sub[[ri, ci]] = self[[r, c]];
+            }
+        }
+
+        sub
+    }
+
+    // Credit to https://www.mathsisfun.com/algebra/matrix-determinant.html for this optimization
+    pub fn minor(&self, row: usize, col: usize) -> f32 {
+        let mut i = 0;
+        let mut m: [f32; 4] = [0.0; 4];
+
+        for r in 0..=2 {
+            if r == row {
+                continue;
+            }
+
+            for c in 0..=2 {
+                if c == col {
+                    continue;
+                }
+
+                m[i] = self[[r, c]];
+                i = i + 1;
+            }
+        }
+
+        (m[0] * m[3]) - (m[1] * m[2])
+    }
+
+    pub fn cofactor(&self, row: usize, col: usize) -> f32 {
+        let minor = self.minor(row, col);
+
+        if (row + col) % 2 == 0 {
+            // if even
+            minor
+        } else {
+            -minor
+        }
+    }
+}
+
+impl ops::Index<[usize; 2]> for Matrix3x3 {
+    type Output = f32;
+
+    fn index(&self, index: [usize; 2]) -> &Self::Output {
+        let row = index[0];
+        let col = index[1];
+
+        &self.values[row * 3 + col]
+    }
+}
+
+impl ops::IndexMut<[usize; 2]> for Matrix3x3 {
+    fn index_mut(&mut self, index: [usize; 2]) -> &mut Self::Output {
+        let row = index[0];
+        let col = index[1];
+
+        &mut self.values[row * 3 + col]
+    }
+}
+
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Matrix4x1 {
     values: [f32; 4],
 }
@@ -111,23 +277,80 @@ impl Matrix4x4 {
     }
 
     pub fn determinant(&self) -> f32 {
-        unimplemented!("no determinant yet")
+        let mut determinant: f32 = 0.0;
+
+        for c in 0..4 {
+            let element = self[[0, c]];
+            let cofactor = self.cofactor(0, c);
+
+            determinant += cofactor * element;
+        }
+
+        determinant
     }
 
     pub fn invertible(&self) -> bool {
-        unimplemented!("no invertible yet")
+        self.determinant() != 0.0
     }
 
     pub fn cofactor(&self, row: usize, col: usize) -> f32 {
-        unimplemented!("no cofactor yet")
+        let minor = self.minor(row, col);
+
+        if (row + col) % 2 == 0 {
+            // if even
+            minor
+        } else {
+            -minor
+        }
     }
 
+    // Credit to https://www.mathsisfun.com/algebra/matrix-determinant.html for this optimization
     pub fn minor(&self, row: usize, col: usize) -> f32 {
-        unimplemented!("no minor yet")
+        let mut index = 0;
+        let mut m: [f32; 9] = [0.0; 9];
+
+        for r in 0..=3 {
+            if r == row {
+                continue;
+            }
+
+            for c in 0..=3 {
+                if c == col {
+                    continue;
+                }
+
+                m[index] = self[[r, c]];
+                index = index + 1;
+            }
+        }
+
+        m[0] * (m[4] * m[8] - m[5] * m[7])
+            - m[1] * (m[3] * m[8] - m[5] * m[6])
+            + m[2] * (m[3] * m[7] - m[4] * m[6])
     }
 
-    pub fn submatrix(&self, row: usize, col: usize) -> Self {
-        unimplemented!("no submatrix yet")
+    pub fn submatrix(&self, row: usize, col: usize) -> Matrix3x3 {
+        let mut sub = Matrix3x3::default();
+
+        for r in 0..4 {
+            if r == row {
+                continue;
+            }
+
+            for c in 0..4 {
+                if c == col {
+                    continue;
+                }
+
+                let ri = if r > row { r - 1 } else { r };
+
+                let ci = if c > col { c - 1 } else { c };
+
+                sub[[ri, ci]] = self[[r, c]];
+            }
+        }
+
+        sub
     }
 
     pub fn inverse(&self) -> Self {

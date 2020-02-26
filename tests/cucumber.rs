@@ -12,6 +12,7 @@ use ray_tracer_challenge::canvas::*;
 use ray_tracer_challenge::color::*;
 use ray_tracer_challenge::light::*;
 use ray_tracer_challenge::material::*;
+use ray_tracer_challenge::math::*;
 use ray_tracer_challenge::math::transforms::*;
 use ray_tracer_challenge::objects::*;
 use ray_tracer_challenge::*;
@@ -21,10 +22,10 @@ pub struct MyWorld {
     rw: RaytracerWorld,
     colors: Vec<Color>,
     matrix: Array<f32, Ix2>,
-    matrix_a: Rc<TransformationMatrix>,
-    matrix_b: Rc<TransformationMatrix>,
-    matrix_c: Rc<TransformationMatrix>,
-    matrix_t: Rc<TransformationMatrix>,
+    matrix_a: Rc<AnyMatrix>,
+    matrix_b: Rc<AnyMatrix>,
+    matrix_c: Rc<AnyMatrix>,
+    matrix_t: Rc<AnyMatrix>,
     half_quarter: Rc<TransformationMatrix>,
     full_quarter: Rc<TransformationMatrix>,
     transform: Rc<TransformationMatrix>,
@@ -87,10 +88,10 @@ impl std::default::Default for MyWorld {
             colors: vec![BLACK; 3],
             // TODO: Consider using Option here to make it more obvious when they haven't been set
             matrix: Array::from_elem((4, 4), 0.0),
-            matrix_a: Rc::new(TransformationMatrix::default()),
-            matrix_b: Rc::new(TransformationMatrix::default()),
-            matrix_c: Rc::new(TransformationMatrix::default()),
-            matrix_t: Rc::new(TransformationMatrix::default()),
+            matrix_a: Rc::new(AnyMatrix::M4x4(TransformationMatrix::default())),
+            matrix_b: Rc::new(AnyMatrix::M4x4(TransformationMatrix::default())),
+            matrix_c: Rc::new(AnyMatrix::M4x4(TransformationMatrix::default())),
+            matrix_t: Rc::new(AnyMatrix::M4x4(TransformationMatrix::default())),
             half_quarter: Rc::new(TransformationMatrix::default()),
             full_quarter: Rc::new(TransformationMatrix::default()),
             transform: Rc::new(TransformationMatrix::default()),
@@ -159,8 +160,77 @@ mod example_steps {
     use ray_tracer_challenge::objects::*;
     use ray_tracer_challenge::*;
 
+    fn m2x2(any: &Rc<AnyMatrix>) -> Matrix2x2 {
+        match **any {
+            AnyMatrix::M2x2(m) => m,
+            _ => panic!("Expected matrix to be a Matrix2x2"),
+        }.clone()
+    }
+
+    fn m3x3(any: &Rc<AnyMatrix>) -> Matrix3x3 {
+        match **any {
+            AnyMatrix::M3x3(m) => m,
+            _ => panic!("Expected matrix to be a Matrix3x3"),
+        }.clone()
+    }
+
+    fn m4x4(any: &Rc<AnyMatrix>) -> Matrix4x4 {
+        match **any {
+            AnyMatrix::M4x4(m) => m,
+            _ => panic!("Expected matrix to be a Matrix4x4"),
+        }.clone()
+    }
+
     fn table_to_matrix(table: gherkin::Table, size: (Ix, Ix)) -> Array<f32, Ix2> {
         let mut matrix = Array::from_elem(size, 0.0);
+
+        for (c, value) in table.header.iter().enumerate() {
+            matrix[[0, c]] = value.parse().unwrap();
+        }
+
+        for (r, row) in table.rows.iter().enumerate() {
+            for (c, value) in row.iter().enumerate() {
+                matrix[[r + 1, c]] = value.parse().unwrap();
+            }
+        }
+
+        matrix
+    }
+
+    fn table_to_matrix2x2(table: gherkin::Table) -> Matrix2x2 {
+        let mut matrix = Matrix2x2::default();
+
+        for (c, value) in table.header.iter().enumerate() {
+            matrix[[0, c]] = value.parse().unwrap();
+        }
+
+        for (r, row) in table.rows.iter().enumerate() {
+            for (c, value) in row.iter().enumerate() {
+                matrix[[r + 1, c]] = value.parse().unwrap();
+            }
+        }
+
+        matrix
+    }
+
+    fn table_to_matrix3x3(table: gherkin::Table) -> Matrix3x3 {
+        let mut matrix = Matrix3x3::default();
+
+        for (c, value) in table.header.iter().enumerate() {
+            matrix[[0, c]] = value.parse().unwrap();
+        }
+
+        for (r, row) in table.rows.iter().enumerate() {
+            for (c, value) in row.iter().enumerate() {
+                matrix[[r + 1, c]] = value.parse().unwrap();
+            }
+        }
+
+        matrix
+    }
+
+    fn table_to_matrix4x4(table: gherkin::Table) -> Matrix4x4 {
+        let mut matrix = Matrix4x4::default();
 
         for (c, value) in table.header.iter().enumerate() {
             matrix[[0, c]] = value.parse().unwrap();
@@ -196,13 +266,22 @@ mod example_steps {
             }
         };
 
-        given regex r"^the following (.*)x(.*) matrix A:$" |world, matches, step| {
-            let width = matches[1].parse().unwrap();
-            let height = matches[2].parse().unwrap();
-
+        given "the following 2x2 matrix A:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            world.matrix_a = Rc::new(table_to_matrix(table, (width, height)).into());
+            world.matrix_a = Rc::new(AnyMatrix::M2x2(table_to_matrix2x2(table)));
+        };
+
+        given "the following 3x3 matrix A:" |world, step| {
+            let table = step.table().unwrap().clone();
+
+            world.matrix_a = Rc::new(AnyMatrix::M3x3(table_to_matrix3x3(table)));
+        };
+
+        given "the following 4x4 matrix A:" |world, step| {
+            let table = step.table().unwrap().clone();
+
+            world.matrix_a = Rc::new(AnyMatrix::M4x4(table_to_matrix4x4(table)));
         };
 
         given regex r"^the following (.*)x(.*) matrix B:$" |world, matches, step| {
@@ -211,7 +290,9 @@ mod example_steps {
 
             let table = step.table().unwrap().clone();
 
-            world.matrix_b = Rc::new(table_to_matrix(table, (width, height)).into());
+            let matrix = table_to_matrix(table, (width, height)).into();
+
+            world.matrix_b = Rc::new(AnyMatrix::M4x4(matrix));
         };
 
         given "the following matrix B:" |world, step| {
@@ -229,7 +310,7 @@ mod example_steps {
                 }
             }
 
-            world.matrix_b = Rc::new(array.into());
+            world.matrix_b = Rc::new(AnyMatrix::M4x4(array.into()));
         };
 
         given "the following matrix A:" |world, step| {
@@ -247,11 +328,19 @@ mod example_steps {
                 }
             }
 
-            world.matrix_a = Rc::new(array.into());
+            world.matrix_a = Rc::new(AnyMatrix::M4x4(array.into()));
         };
 
         given "C ← A * B" |world, _step| {
-            world.matrix_c = Rc::new(*world.matrix_a * *world.matrix_b);
+            let ma = match *world.matrix_a {
+                AnyMatrix::M4x4(m) => m,
+                _ => panic!("Expected world.matrix_a to be a Matrix4x4"),
+            };
+            let mb = match *world.matrix_b {
+                AnyMatrix::M4x4(m) => m,
+                _ => panic!("Expected world.matrix_b to be a Matrix4x4"),
+            };
+            world.matrix_c = Rc::new(AnyMatrix::M4x4(ma * mb));
         };
 
         then regex r"^M\[(.*),(.*)\] = (.*)$" |world, matches, _step| {
@@ -287,11 +376,14 @@ mod example_steps {
             let row_i: usize = matches[1].parse().unwrap();
             let col_i: usize = matches[2].parse().unwrap();
 
-            world.matrix_b = Rc::new(world.matrix_a.submatrix(row_i, col_i));
+            let ma = m3x3(&world.matrix_a);
+            let sma = ma.submatrix(row_i, col_i);
+
+            world.matrix_b = Rc::new(AnyMatrix::M2x2(sma));
         };
 
         given "B ← inverse(A)" |world, _step| {
-            world.matrix_b = Rc::new(world.matrix_a.inverse());
+            world.matrix_b = Rc::new(AnyMatrix::M4x4(m4x4(&world.matrix_a).inverse()));
         };
 
         given regex r"^transform ← translation\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -411,7 +503,7 @@ mod example_steps {
         given regex r"^A ← rotation_x\(π / (.*)\)$" |world, matches, _step| {
             let denominator: f32 = matches[1].parse().unwrap();
 
-            world.matrix_a = Rc::new(rotation_x(PI / denominator));
+            world.matrix_a = Rc::new(AnyMatrix::M4x4(rotation_x(PI / denominator)));
         };
 
         given regex r"^B ← scaling\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -419,7 +511,7 @@ mod example_steps {
             let y: f32 = matches[2].parse().unwrap();
             let z: f32 = matches[3].parse().unwrap();
 
-            world.matrix_b = Rc::new(scaling(x, y, z));
+            world.matrix_b = Rc::new(AnyMatrix::M4x4(scaling(x, y, z)));
         };
 
         given regex r"^C ← translation\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -427,7 +519,7 @@ mod example_steps {
             let y: f32 = matches[2].parse().unwrap();
             let z: f32 = matches[3].parse().unwrap();
 
-            world.matrix_c = Rc::new(translation(x, y, z));
+            world.matrix_c = Rc::new(AnyMatrix::M4x4(translation(x, y, z)));
         };
 
         given regex r"^t ← translation\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -778,19 +870,21 @@ mod example_steps {
         };
 
         when "p2 ← A * p" |world, _step| {
-            world.p2 = world.matrix_a.as_ref() * world.p;
+            world.p2 = m4x4(&world.matrix_a) * world.p;
         };
 
         when "p3 ← B * p2" |world, _step| {
-            world.p3 = world.matrix_b.as_ref() * world.p2;
+            world.p3 = m4x4(&world.matrix_b) * world.p2;
         };
 
         when "p4 ← C * p3" |world, _step| {
-            world.p4 = world.matrix_c.as_ref() * world.p3;
+            world.p4 = m4x4(&world.matrix_c) * world.p3;
         };
 
         when "T ← C * B * A" |world, _step| {
-            world.matrix_t = Rc::new(*world.matrix_c * *world.matrix_b * *world.matrix_a);
+            let product = m4x4(&world.matrix_c) * m4x4(&world.matrix_b) * m4x4(&world.matrix_a);
+
+            world.matrix_t = Rc::new(AnyMatrix::M4x4(product));
         };
 
         when "r ← ray(origin, direction)" |world, _step| {
@@ -977,7 +1071,7 @@ mod example_steps {
                 world.tuple.3,
             ]);
 
-            let multiplied_matrix = *world.matrix_a * tuple_matrix;
+            let multiplied_matrix = m4x4(&world.matrix_a) * tuple_matrix;
 
             let matrix_as_tuple = (
                 multiplied_matrix[0],
@@ -1006,7 +1100,7 @@ mod example_steps {
                 }
             }
 
-            let actual_matrix = *world.matrix_a * *world.matrix_b;
+            let actual_matrix = m4x4(&world.matrix_a) * m4x4(&world.matrix_b);
 
             assert_eq!(expected_matrix, actual_matrix);
         };
@@ -1014,10 +1108,10 @@ mod example_steps {
         then "A * identity_matrix = A" |world, _step| {
             let identity_matrix: Array<f32, Ix2> = Array::eye(4);
 
-            let expected = world.matrix_a.dot(&identity_matrix);
+            let expected = m4x4(&world.matrix_a).dot(&identity_matrix);
 
             // TODO: Not an ideal cloning. How to make this more efficient?
-            let actual = (*world.matrix_a).clone();
+            let actual = m4x4(&world.matrix_a);
 
             assert_eq!(expected, actual);
         };
@@ -1027,7 +1121,7 @@ mod example_steps {
 
             let expected: Matrix4x4 = table_to_matrix(table, (4, 4)).into();
 
-            let actual = world.matrix_a.transposed();
+            let actual = m4x4(&world.matrix_a).transposed();
 
             assert_eq!(expected, actual);
         };
@@ -1035,7 +1129,12 @@ mod example_steps {
         then regex r"^determinant\(A\) = (.*)$" |world, matches, _step| {
             let expected: f32 = matches[1].parse().unwrap();
 
-            let actual = world.matrix_a.determinant();
+            let actual = match *world.matrix_a {
+                AnyMatrix::M2x2(m) => m.determinant(),
+                AnyMatrix::M3x3(m) => m.determinant(),
+                AnyMatrix::M4x4(m) => m.determinant(),
+                AnyMatrix::M4x1(m) => unimplemented!("need Matrix4x1#cofactor"),
+            };
 
             assert_eq!(expected, actual);
         };
@@ -1043,7 +1142,12 @@ mod example_steps {
         then regex r"^determinant\(B\) = (.*)$" |world, matches, _step| {
             let expected: f32 = matches[1].parse().unwrap();
 
-            let actual = world.matrix_b.determinant();
+            let actual = match *world.matrix_b {
+                AnyMatrix::M2x2(m) => m.determinant(),
+                AnyMatrix::M3x3(m) => m.determinant(),
+                AnyMatrix::M4x4(m) => m.determinant(),
+                AnyMatrix::M4x1(m) => unimplemented!("need Matrix4x1#cofactor"),
+            };
 
             assert_eq!(expected, actual);
         };
@@ -1054,7 +1158,12 @@ mod example_steps {
 
             let expected: f32 = matches[3].parse().unwrap();
 
-            let actual = world.matrix_a.minor(row_i, col_i);
+            let actual = match *world.matrix_a {
+                AnyMatrix::M2x2(m) => unimplemented!("need Matrix2x2#cofactor"),
+                AnyMatrix::M3x3(m) => m.minor(row_i, col_i),
+                AnyMatrix::M4x4(m) => m.minor(row_i, col_i),
+                AnyMatrix::M4x1(m) => unimplemented!("need Matrix4x1#cofactor"),
+            };
 
             assert_eq!(expected, actual);
         };
@@ -1065,31 +1174,44 @@ mod example_steps {
 
             let expected: f32 = matches[3].parse().unwrap();
 
-            let actual = world.matrix_a.cofactor(row_i, col_i);
+            let actual = match *world.matrix_a {
+                AnyMatrix::M2x2(m) => unimplemented!("need Matrix2x2#cofactor"),
+                AnyMatrix::M3x3(m) => m.cofactor(row_i, col_i),
+                AnyMatrix::M4x4(m) => m.cofactor(row_i, col_i),
+                AnyMatrix::M4x1(m) => unimplemented!("need Matrix4x1#cofactor"),
+            };
 
             assert_eq!(expected, actual);
         };
 
-        then regex r"^submatrix\(A, (.*), (.*)\) is the following (.*)x(.*) matrix:$" |world, matches, step| {
+        then regex r"^submatrix\(A, (.*), (.*)\) is the following 2x2 matrix:$" |world, matches, step| {
             let row_i: usize = matches[1].parse().unwrap();
             let col_i: usize = matches[2].parse().unwrap();
 
-            let row_count: usize = matches[3].parse().unwrap();
-            let col_count: usize = matches[4].parse().unwrap();
+            let expected: Matrix2x2 = table_to_matrix2x2(step.table().unwrap().clone());
 
-            let actual = world.matrix_a.submatrix(row_i, col_i);
+            let actual = m3x3(&world.matrix_a).submatrix(row_i, col_i);
 
-            let expected: Matrix4x4 = table_to_matrix(step.table().unwrap().clone(), (row_count, col_count)).into();
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"^submatrix\(A, (.*), (.*)\) is the following 3x3 matrix:$" |world, matches, step| {
+            let row_i: usize = matches[1].parse().unwrap();
+            let col_i: usize = matches[2].parse().unwrap();
+
+            let expected: Matrix3x3 = table_to_matrix3x3(step.table().unwrap().clone());
+
+            let actual = m4x4(&world.matrix_a).submatrix(row_i, col_i);
 
             assert_eq!(expected, actual);
         };
 
         then "A is invertible" |world, _step| {
-            assert!(world.matrix_a.invertible());
+            assert!(m4x4(&world.matrix_a).invertible());
         };
 
         then "A is not invertible" |world, _step| {
-            assert!(!world.matrix_a.invertible());
+            assert!(!m4x4(&world.matrix_a).invertible());
         };
 
         then regex r"^B\[(.*),(.*)\] = (.*)/(.*)$" |world, matches, _step| {
@@ -1099,9 +1221,14 @@ mod example_steps {
             let numerator: f32 = matches[3].parse().unwrap();
             let denominator: f32 = matches[4].parse().unwrap();
 
+            let mb = match *world.matrix_b {
+                AnyMatrix::M4x4(m) => m,
+                _ => panic!("Expected world.matrix_b to be a Matrix4x4"),
+            };
+
             let expected: f32 = (numerator as f32) / (denominator as f32);
 
-            let actual = world.matrix_b[[row_i, col_i]] as f32;
+            let actual = mb[[row_i, col_i]] as f32;
 
             assert_eq!(expected, actual);
         };
@@ -1112,9 +1239,14 @@ mod example_steps {
 
             let table = step.table().unwrap().clone();
 
+            let mb = match *world.matrix_b {
+                AnyMatrix::M4x4(m) => m,
+                _ => panic!("Expected world.matrix_b to be a Matrix4x4"),
+            };
+
             let expected: Matrix4x4 = table_to_matrix(table, (width, height)).into();
 
-            assert_eq!(expected, world.matrix_b.rounded());
+            assert_eq!(expected, mb.rounded());
         };
 
         then regex r"^inverse\(A\) is the following (.*)x(.*) matrix:$" |world, matches, step| {
@@ -1123,15 +1255,33 @@ mod example_steps {
 
             let table = step.table().unwrap().clone();
 
+            let ma = match *world.matrix_a {
+                AnyMatrix::M4x4(m) => m,
+                _ => panic!("Expected world.matrix_a to be a Matrix4x4"),
+            };
+
             let expected: Matrix4x4 = table_to_matrix(table, (width, height)).into();
 
-            assert_eq!(expected, world.matrix_a.inverse().rounded());
+            assert_eq!(expected, ma.inverse().rounded());
         };
 
         then "C * inverse(B) = A" |world, _step| {
-            let expected = (*world.matrix_a).clone();
+            let ma = match *world.matrix_a {
+                AnyMatrix::M4x4(m) => m,
+                _ => panic!("Expected world.matrix_a to be a Matrix4x4"),
+            };
+            let mb = match *world.matrix_b {
+                AnyMatrix::M4x4(m) => m,
+                _ => panic!("Expected world.matrix_b to be a Matrix4x4"),
+            };
+            let mc = match *world.matrix_c {
+                AnyMatrix::M4x4(m) => m,
+                _ => panic!("Expected world.matrix_b to be a Matrix4x4"),
+            };
 
-            let actual = (*world.matrix_c * world.matrix_b.inverse()).rounded();
+            let expected = ma;
+
+            let actual = (mc * mb.inverse()).rounded();
 
             assert_eq!(expected, actual);
         };
@@ -1283,7 +1433,9 @@ mod example_steps {
 
             let expected = Point::new(x, y, z);
 
-            let actual = *world.matrix_t * world.p;
+            let mt = m4x4(&world.matrix_t);
+
+            let actual = mt * world.p;
 
             assert_eq!(expected, actual.rounded());
         };

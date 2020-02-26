@@ -385,3 +385,11 @@ Success! Finally! Took forever (and a break) for me to realize that I was genera
 And all the tests pass again! Yay!
 
 Now to optimize some more! Let's see how many more references to `Array` we can remove.
+
+# 26Feb2020
+
+Going to complete this refactoring effort! It's a bit of a slog but I'm making progress. I added an `AnyMatrix` enum to make the `world` properties more flexible. Seems to be working so far.
+
+It continues to be a slog but I seem soooo close to wrapping this stage of the refactoring up! I'd had to lay a lot of groundwork for this so I have high hopes for having a much less painful time with the rest of the refactoring.
+
+And done! Phew. The current code is still much slower than before but this is a necessary iterative step.
