@@ -397,3 +397,17 @@ And done! Phew. The current code is still much slower than before but this is a 
 Removed another `Array` reference. That wasn't too bad. Huh! And removing the next one didn't even require refactoring other code! No surprise; it was just the reference version of the earlier one.
 
 Whoa. Removal of all these other `Array` references almost feels too easy.
+
+And now I've removed `ndarray` entirely as a dependency! Let's see if that sped things up!
+
+`bench "cargo run --example sphere --release -- 200 100"`:
+
+```
+time                 602.1 ms   (575.4 ms .. 620.8 ms)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 605.0 ms   (602.8 ms .. 608.4 ms)
+std dev              3.562 ms   (1.556 ms .. 4.968 ms)
+variance introduced by outliers: 19% (moderately inflated)
+```
+
+Down to 78.6% of the previous time! Nice! And that's without any further optimizations! But that's also plenty fast enough to refocus on new functionality for now!
