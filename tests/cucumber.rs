@@ -4,8 +4,6 @@
 
 use std::rc::Rc;
 
-use ndarray::*;
-
 use cucumber::{after, before, cucumber};
 
 use ray_tracer_challenge::canvas::*;
@@ -21,7 +19,7 @@ pub struct MyWorld {
     // You can use this struct for mutable context in scenarios.
     rw: RaytracerWorld,
     colors: Vec<Color>,
-    matrix: Array<f32, Ix2>,
+    matrix: AnyMatrix,
     matrix_a: Rc<AnyMatrix>,
     matrix_b: Rc<AnyMatrix>,
     matrix_c: Rc<AnyMatrix>,
@@ -87,7 +85,7 @@ impl std::default::Default for MyWorld {
             rw,
             colors: vec![BLACK; 3],
             // TODO: Consider using Option here to make it more obvious when they haven't been set
-            matrix: Array::from_elem((4, 4), 0.0),
+            matrix: AnyMatrix::M4x4(TransformationMatrix::default()),
             matrix_a: Rc::new(AnyMatrix::M4x4(TransformationMatrix::default())),
             matrix_b: Rc::new(AnyMatrix::M4x4(TransformationMatrix::default())),
             matrix_c: Rc::new(AnyMatrix::M4x4(TransformationMatrix::default())),
@@ -150,7 +148,6 @@ mod example_steps {
     use cucumber::steps;
 
     use gherkin;
-    use ndarray::*;
 
     use ray_tracer_challenge::color::*;
     use ray_tracer_challenge::light::*;
@@ -232,23 +229,58 @@ mod example_steps {
 
     // Any type that implements cucumber::World + Default can be the world
     steps!(crate::MyWorld => {
-        given regex r"^the following (.*)x(.*) matrix M:$" |world, matches, step| {
-            let width = matches[1].parse().unwrap();
-            let height = matches[2].parse().unwrap();
-
+        given "the following 2x2 matrix M:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            world.matrix = Array::from_elem((width, height), 0.0);
+            let mut matrix = Matrix2x2::default();
 
             for (c, value) in table.header.iter().enumerate() {
-                world.matrix[[0,c]] = value.parse().unwrap();
+                matrix[[0,c]] = value.parse().unwrap();
             }
 
             for (r, row) in table.rows.iter().enumerate() {
                 for (c, value) in row.iter().enumerate() {
-                    world.matrix[[r + 1,c]] = value.parse().unwrap();
+                    matrix[[r + 1,c]] = value.parse().unwrap();
                 }
             }
+
+            world.matrix = AnyMatrix::M2x2(matrix);
+        };
+
+        given "the following 3x3 matrix M:" |world, step| {
+            let table = step.table().unwrap().clone();
+
+            let mut matrix = Matrix3x3::default();
+
+            for (c, value) in table.header.iter().enumerate() {
+                matrix[[0,c]] = value.parse().unwrap();
+            }
+
+            for (r, row) in table.rows.iter().enumerate() {
+                for (c, value) in row.iter().enumerate() {
+                    matrix[[r + 1,c]] = value.parse().unwrap();
+                }
+            }
+
+            world.matrix = AnyMatrix::M3x3(matrix);
+        };
+
+        given "the following 4x4 matrix M:" |world, step| {
+            let table = step.table().unwrap().clone();
+
+            let mut matrix = Matrix4x4::default();
+
+            for (c, value) in table.header.iter().enumerate() {
+                matrix[[0,c]] = value.parse().unwrap();
+            }
+
+            for (r, row) in table.rows.iter().enumerate() {
+                for (c, value) in row.iter().enumerate() {
+                    matrix[[r + 1,c]] = value.parse().unwrap();
+                }
+            }
+
+            world.matrix = AnyMatrix::M4x4(matrix);
         };
 
         given "the following 2x2 matrix A:" |world, step| {
@@ -328,9 +360,17 @@ mod example_steps {
         then regex r"^M\[(.*),(.*)\] = (.*)$" |world, matches, _step| {
             let r: usize = matches[1].parse().unwrap();
             let c: usize = matches[2].parse().unwrap();
+
             let expected: f32 = matches[3].parse().unwrap();
 
-            assert_eq!(expected, world.matrix[[r, c]]);
+            let actual = match world.matrix {
+                AnyMatrix::M2x2(m) => m[[r, c]],
+                AnyMatrix::M3x3(m) => m[[r, c]],
+                AnyMatrix::M4x4(m) => m[[r, c]],
+                AnyMatrix::M4x1(_m) => unimplemented!("Did not expect a 4x1 matrix"),
+            };
+
+            assert_eq!(expected, actual);
         };
 
         given regex r"^c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
