@@ -1,8 +1,6 @@
 use std::ops;
 use std::rc::Rc;
 
-use ndarray::*;
-
 use self::canvas::Canvas;
 use self::color::{BLACK, Color, WHITE};
 use self::light::Light;
@@ -351,24 +349,6 @@ impl Vector {
         let incoming: Vector = *self;
 
         incoming - *normal * 2.0_f32 * incoming.dot(*normal)
-    }
-}
-
-impl From<Vector> for Array<f32, Ix1> {
-    fn from(item: Vector) -> Self {
-        arr1(&[item.x, item.y, item.z, 0.0])
-    }
-}
-
-impl From<Array<f32, Ix1>> for Vector {
-    fn from(item: Array<f32, Ix1>) -> Self {
-        Vector::new(item[[0]], item[[1]], item[[2]])
-    }
-}
-
-impl From<Array<f32, Ix1>> for Point {
-    fn from(item: Array<f32, Ix1>) -> Self {
-        Point::new(item[[0]], item[[1]], item[[2]])
     }
 }
 
