@@ -2023,6 +2023,14 @@ mod example_steps {
 
             assert_eq!(expected.rounded(), actual.rounded());
         };
+
+        then "is_shadowed(w, p) is true" |world, _step| {
+            assert!(world.rw.is_shadowed(world.p));
+        };
+
+        then "is_shadowed(w, p) is false" |world, _step| {
+            assert!(!world.rw.is_shadowed(world.p));
+        };
     });
 }
 
