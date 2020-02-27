@@ -411,3 +411,9 @@ variance introduced by outliers: 19% (moderately inflated)
 ```
 
 Down to 78.6% of the previous time! Nice! And that's without any further optimizations! But that's also plenty fast enough to refocus on new functionality for now!
+
+# 27Feb2020
+
+I've had a productive day! And it's already 4:10pm! I can work on this without feeling like I'm being unproductive.
+
+Up next: shadows!

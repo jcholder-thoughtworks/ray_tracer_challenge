@@ -69,6 +69,7 @@ pub struct MyWorld {
     field_of_view: f32,
     camera: Camera,
     image: Canvas,
+    in_shadow: bool,
 }
 
 impl cucumber::World for MyWorld {}
@@ -135,6 +136,7 @@ impl std::default::Default for MyWorld {
             field_of_view: 0.0,
             camera: Camera::new(0.0, 0.0, 0.0),
             image: Canvas::new(0, 0),
+            in_shadow: false,
         }
     }
 }
@@ -891,6 +893,10 @@ mod example_steps {
             world.camera.transform = view_transform(&world.from, &world.to, &world.up);
         };
 
+        given "in_shadow ← true" |world, _step| {
+            world.in_shadow = true;
+        };
+
         when "p2 ← A * p" |world, _step| {
             world.p2 = m4x4(&world.matrix_a) * world.p;
         };
@@ -1010,7 +1016,11 @@ mod example_steps {
         };
 
         when "result ← lighting(m, light, position, eyev, normalv)" |world, _step| {
-            world.result = world.mt.lighting(world.light, world.position, world.eyev, world.normalv);
+            world.result = world.mt.lighting(world.light, world.position, world.eyev, world.normalv, world.in_shadow);
+        };
+
+        when "result ← lighting(m, light, position, eyev, normalv, in_shadow)" |world, _step| {
+            world.result = world.mt.lighting(world.light, world.position, world.eyev, world.normalv, world.in_shadow);
         };
 
         when "w ← default_world()" |world, _step| {

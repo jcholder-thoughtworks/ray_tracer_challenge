@@ -89,7 +89,9 @@ impl RaytracerWorld {
     }
 
     pub fn shade_hit(&self, comp: &PrecomputedHit) -> Color {
-        comp.object.material.lighting(self.light.unwrap(), comp.point, comp.eyev, comp.normalv)
+        let in_shadow = false;
+
+        comp.object.material.lighting(self.light.unwrap(), comp.point, comp.eyev, comp.normalv, in_shadow)
     }
 
     pub fn color_at(&self, ray: &Ray) -> Color {
