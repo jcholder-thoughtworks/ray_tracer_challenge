@@ -107,6 +107,25 @@ impl RaytracerWorld {
 
         self.shade_hit(&comps)
     }
+
+    pub fn is_shadowed(&self, point: Point) -> bool {
+        assert!(self.light != None, "The world has no light for casting shadows");
+
+        let vector = self.light.unwrap().position - point;
+        let distance = vector.mag();
+        let direction = vector.norm();
+
+        let ray = Ray::new(point, direction);
+        let intersections = self.intersect(&ray);
+
+        let hit = intersections.hit();
+
+        if let Some(h) = hit {
+            h.time < distance
+        } else {
+            false
+        }
+    }
 }
 
 impl Default for RaytracerWorld {
