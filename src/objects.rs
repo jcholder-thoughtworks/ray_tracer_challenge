@@ -3,14 +3,14 @@ use std::rc::Rc;
 use super::material::Material;
 use super::*;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum RaytracerObjectType {
     Sphere,
 }
 
 type ROT = RaytracerObjectType;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct RaytracerObject {
     obj_id: usize,
     pub obj_type: ROT,
