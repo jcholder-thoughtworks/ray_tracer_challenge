@@ -22,7 +22,14 @@ impl Material {
         }
     }
 
-    pub fn lighting(&self, light: Light, point: Point, eyev: Vector, normalv: Vector, in_shadow: bool) -> Color {
+    pub fn lighting(
+        &self,
+        light: Light,
+        point: Point,
+        eyev: Vector,
+        normalv: Vector,
+        in_shadow: bool,
+    ) -> Color {
         let material = self;
 
         let effective_color: Color = material.color * light.intensity;

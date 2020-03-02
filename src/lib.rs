@@ -2,7 +2,7 @@ use std::ops;
 use std::rc::Rc;
 
 use self::canvas::Canvas;
-use self::color::{BLACK, Color, WHITE};
+use self::color::{Color, BLACK, WHITE};
 use self::light::Light;
 use self::math::transforms::{scaling, TransformationMatrix};
 use self::objects::RaytracerObject;
@@ -91,7 +91,13 @@ impl RaytracerWorld {
     pub fn shade_hit(&self, comp: &PrecomputedHit) -> Color {
         let in_shadow = self.is_shadowed(comp.over_point);
 
-        comp.object.material.lighting(self.light.unwrap(), comp.over_point, comp.eyev, comp.normalv, in_shadow)
+        comp.object.material.lighting(
+            self.light.unwrap(),
+            comp.over_point,
+            comp.eyev,
+            comp.normalv,
+            in_shadow,
+        )
     }
 
     pub fn color_at(&self, ray: &Ray) -> Color {
@@ -109,7 +115,10 @@ impl RaytracerWorld {
     }
 
     pub fn is_shadowed(&self, point: Point) -> bool {
-        assert!(self.light != None, "The world has no light for casting shadows");
+        assert!(
+            self.light != None,
+            "The world has no light for casting shadows"
+        );
 
         let vector = self.light.unwrap().position - point;
         let distance = vector.mag();

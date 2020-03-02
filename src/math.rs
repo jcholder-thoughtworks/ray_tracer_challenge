@@ -181,7 +181,9 @@ impl Matrix4x1 {
     }
 
     pub fn default() -> Self {
-        Self { values: [0.0, 0.0, 0.0, 0.0] }
+        Self {
+            values: [0.0, 0.0, 0.0, 0.0],
+        }
     }
 }
 
@@ -216,22 +218,22 @@ impl Matrix4x4 {
 
     pub fn from_2d_array(values: [[f32; 4]; 4]) -> Self {
         Self::new([
-                  values[0][0],
-                  values[0][1],
-                  values[0][2],
-                  values[0][3],
-                  values[1][0],
-                  values[1][1],
-                  values[1][2],
-                  values[1][3],
-                  values[2][0],
-                  values[2][1],
-                  values[2][2],
-                  values[2][3],
-                  values[3][0],
-                  values[3][1],
-                  values[3][2],
-                  values[3][3],
+            values[0][0],
+            values[0][1],
+            values[0][2],
+            values[0][3],
+            values[1][0],
+            values[1][1],
+            values[1][2],
+            values[1][3],
+            values[2][0],
+            values[2][1],
+            values[2][2],
+            values[2][3],
+            values[3][0],
+            values[3][1],
+            values[3][2],
+            values[3][3],
         ])
     }
 
@@ -266,10 +268,7 @@ impl Matrix4x4 {
 
     pub fn identity() -> Self {
         Self::new([
-                  1.0, 0.0, 0.0, 0.0,
-                  0.0, 1.0, 0.0, 0.0,
-                  0.0, 0.0, 1.0, 0.0,
-                  0.0, 0.0, 0.0, 1.0,
+            1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
         ])
     }
 
@@ -321,8 +320,7 @@ impl Matrix4x4 {
             }
         }
 
-        m[0] * (m[4] * m[8] - m[5] * m[7])
-            - m[1] * (m[3] * m[8] - m[5] * m[6])
+        m[0] * (m[4] * m[8] - m[5] * m[7]) - m[1] * (m[3] * m[8] - m[5] * m[6])
             + m[2] * (m[3] * m[7] - m[4] * m[6])
     }
 
@@ -372,10 +370,8 @@ impl Matrix4x4 {
         let v = self.values;
 
         Self::new([
-                  v[0], v[4], v[8], v[12],
-                  v[1], v[5], v[9], v[13],
-                  v[2], v[6], v[10], v[14],
-                  v[3], v[7], v[11], v[15],
+            v[0], v[4], v[8], v[12], v[1], v[5], v[9], v[13], v[2], v[6], v[10], v[14], v[3], v[7],
+            v[11], v[15],
         ])
     }
 
@@ -415,7 +411,7 @@ impl ops::Mul<Point> for &Matrix4x4 {
 
     fn mul(self, rhs: Point) -> Self::Output {
         let rhs: [f32; 4] = [rhs.x(), rhs.y(), rhs.z(), 1.0]; // TODO: replace with Into<Matrix4x1>
-        // TODO: These indices for Matrix4x4 may be wrong
+                                                              // TODO: These indices for Matrix4x4 may be wrong
         let v = self.values;
         let values: [f32; 4] = [
             (v[0] * rhs[0]) + (v[1] * rhs[1]) + (v[2] * rhs[2]) + (v[3] * rhs[3]),

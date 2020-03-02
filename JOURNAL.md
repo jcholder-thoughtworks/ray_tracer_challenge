@@ -423,3 +423,7 @@ Progress! I have some "acne"-ridden renders (technical term, honest!) but it's p
 # 02Mar2020
 
 Brain blast! I can parallelize this work! Good context as any in which to learn `async` in Rust! But wrap up shadows first!
+
+Hrm, all the new scenarios pass but it seems like I'm still getting acne on the background. Might be an artifact of how they're flattened spheres instead of actual planes, though. Let's see what happens when I de-flatten them a bit. It _does_ seem to improve! We'll leave things like that for now and refocus on async.
+
+But before anything else: `rustfmt` time!
