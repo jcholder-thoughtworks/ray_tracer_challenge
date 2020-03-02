@@ -417,3 +417,9 @@ Down to 78.6% of the previous time! Nice! And that's without any further optimiz
 I've had a productive day! And it's already 4:10pm! I can work on this without feeling like I'm being unproductive.
 
 Up next: shadows!
+
+Progress! I have some "acne"-ridden renders (technical term, honest!) but it's progress! And in less than an hour, too.
+
+# 02Mar2020
+
+Brain blast! I can parallelize this work! Good context as any in which to learn `async` in Rust! But wrap up shadows first!

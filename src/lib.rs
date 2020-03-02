@@ -89,9 +89,9 @@ impl RaytracerWorld {
     }
 
     pub fn shade_hit(&self, comp: &PrecomputedHit) -> Color {
-        let in_shadow = false;
+        let in_shadow = self.is_shadowed(comp.over_point);
 
-        comp.object.material.lighting(self.light.unwrap(), comp.point, comp.eyev, comp.normalv, in_shadow)
+        comp.object.material.lighting(self.light.unwrap(), comp.over_point, comp.eyev, comp.normalv, in_shadow)
     }
 
     pub fn color_at(&self, ray: &Ray) -> Color {
@@ -414,10 +414,13 @@ impl Intersection {
 
         let normalv = if inside { -normalv } else { normalv };
 
+        let over_point = point + normalv * EPSILON;
+
         PrecomputedHit {
             time,
             object,
             point,
+            over_point,
             eyev,
             normalv,
             inside,
@@ -475,6 +478,7 @@ pub struct PrecomputedHit {
     pub time: Time,
     pub object: Rc<RaytracerObject>,
     pub point: Point,
+    pub over_point: Point,
     pub eyev: Vector,
     pub normalv: Vector,
     pub inside: bool,

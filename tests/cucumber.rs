@@ -586,12 +586,32 @@ mod example_steps {
             world.s = world.rw.new_sphere(CENTER_ORIGIN);
         };
 
+        given "s1 ← sphere()" |world, _step| {
+            world.s1 = world.rw.new_sphere(CENTER_ORIGIN);
+        };
+
+        given "s1 is added to w" |world, _step| {
+            world.rw.add_object(world.s1);
+        };
+
+        given "s2 is added to w" |world, _step| {
+            world.rw.add_object(world.s2);
+        };
+
         given regex r"^i1 ← intersection\((.*), s\)$" |world, matches, _step| {
             let time: Time = matches[1].parse().unwrap();
 
             let object = Rc::new(world.s.clone());
 
             world.i1 = Some(Rc::new(Intersection { time, object }));
+        };
+
+        given regex r"^i ← intersection\((.*), s2\)$" |world, matches, _step| {
+            let time: Time = matches[1].parse().unwrap();
+
+            let object = Rc::new(world.s2.clone());
+
+            world.i = Some(Rc::new(Intersection { time, object }));
         };
 
         given regex r"^i2 ← intersection\((.*), s\)$" |world, matches, _step| {
@@ -792,15 +812,42 @@ mod example_steps {
         given "s2 ← sphere() with:" |world, step| {
             let table = step.table().unwrap().clone();
 
-            let regex = Regex::new(r"^scaling\((.*), (.*), (.*)\)$").unwrap();
+            let regex = Regex::new(r"^(translation|scaling)\((.*), (.*), (.*)\)$").unwrap();
             let captures = regex.captures(&table.rows[0][1]).unwrap();
-            let x: f32 = captures.get(1).unwrap().as_str().parse().unwrap();
-            let y: f32 = captures.get(2).unwrap().as_str().parse().unwrap();
-            let z: f32 = captures.get(3).unwrap().as_str().parse().unwrap();
+            let transformation_type: &str = captures.get(1).unwrap().as_str();
+            let x: f32 = captures.get(2).unwrap().as_str().parse().unwrap();
+            let y: f32 = captures.get(3).unwrap().as_str().parse().unwrap();
+            let z: f32 = captures.get(4).unwrap().as_str().parse().unwrap();
 
-            let transform = scaling(x, y, z);
+            let transform = match transformation_type {
+                "scaling" => scaling(x, y, z),
+                "translation" => translation(x, y, z),
+                _ => unimplemented!("Missing support for transformation of type {}", transformation_type),
+            };
 
             world.s2.transform = transform;
+        };
+
+        given "shape ← sphere() with:" |world, step| {
+            let table = step.table().unwrap().clone();
+
+            let regex = Regex::new(r"^(translation|scaling)\((.*), (.*), (.*)\)$").unwrap();
+            let captures = regex.captures(&table.rows[0][1]).unwrap();
+            let transformation_type: &str = captures.get(1).unwrap().as_str();
+            let x: f32 = captures.get(2).unwrap().as_str().parse().unwrap();
+            let y: f32 = captures.get(3).unwrap().as_str().parse().unwrap();
+            let z: f32 = captures.get(4).unwrap().as_str().parse().unwrap();
+
+            let transform = match transformation_type {
+                "scaling" => scaling(x, y, z),
+                "translation" => translation(x, y, z),
+                _ => unimplemented!("Missing support for transformation of type {}", transformation_type),
+            };
+
+            let mut shape = world.rw.new_sphere(CENTER_ORIGIN);
+            shape.transform = transform;
+
+            world.shape = Rc::new(shape);
         };
 
         given "w ← default_world()" |world, _step| {
@@ -1927,6 +1974,20 @@ mod example_steps {
             let actual = world.comps.as_ref().unwrap().inside;
 
             assert_eq!(expected, actual);
+        };
+
+        then "comps.over_point.z < -EPSILON/2" |world, _step| {
+            let expected: f32 = -(EPSILON/2.0);
+
+            let actual = world.comps.as_ref().unwrap().over_point.z();
+
+            assert_eq!(round(expected), round(actual));
+        };
+
+        then "comps.point.z > comps.over_point.z" |world, _step| {
+            let comps = world.comps.as_ref().unwrap();
+
+            assert!(comps.point.z() > comps.over_point.z(), "Expected comps.point.z ({}) to be greater than comps._over_point.z ({})", comps.point.z(), comps.over_point.z());
         };
 
         then regex r"^c = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
