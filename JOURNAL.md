@@ -427,3 +427,9 @@ Brain blast! I can parallelize this work! Good context as any in which to learn 
 Hrm, all the new scenarios pass but it seems like I'm still getting acne on the background. Might be an artifact of how they're flattened spheres instead of actual planes, though. Let's see what happens when I de-flatten them a bit. It _does_ seem to improve! We'll leave things like that for now and refocus on async.
 
 But before anything else: `rustfmt` time!
+
+It took a while to figure out correct ownership for the threading. Now to just figure out how to allocate the work out correctly! (Thankfully the latter should be just a bit of arithmetic.)
+
+# 03Mar2020
+
+Okay, I've had a productive day! Let's take another stab at parallelizing this work.

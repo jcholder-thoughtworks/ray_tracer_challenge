@@ -1,5 +1,7 @@
 use std::ops;
 use std::rc::Rc;
+use std::sync::{Mutex, Arc};
+use std::thread;
 
 use self::canvas::Canvas;
 use self::color::{Color, BLACK, WHITE};
@@ -37,7 +39,7 @@ pub fn round(v: f32) -> f32 {
     (v * factor).round() / factor
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct RaytracerWorld {
     next_id: usize,
     pub light: Option<Light>,
@@ -497,6 +499,7 @@ pub fn equalish(a: f32, b: f32) -> bool {
     (a - b).abs() < EPSILON
 }
 
+#[derive(Clone, Debug)]
 pub struct Camera {
     pub hsize: f32,
     pub vsize: f32,
@@ -566,6 +569,57 @@ impl Camera {
 
         image
     }
+
+    pub fn render_column_to(&self, world: &RaytracerWorld, y: usize, image: &mut Canvas) {
+        for x in 0..(self.hsize as usize) {
+            let ray = self.ray_for_pixel(x, y);
+            let color = world.color_at(&ray);
+
+            image.write_pixel(x as u32, y as u32, color);
+        }
+    }
+}
+
+pub fn render_threaded(world: RaytracerWorld, camera: Camera) -> Canvas {
+    let image = Arc::new(Mutex::new(Canvas::new(camera.hsize as u32, camera.vsize as u32)));
+
+    let mut handles = vec![];
+
+    let vsize = camera.vsize.round() as usize;
+
+    let mut start_y = 0;
+    let mut end_y = 0;
+
+    while start_y < vsize && end_y < vsize {
+        let image = Arc::clone(&image);
+        let world = world.clone();
+        let camera = camera.clone();
+
+        end_y = start_y + (vsize / 10);
+        if end_y > vsize {
+            end_y = vsize;
+        }
+
+        let handle = thread::spawn(move || {
+            let image = &mut *image.lock().unwrap();
+
+            for y in start_y..end_y {
+                camera.render_column_to(&world, y, image);
+            }
+        });
+
+        handles.push(handle);
+
+        start_y = end_y;
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    let image = image.lock().unwrap();
+
+    image.clone()
 }
 
 #[cfg(test)]
