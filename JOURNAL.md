@@ -433,3 +433,41 @@ It took a while to figure out correct ownership for the threading. Now to just f
 # 03Mar2020
 
 Okay, I've had a productive day! Let's take another stab at parallelizing this work.
+
+Success! Now let's see if it actually makes a speed difference!
+
+`bench "cargo run --example sphere --release -- --threaded 200 100"`:
+
+```
+time                 1.014 s    (977.6 ms .. 1.063 s)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 1.025 s    (1.013 s .. 1.045 s)
+std dev              18.34 ms   (2.060 ms .. 23.39 ms)
+variance introduced by outliers: 19% (moderately inflated)
+```
+
+Well, look at that! It's actually slower! Not _that_ surprising for so small of an image, given the potential overhead. (And I'm not 100% sure that it's even using more than one core.) Let's try it again with a much larger render.
+
+`bench "cargo run --example sphere --release -- 800 400"`:
+
+```
+time                 15.03 s    (14.85 s .. 15.20 s)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 14.94 s    (14.90 s .. 14.98 s)
+std dev              50.20 ms   (18.52 ms .. 68.58 ms)
+variance introduced by outliers: 19% (moderately inflated)
+```
+
+Phew! That took a while. Let's try it with threads.
+
+`bench "cargo run --example sphere --release -- --threaded 800 400"`:
+
+```
+time                 14.84 s    (14.71 s .. 14.98 s)
+                     1.000 R²   (NaN R² .. 1.000 R²)
+mean                 14.84 s    (14.82 s .. 14.86 s)
+std dev              22.16 ms   (9.209 ms .. 28.70 ms)
+variance introduced by outliers: 19% (moderately inflated)
+```
+
+Huh. Barely any faster. Makes me seriously doubt whether this work was split across multiple cores in the first place. Did a quick Google search and found a [potentially useful article](https://chilimatic.hashnode.dev/threads-in-rust-cjwmbxw9e003pzjs19n7pa0bt). I bet it's my `Mutex` that's hampering my efficiency. It would make more sense for each thread to pass a message with its columns, wouldn't it, and for the parent thread to only recombine the columns once they're all done. Let's give that a try.
