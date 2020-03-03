@@ -20,26 +20,34 @@ fn parse_arg(arg: &str) -> f32 {
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
+    let mut threaded = false;
+    let mut arg_index = 0;
+
     if let Some(a) = args.get(1) {
         if a == "--help" {
             let cmd_name = args.get(0).unwrap();
-            println!("Usage: {} [width:float] [height:float] [field-of-view:float]", cmd_name);
+            println!("Usage: {} [--threaded] [width:float] [height:float] [field-of-view:float]", cmd_name);
             println!("e.g. {} 200.0, 100.0, 1.047", cmd_name);
             return Ok(());
         }
+
+        if a == "--threaded" {
+            threaded = true;
+            arg_index += 1;
+        }
     }
 
-    let canvas_width: f32 = match args.get(1) {
+    let canvas_width: f32 = match args.get(arg_index + 1) {
         Some(a) => parse_arg(a),
         None => 200.0,
     };
 
-    let canvas_height: f32 = match args.get(2) {
+    let canvas_height: f32 = match args.get(arg_index + 2) {
         Some(a) => parse_arg(a),
         None => 100.0,
     };
 
-    let field_of_view: f32 = match args.get(3) {
+    let field_of_view: f32 = match args.get(arg_index + 3) {
         Some(a) => parse_arg(a),
         None => PI / 3.0,
     };
@@ -100,7 +108,11 @@ fn main() -> std::io::Result<()> {
     let mut camera = Camera::new(canvas_width, canvas_height, field_of_view);
     camera.transform = view_transform(&Point::new(0.0, 1.5, -5.0), &Point::new(0.0, 1.0, 0.0), &Vector::new(0.0, 1.0, 0.0));
 
-    let canvas = camera.render(&world);
+    let canvas = if threaded {
+        render_threaded(world, camera)
+    } else {
+        camera.render(&world)
+    };
 
     println!("Saving the PPM to a file ...");
 
