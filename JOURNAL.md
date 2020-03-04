@@ -475,3 +475,34 @@ Huh. Barely any faster. Makes me seriously doubt whether this work was split acr
 # 04Mar2020
 
 Okay! It's early in the work day but I'm already waiting for multiple people to get back to me so I'll bide some tie this way.
+
+Alrighty! We have a proof of concept where each thread now renders to its own `Canvas` and then the results are copied into one final `Canvas` in a single go. Let's see how that impacts things. (Prediction: Definitely slower for smaller images because of all the extra allocations. _Possibly_ faster for sufficiently large images.)
+
+
+`bench "cargo run --example sphere --release -- --threaded 200 100"`:
+
+```
+time                 1.021 s    (987.7 ms .. 1.047 s)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 1.022 s    (1.016 s .. 1.029 s)
+std dev              7.083 ms   (427.2 μs .. 8.877 ms)
+variance introduced by outliers: 19% (moderately inflated)
+```
+
+Still slower than a single-threaded version but about the same as before. Surprisingly small difference.
+
+`bench "cargo run --example sphere --release -- --threaded 800 400"`:
+
+```
+time                 15.09 s    (14.96 s .. 15.26 s)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 15.21 s    (15.15 s .. 15.31 s)
+std dev              90.09 ms   (15.74 ms .. 116.9 ms)
+variance introduced by outliers: 19% (moderately inflated)
+```
+
+Slightly slower again! That's, uh, rather surprising. Let's profile this code and see what's up. Could be a coincidence that all those changes made no significant difference in either direction but that raises more doubts about whether this code is being parallelized correctly.
+
+The results are in and it looks like the actual rendering still takes up 99% of the total process time. But the work _is_ clearly being distributed across multiple threads (`std::sys::unix::thread::Thread::new`). I bet that `MArc<Mutex>` is still causing me problems. Well, this _was_ only an iterative change meant to precede a switch to message passing! Let's move onto that and see what happens.
+
+Refactoring for message passing wasn't too bad! And the results seem amazing! But let's test that empirically.

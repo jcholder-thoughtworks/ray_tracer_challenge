@@ -1,6 +1,6 @@
 use std::ops;
 use std::rc::Rc;
-use std::sync::{Mutex, Arc};
+use std::sync::mpsc;
 use std::thread;
 
 use self::canvas::Canvas;
@@ -586,19 +586,17 @@ pub fn render_threaded(world: RaytracerWorld, camera: Camera) -> Canvas {
 
     let mut handles = vec![];
 
-    let cols: Vec<(usize, usize, Canvas)> = vec![]; // usizes = start/end range of larger canvas
-    let cols = Arc::new(Mutex::new(cols));
-
     let hsize = camera.hsize.round() as usize;
     let vsize = camera.vsize.round() as usize;
 
     let mut start_y = 0;
     let mut end_y = 0;
 
+    let (tx, rx) = mpsc::channel();
+
     while start_y < vsize && end_y < vsize {
         let world = world.clone();
         let camera = camera.clone();
-        let cols = Arc::clone(&cols);
 
         end_y = start_y + (vsize / 10);
         if end_y > vsize {
@@ -607,14 +605,14 @@ pub fn render_threaded(world: RaytracerWorld, camera: Camera) -> Canvas {
 
         let mut canvas = Canvas::new(hsize as u32, vsize as u32);
 
-        let handle = thread::spawn(move || {
-            let cols = &mut *cols.lock().unwrap();
+        let thread_tx = mpsc::Sender::clone(&tx);
 
+        let handle = thread::spawn(move || {
             for y in start_y..end_y {
                 camera.render_column_to(&world, y, &mut canvas);
             }
 
-            cols.push((start_y, end_y, canvas));
+            thread_tx.send((start_y, end_y, canvas)).unwrap();
         });
 
         handles.push(handle);
@@ -622,20 +620,28 @@ pub fn render_threaded(world: RaytracerWorld, camera: Camera) -> Canvas {
         start_y = end_y;
     }
 
-    for handle in handles {
-        handle.join().unwrap();
-    }
+    let mut finished_handles = 0;
 
-    for col in cols.lock().unwrap().iter() {
-        let (start_y, end_y, canvas) = col;
+    for received in rx {
+        let (start_y, end_y, canvas) = received;
 
         for x in 0..hsize {
-            for y in *start_y..*end_y {
+            for y in start_y..end_y {
                 let x = x as u32;
                 let y = y as u32;
                 image.write_pixel(x, y, canvas.pixel_at(x, y));
             }
         }
+
+        finished_handles += 1;
+
+        if finished_handles == handles.len() {
+            break;
+        }
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
     }
 
     image.clone()
