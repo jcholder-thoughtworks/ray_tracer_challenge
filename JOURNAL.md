@@ -471,3 +471,7 @@ variance introduced by outliers: 19% (moderately inflated)
 ```
 
 Huh. Barely any faster. Makes me seriously doubt whether this work was split across multiple cores in the first place. Did a quick Google search and found a [potentially useful article](https://chilimatic.hashnode.dev/threads-in-rust-cjwmbxw9e003pzjs19n7pa0bt). I bet it's my `Mutex` that's hampering my efficiency. It would make more sense for each thread to pass a message with its columns, wouldn't it, and for the parent thread to only recombine the columns once they're all done. Let's give that a try.
+
+# 04Mar2020
+
+Okay! It's early in the work day but I'm already waiting for multiple people to get back to me so I'll bide some tie this way.

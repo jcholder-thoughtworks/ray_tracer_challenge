@@ -570,6 +570,7 @@ impl Camera {
         image
     }
 
+    // TODO: Rename to render_row_to since that's what's actually being rendered
     pub fn render_column_to(&self, world: &RaytracerWorld, y: usize, image: &mut Canvas) {
         for x in 0..(self.hsize as usize) {
             let ray = self.ray_for_pixel(x, y);
@@ -581,31 +582,39 @@ impl Camera {
 }
 
 pub fn render_threaded(world: RaytracerWorld, camera: Camera) -> Canvas {
-    let image = Arc::new(Mutex::new(Canvas::new(camera.hsize as u32, camera.vsize as u32)));
+    let mut image = Canvas::new(camera.hsize as u32, camera.vsize as u32);
 
     let mut handles = vec![];
 
+    let cols: Vec<(usize, usize, Canvas)> = vec![]; // usizes = start/end range of larger canvas
+    let cols = Arc::new(Mutex::new(cols));
+
+    let hsize = camera.hsize.round() as usize;
     let vsize = camera.vsize.round() as usize;
 
     let mut start_y = 0;
     let mut end_y = 0;
 
     while start_y < vsize && end_y < vsize {
-        let image = Arc::clone(&image);
         let world = world.clone();
         let camera = camera.clone();
+        let cols = Arc::clone(&cols);
 
         end_y = start_y + (vsize / 10);
         if end_y > vsize {
             end_y = vsize;
         }
 
+        let mut canvas = Canvas::new(hsize as u32, vsize as u32);
+
         let handle = thread::spawn(move || {
-            let image = &mut *image.lock().unwrap();
+            let cols = &mut *cols.lock().unwrap();
 
             for y in start_y..end_y {
-                camera.render_column_to(&world, y, image);
+                camera.render_column_to(&world, y, &mut canvas);
             }
+
+            cols.push((start_y, end_y, canvas));
         });
 
         handles.push(handle);
@@ -617,7 +626,17 @@ pub fn render_threaded(world: RaytracerWorld, camera: Camera) -> Canvas {
         handle.join().unwrap();
     }
 
-    let image = image.lock().unwrap();
+    for col in cols.lock().unwrap().iter() {
+        let (start_y, end_y, canvas) = col;
+
+        for x in 0..hsize {
+            for y in *start_y..*end_y {
+                let x = x as u32;
+                let y = y as u32;
+                image.write_pixel(x, y, canvas.pixel_at(x, y));
+            }
+        }
+    }
 
     image.clone()
 }
