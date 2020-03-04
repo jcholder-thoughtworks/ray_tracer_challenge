@@ -506,3 +506,26 @@ Slightly slower again! That's, uh, rather surprising. Let's profile this code an
 The results are in and it looks like the actual rendering still takes up 99% of the total process time. But the work _is_ clearly being distributed across multiple threads (`std::sys::unix::thread::Thread::new`). I bet that `MArc<Mutex>` is still causing me problems. Well, this _was_ only an iterative change meant to precede a switch to message passing! Let's move onto that and see what happens.
 
 Refactoring for message passing wasn't too bad! And the results seem amazing! But let's test that empirically.
+
+`bench "cargo run --example sphere --release -- --threaded 200 100"`:
+
+```
+time                 240.2 ms   (230.6 ms .. 248.6 ms)
+                     0.999 R²   (0.996 R² .. 1.000 R²)
+mean                 237.1 ms   (232.2 ms .. 241.2 ms)
+std dev              5.988 ms   (4.254 ms .. 8.241 ms)
+variance introduced by outliers: 14% (moderately inflated)
+```
+
+_WHOA_ there! That's less than half of our previous best time!
+
+`bench "cargo run --example sphere --release -- --threaded 800 400"`:
+```
+time                 3.397 s    (3.358 s .. 3.456 s)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 3.104 s    (2.906 s .. 3.215 s)
+std dev              186.6 ms   (59.18 ms .. 237.9 ms)
+variance introduced by outliers: 19% (moderately inflated)
+```
+
+_Gaaaaaaasp_. That's 3.4s vs 15.1s!! That's 4.4x as fast! Amaaazing.
