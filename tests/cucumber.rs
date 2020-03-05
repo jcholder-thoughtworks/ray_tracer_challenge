@@ -613,6 +613,7 @@ mod example_steps {
 
         given "p ← plane()" |world, _step| {
             world.plane = world.rw.new_plane();
+            world.rw.add_object(world.plane);
         };
 
         given regex r"^i1 ← intersection\((.*), s\)$" |world, matches, _step| {
@@ -1093,6 +1094,23 @@ mod example_steps {
 
         when "xs ← intersect_world(w, r)" |world, _step| {
             world.xs = world.rw.intersect(&world.r);
+        };
+
+        when "xs ← local_intersect(p, r)" |world, _step| {
+            let times = world.plane.local_intersect(world.r);
+            let intersections = times
+                .iter()
+                .map({
+                    |t| {
+                        Rc::new(Intersection {
+                            time: *t,
+                            object: Rc::new(world.plane.clone()),
+                        })
+                    }
+                })
+                .collect();
+
+            world.xs = intersections;
         };
 
         when "comps ← prepare_computations(i, r)" |world, _step| {
@@ -1621,6 +1639,14 @@ mod example_steps {
             let actual = world.r.position(t);
 
             assert_eq!(expected, actual.rounded());
+        };
+
+        then "xs is empty" |world, _step| {
+            let expected = 0;
+
+            let actual = world.xs.len();
+
+            assert_eq!(expected, actual);
         };
 
         then regex r"^xs.count = (.*)$" |world, matches, _step| {
