@@ -45,6 +45,7 @@ pub struct MyWorld {
     s: RaytracerObject,
     s1: RaytracerObject,
     s2: RaytracerObject,
+    plane: RaytracerObject,
     xs: Intersections,
     i: Option<Rc<Intersection>>,
     i1: Option<Rc<Intersection>>,
@@ -70,6 +71,9 @@ pub struct MyWorld {
     camera: Camera,
     image: Canvas,
     in_shadow: bool,
+    n1: Vector,
+    n2: Vector,
+    n3: Vector,
 }
 
 impl cucumber::World for MyWorld {}
@@ -79,6 +83,7 @@ impl std::default::Default for MyWorld {
         let s = rw.new_sphere(CENTER_ORIGIN);
         let s1 = rw.new_sphere(CENTER_ORIGIN);
         let s2 = rw.new_sphere(CENTER_ORIGIN);
+        let plane = rw.new_test_shape();
         let shape = Rc::new(rw.new_sphere(CENTER_ORIGIN));
 
         // This function is called every time a new scenario is started
@@ -112,6 +117,7 @@ impl std::default::Default for MyWorld {
             s,
             s1,
             s2,
+            plane,
             xs: vec![],
             i: None,
             i1: None,
@@ -137,6 +143,9 @@ impl std::default::Default for MyWorld {
             camera: Camera::new(0.0, 0.0, 0.0),
             image: Canvas::new(0, 0),
             in_shadow: false,
+            n1: STATIONARY,
+            n2: STATIONARY,
+            n3: STATIONARY,
         }
     }
 }
@@ -600,6 +609,10 @@ mod example_steps {
 
         given "s2 is added to w" |world, _step| {
             world.rw.add_object(world.s2);
+        };
+
+        given "p ← plane()" |world, _step| {
+            world.plane = world.rw.new_plane();
         };
 
         given regex r"^i1 ← intersection\((.*), s\)$" |world, matches, _step| {
@@ -1115,6 +1128,24 @@ mod example_steps {
 
         when "image ← render(c, w)" |world, _step| {
             world.image = world.camera.render(&world.rw);
+        };
+
+        when regex r"^n(.*) ← local_normal_at\(p, point\((.*), (.*), (.*)\)\)$" |world, matches, _step| {
+            let n_index: usize = matches[1].parse().unwrap();
+            let x: f32 = matches[2].parse().unwrap();
+            let y: f32 = matches[3].parse().unwrap();
+            let z: f32 = matches[4].parse().unwrap();
+
+            let point = Point::new(x, y, z);
+
+            let n = match n_index {
+                1 => &mut world.n1,
+                2 => &mut world.n2,
+                3 => &mut world.n3,
+                _ => panic!("Invalid n value"),
+            };
+
+            *n = world.plane.local_normal_at(point);
         };
 
         then regex r"^c(.*) \+ c(.*) = color\((.*), (.*), (.*)\)$" |world, matches, _step| {
@@ -2107,6 +2138,24 @@ mod example_steps {
 
         then "is_shadowed(w, p) is false" |world, _step| {
             assert!(!world.rw.is_shadowed(world.p));
+        };
+
+        then regex r"^n(.*) = vector\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let n_index: usize = matches[1].parse().unwrap();
+            let x: f32 = matches[2].parse().unwrap();
+            let y: f32 = matches[3].parse().unwrap();
+            let z: f32 = matches[4].parse().unwrap();
+
+            let expected = match n_index {
+                1 => world.n1,
+                2 => world.n2,
+                3 => world.n3,
+                _ => panic!("Invalid n value"),
+            };
+
+            let actual = Vector::new(x, y, z);
+
+            assert_eq!(expected, actual);
         };
     });
 }
