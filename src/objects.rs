@@ -72,6 +72,13 @@ impl RaytracerObject {
         }
     }
 
+    pub fn local_intersect(&self, _ray: Ray) -> Vec<Time> {
+        match &self.obj_type {
+            ROT::Plane => vec![],
+            _ => unimplemented!("Not yet implemented for {:?}", self.obj_type),
+        }
+    }
+
     fn intersect_sphere(&self, original_ray: &Ray) -> Vec<Time> {
         let inverse = self.transform.inverse();
 
