@@ -68,13 +68,16 @@ impl RaytracerObject {
     pub fn intersect(&self, ray: &Ray) -> Vec<Time> {
         match &self.obj_type {
             ROT::Sphere => self.intersect_sphere(ray),
+            ROT::Plane => self.intersect_plane(ray),
             _ => unimplemented!("Not yet implemented for {:?}", self.obj_type),
         }
     }
 
-    pub fn local_intersect(&self, ray: &Ray) -> Vec<Time> {
+    pub fn local_intersect(&self, world_ray: &Ray) -> Vec<Time> {
+        let local_ray = &world_ray.transform(&self.transform.inverse());
+
         match &self.obj_type {
-            ROT::Plane => self.local_intersect_plane(ray),
+            ROT::Plane => self.local_intersect_plane(local_ray),
             _ => unimplemented!("Not yet implemented for {:?}", self.obj_type),
         }
     }
@@ -115,6 +118,10 @@ impl RaytracerObject {
         } else {
             vec![t2, t1]
         }
+    }
+
+    fn intersect_plane(&self, ray: &Ray) -> Vec<Time> {
+        self.local_intersect_plane(ray)
     }
 
     pub fn normal_at(&self, world_point: Point) -> Vector {
