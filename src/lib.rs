@@ -63,6 +63,15 @@ impl RaytracerWorld {
         RaytracerObject::new_sphere(id, origin)
     }
 
+    pub fn new_test_shape(&mut self) -> RaytracerObject {
+        let id = self.next_id;
+        self.next_id += 1;
+
+        let origin = CENTER_ORIGIN;
+
+        RaytracerObject::new_test_shape(id, origin)
+    }
+
     pub fn objects(&self) -> Vec<Rc<RaytracerObject>> {
         // TODO: Return an iterator of objects, instead. No Vec/Rc necessary
         self.objs.iter().map({ |o| Rc::new(o.clone()) }).collect()

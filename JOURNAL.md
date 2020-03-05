@@ -529,3 +529,7 @@ variance introduced by outliers: 19% (moderately inflated)
 ```
 
 _Gaaaaaaasp_. That's 3.4s vs 15.1s!! That's 4.4x as fast! Amaaazing.
+
+# 05Mar2020
+
+Time for a brain break! Been doing a fair amount of research and ready for a gear shift. Time for new primitives!
