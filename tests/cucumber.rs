@@ -590,6 +590,10 @@ mod example_steps {
             world.s1 = world.rw.new_sphere(CENTER_ORIGIN);
         };
 
+        given "s ← test_shape()" |world, _step| {
+            world.s = world.rw.new_test_shape();
+        };
+
         given "s1 is added to w" |world, _step| {
             world.rw.add_object(world.s1);
         };
@@ -1702,6 +1706,18 @@ mod example_steps {
 
         then "s.transform = t" |world, _step| {
             let expected = world.t.as_ref().clone();
+
+            let actual = world.s.transform.clone();
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"^s.transform = translation\((.*), (.*), (.*)\)$" |world, matches, _step| {
+            let x: f32 = matches[1].parse().unwrap();
+            let y: f32 = matches[2].parse().unwrap();
+            let z: f32 = matches[3].parse().unwrap();
+
+            let expected = translation(x, y, z);
 
             let actual = world.s.transform.clone();
 
