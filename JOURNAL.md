@@ -533,3 +533,5 @@ _Gaaaaaaasp_. That's 3.4s vs 15.1s!! That's 4.4x as fast! Amaaazing.
 # 05Mar2020
 
 Time for a brain break! Been doing a fair amount of research and ready for a gear shift. Time for new primitives!
+
+Hrm. These `test_shape` tests might not be necessary for my use case and more trouble than they're worth in Rust, especially since my code already has a generic `RaytracerObject` instead of just a `Sphere`. I'll see about skipping ahead.
