@@ -49,12 +49,18 @@ impl RaytracerObject {
     pub fn hit_on_intersect(&self, ray: &Ray) -> Option<Rc<Intersection>> {
         match &self.obj_type {
             ROT::Sphere => hit_on_intersect_sphere(self, ray),
-            _ => unimplemented!("Not yet implemented for {:?}", self.obj_type)
+            _ => unimplemented!("Not yet implemented for {:?}", self.obj_type),
         }
     }
 
-    pub fn intersect(&self, original_ray: &Ray) -> Vec<Time> {
-        // TODO: match on obj_type. Current sphere specific
+    pub fn intersect(&self, ray: &Ray) -> Vec<Time> {
+        match &self.obj_type {
+            ROT::Sphere => self.intersect_sphere(ray),
+            _ => unimplemented!("Not yet implemented for {:?}", self.obj_type),
+        }
+    }
+
+    fn intersect_sphere(&self, original_ray: &Ray) -> Vec<Time> {
         let inverse = self.transform.inverse();
 
         let ray = original_ray.transform(&inverse);
