@@ -1097,20 +1097,7 @@ mod example_steps {
         };
 
         when "xs ← local_intersect(p, r)" |world, _step| {
-            let times = world.plane.local_intersect(world.r);
-            let intersections = times
-                .iter()
-                .map({
-                    |t| {
-                        Rc::new(Intersection {
-                            time: *t,
-                            object: Rc::new(world.plane.clone()),
-                        })
-                    }
-                })
-                .collect();
-
-            world.xs = intersections;
+            world.xs = local_intersect(Rc::new(world.plane), &world.r);
         };
 
         when "comps ← prepare_computations(i, r)" |world, _step| {
@@ -1674,6 +1661,16 @@ mod example_steps {
             let index: usize = matches[1].parse().unwrap();
 
             let expected = world.s.id();
+
+            let actual = world.xs[index].object.id();
+
+            assert_eq!(expected, actual);
+        };
+
+        then regex r"^xs\[(.*)\].object = p$" |world, matches, _step| {
+            let index: usize = matches[1].parse().unwrap();
+
+            let expected = world.plane.id();
 
             let actual = world.xs[index].object.id();
 
