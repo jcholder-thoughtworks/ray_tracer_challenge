@@ -537,3 +537,7 @@ Time for a brain break! Been doing a fair amount of research and ready for a gea
 Hrm. These `test_shape` tests might not be necessary for my use case and more trouble than they're worth in Rust, especially since my code already has a generic `RaytracerObject` instead of just a `Sphere`. I'll see about skipping ahead.
 
 Making some slow but steady progress. Head feels foggy. I think it's allergy season.
+
+Made some progress! But alas, it turns out that I did need to revisit those earlier steps for `TestShape`. Can't say I should be surprised.
+
+Hrm. Even though I went back and spotted what I thought was the omission, I still have a lot of "acne" on my plane. More investigation required, but that's for tomorrow.
