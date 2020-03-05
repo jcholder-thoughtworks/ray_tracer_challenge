@@ -63,6 +63,15 @@ impl RaytracerWorld {
         RaytracerObject::new_sphere(id, origin)
     }
 
+    pub fn new_plane(&mut self) -> RaytracerObject {
+        let id = self.next_id;
+        self.next_id += 1;
+
+        let origin = CENTER_ORIGIN;
+
+        RaytracerObject::new_plane(id, origin)
+    }
+
     pub fn new_test_shape(&mut self) -> RaytracerObject {
         let id = self.next_id;
         self.next_id += 1;
