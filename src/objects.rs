@@ -5,6 +5,7 @@ use super::*;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum RaytracerObjectType {
+    Plane,
     Sphere,
     TestShape,
 }
@@ -38,12 +39,23 @@ impl RaytracerObject {
         Self::new(obj_id, ROT::Sphere, origin)
     }
 
+    pub fn new_plane(obj_id: usize, origin: Point) -> Self {
+        Self::new(obj_id, ROT::Plane, origin)
+    }
+
     pub fn new_test_shape(obj_id: usize, origin: Point) -> Self {
         Self::new(obj_id, ROT::TestShape, origin)
     }
 
     pub fn id(&self) -> usize {
         self.obj_id
+    }
+
+    pub fn local_normal_at(&self, _point: Point) -> Vector {
+        match &self.obj_type {
+            ROT::Plane => Vector::new(0.0, 1.0, 0.0),
+            _ => unimplemented!("Not yet implemented for {:?}", self.obj_type),
+        }
     }
 
     pub fn hit_on_intersect(&self, ray: &Ray) -> Option<Rc<Intersection>> {
