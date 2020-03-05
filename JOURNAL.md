@@ -541,3 +541,5 @@ Making some slow but steady progress. Head feels foggy. I think it's allergy sea
 Made some progress! But alas, it turns out that I did need to revisit those earlier steps for `TestShape`. Can't say I should be surprised.
 
 Hrm. Even though I went back and spotted what I thought was the omission, I still have a lot of "acne" on my plane. More investigation required, but that's for tomorrow.
+
+Overdue for refactoring out all those unnecessary uses of `Rc` and references, too. That will only make it easier to support more shapes.
