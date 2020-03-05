@@ -473,6 +473,22 @@ pub fn intersect(object: Rc<RaytracerObject>, ray: &Ray) -> Intersections {
         .collect()
 }
 
+pub fn local_intersect(object: Rc<RaytracerObject>, ray: &Ray) -> Intersections {
+    let times = object.local_intersect(ray);
+
+    times
+        .iter()
+        .map({
+            |t| {
+                Rc::new(Intersection {
+                    time: *t,
+                    object: Rc::clone(&object),
+                })
+            }
+        })
+        .collect()
+}
+
 pub trait Hittable {
     fn hit(&self) -> Option<Rc<Intersection>>;
 }

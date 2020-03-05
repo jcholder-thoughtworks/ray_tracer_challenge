@@ -72,19 +72,21 @@ impl RaytracerObject {
         }
     }
 
-    pub fn local_intersect(&self, ray: Ray) -> Vec<Time> {
+    pub fn local_intersect(&self, ray: &Ray) -> Vec<Time> {
         match &self.obj_type {
             ROT::Plane => self.local_intersect_plane(ray),
             _ => unimplemented!("Not yet implemented for {:?}", self.obj_type),
         }
     }
 
-    fn local_intersect_plane(&self, ray: Ray) -> Vec<Time> {
-        if ray.direction.y < EPSILON {
-            vec![]
-        } else {
-            unimplemented!("WIP")
+    fn local_intersect_plane(&self, ray: &Ray) -> Vec<Time> {
+        if ray.direction.y.abs() < EPSILON {
+            return vec![];
         }
+
+        let time = -ray.origin.y / ray.direction.y;
+
+        vec![time]
     }
 
     fn intersect_sphere(&self, original_ray: &Ray) -> Vec<Time> {
