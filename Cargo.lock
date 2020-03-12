@@ -436,6 +436,7 @@ dependencies = [
 name = "ray_tracer_challenge"
 version = "0.1.0"
 dependencies = [
+ "clap",
  "cucumber_rust",
  "gherkin_rust",
  "regex",
