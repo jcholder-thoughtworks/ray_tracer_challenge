@@ -1,6 +1,8 @@
+extern crate clap;
+use clap::{Arg, App};
+
 use core::f32::consts::PI;
 
-use std::env;
 use std::fs::File;
 use std::io::prelude::*;
 
@@ -18,39 +20,31 @@ fn parse_arg(arg: &str) -> f32 {
 }
 
 fn main() -> std::io::Result<()> {
-    let args: Vec<String> = env::args().collect();
+    let matches = App::new("Example: Sphere")
+        .version("0.0.1")
+        .author("JC Holder")
+        .arg(Arg::with_name("width")
+             .help("Width of the image to render in pixels. Default: 200")
+             .required(true)
+             .index(1))
+        .arg(Arg::with_name("height")
+             .help("Height of the image to render in pixels: Default: 100")
+             .required(true)
+             .index(2))
+        .arg(Arg::with_name("field-of-view")
+             .help("Field of view for the camera. Default: PI / 3")
+             .required(false)
+             .index(3))
+        .arg(Arg::with_name("threaded")
+             .help("Splits the rendering work across multiple threads. (Default: single threaded.)")
+             .short("t")
+             .long("threaded"))
+        .get_matches();
 
-    let mut threaded = false;
-    let mut arg_index = 0;
-
-    if let Some(a) = args.get(1) {
-        if a == "--help" {
-            let cmd_name = args.get(0).unwrap();
-            println!("Usage: {} [--threaded] [width:float] [height:float] [field-of-view:float]", cmd_name);
-            println!("e.g. {} 200.0, 100.0, 1.047", cmd_name);
-            return Ok(());
-        }
-
-        if a == "--threaded" {
-            threaded = true;
-            arg_index += 1;
-        }
-    }
-
-    let canvas_width: f32 = match args.get(arg_index + 1) {
-        Some(a) => parse_arg(a),
-        None => 200.0,
-    };
-
-    let canvas_height: f32 = match args.get(arg_index + 2) {
-        Some(a) => parse_arg(a),
-        None => 100.0,
-    };
-
-    let field_of_view: f32 = match args.get(arg_index + 3) {
-        Some(a) => parse_arg(a),
-        None => PI / 3.0,
-    };
+    let threaded = matches.is_present("threaded");
+    let canvas_width = parse_arg(matches.value_of("width").unwrap_or("200.0"));
+    let canvas_height = parse_arg(matches.value_of("height").unwrap_or("200.0"));
+    let field_of_view = parse_arg(matches.value_of("field-of-view").unwrap_or(&(PI / 3.0).to_string()));
 
     println!("Settings: width({}), height({}), field of view({})", canvas_width, canvas_height, field_of_view);
     println!("Rendering the scene ...");
